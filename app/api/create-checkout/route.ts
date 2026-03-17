@@ -30,9 +30,8 @@ export async function POST(req: Request) {
     metadata: {
       quoteId: quoteId
     },
-
-    success_url: "http://localhost:3000/payment-success",
-    cancel_url: "http://localhost:3000",
+success_url: "https://quote-to-booking-project.vercel.app/payment-success",
+cancel_url: "https://quote-to-booking-project.vercel.app",
   })
 
   return NextResponse.json({ url: session.url })

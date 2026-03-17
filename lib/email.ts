@@ -7,7 +7,7 @@ export async function sendQuoteEmail(
   name: string,
   quoteId: string
 ) {
-  const link = `http://localhost:3000/quote/${quoteId}`
+    const link = `https://quote-to-booking-project.vercel.app/quote/${quoteId}`
   const now = new Date().toLocaleString()
 
   await resend.emails.send({

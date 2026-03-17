@@ -35,7 +35,7 @@ async function handleSubmit(e: React.FormEvent) {
   }
 
   const id = data?.[0]?.id
-  const link = `http://localhost:3000/quote/${id}`
+  const link = `https://quote-to-booking-project.vercel.app/quote/${id}`
 
   // 🔥 LOG: Quote created
   await logEvent(id, "quote_created", "Quote created")

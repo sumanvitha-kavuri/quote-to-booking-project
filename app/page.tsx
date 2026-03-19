@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
 
       {/* NAVBAR */}
       <div className="flex justify-between items-center px-6 py-4 border-b bg-white/80 backdrop-blur-md">
@@ -46,7 +46,7 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-white to-slate-50">
 
         <div className="mb-4 px-4 py-1 text-sm bg-indigo-100 text-indigo-700 rounded-full">
           Workflow Automation for Service Businesses
@@ -82,10 +82,13 @@ export default function Home() {
         </p>
       </div>
 
-      {/* DASHBOARD SECTION BACKGROUND */}
-      <div className="mt-10 w-full bg-gradient-to-b from-transparent via-blue-50 to-indigo-100 py-16 flex justify-center px-6">
+      {/* 🔥 DASHBOARD SECTION WITH REAL BACKGROUND */}
+      <div className="mt-16 w-full relative py-20 flex justify-center px-6 bg-gradient-to-b from-white via-blue-50 to-indigo-100">
 
-        <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full">
+        {/* GLOW EFFECT */}
+        <div className="absolute top-0 w-[600px] h-[600px] bg-blue-200 opacity-30 blur-3xl rounded-full"></div>
+
+        <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full relative z-10">
 
           {/* STATS */}
           <div className="grid grid-cols-4 gap-4 mb-6">
@@ -151,7 +154,7 @@ export default function Home() {
       </div>
 
       {/* FEATURES */}
-      <div className="py-10 px-6 bg-white border-t mt-16">
+      <div className="py-10 px-6 bg-white border-t">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
 
           <div>

@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 flex flex-col">
 
       {/* NAVBAR */}
       <div className="flex justify-between items-center px-6 py-4 border-b bg-white/80 backdrop-blur-md">
@@ -10,9 +10,10 @@ export default function Home() {
         </h1>
 
         <div className="flex items-center gap-4">
+          {/* Highlighted Login */}
           <a
             href="/login"
-            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+            className="px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition"
           >
             Login
           </a>
@@ -26,14 +27,23 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 🔥 TOP SCROLL STRIP (FIXED DIRECTION + SIZE) */}
-      <div className="overflow-hidden border-b bg-white">
-        <div className="animate-marquee text-base font-medium text-gray-600 py-3 whitespace-nowrap">
-          <span className="mx-8">🚀 Send Quotes Faster</span>
-          <span className="mx-8">📩 Track Responses Easily</span>
-          <span className="mx-8">💳 Collect Deposits Securely</span>
-          <span className="mx-8">⏱️ Automated Follow-ups</span>
-          <span className="mx-8">📊 Real-time Business Status</span>
+      {/* 🔥 SCROLL STRIP (WORKING LOOP) */}
+      <div className="overflow-hidden border-b bg-white py-3">
+        <div className="animate-marquee flex gap-10 text-base font-medium text-gray-700">
+
+          <span>🚀 Send Quotes Faster</span>
+          <span>📩 Track Responses Easily</span>
+          <span>💳 Collect Deposits Securely</span>
+          <span>⏱️ Automated Follow-ups</span>
+          <span>📊 Real-time Business Status</span>
+
+          {/* duplicate for seamless loop */}
+          <span>🚀 Send Quotes Faster</span>
+          <span>📩 Track Responses Easily</span>
+          <span>💳 Collect Deposits Securely</span>
+          <span>⏱️ Automated Follow-ups</span>
+          <span>📊 Real-time Business Status</span>
+
         </div>
       </div>
 
@@ -76,47 +86,47 @@ export default function Home() {
 
       {/* DASHBOARD PREVIEW */}
       <div className="mt-10 flex justify-center px-6">
-
         <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full">
 
           {/* STATS */}
           <div className="grid grid-cols-4 gap-4 mb-6">
 
-            <div className="p-4 bg-blue-50 rounded-xl">
-              <p className="text-sm text-blue-600">Total Quotes</p>
-              <p className="text-2xl font-bold text-blue-700">18</p>
+            <div className="p-4 bg-blue-100 rounded-xl">
+              <p className="text-sm text-blue-700 font-medium">Total Quotes</p>
+              <p className="text-2xl font-bold text-blue-800">18</p>
             </div>
 
-            <div className="p-4 bg-yellow-50 rounded-xl">
-              <p className="text-sm text-yellow-600">Awaiting</p>
-              <p className="text-2xl font-bold text-yellow-700">6</p>
+            <div className="p-4 bg-yellow-100 rounded-xl">
+              <p className="text-sm text-yellow-700 font-medium">Awaiting</p>
+              <p className="text-2xl font-bold text-yellow-800">6</p>
             </div>
 
-            <div className="p-4 bg-green-50 rounded-xl">
-              <p className="text-sm text-green-600">Paid</p>
-              <p className="text-2xl font-bold text-green-700">4</p>
+            <div className="p-4 bg-green-100 rounded-xl">
+              <p className="text-sm text-green-700 font-medium">Paid</p>
+              <p className="text-2xl font-bold text-green-800">4</p>
             </div>
 
-            <div className="p-4 bg-purple-50 rounded-xl">
-              <p className="text-sm text-purple-600">Revenue</p>
-              <p className="text-2xl font-bold text-purple-700">₹32K</p>
+            {/* 💰 STRONG REVENUE CARD */}
+            <div className="p-4 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl text-white shadow-lg">
+              <p className="text-sm">Revenue</p>
+              <p className="text-2xl font-bold">₹32,000</p>
             </div>
 
           </div>
 
-          {/* ⚡ SOFT ATTENTION (NO RED) */}
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
-            <p className="text-sm font-semibold text-yellow-700 mb-2">
+          {/* SOFT ATTENTION */}
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+            <p className="text-sm font-semibold text-blue-700 mb-2">
               Needs Attention
             </p>
-            <ul className="text-sm text-yellow-600 space-y-1">
+            <ul className="text-sm text-blue-600 space-y-1">
               <li>• 2 quotes expiring today</li>
               <li>• 1 approved but pending payment</li>
               <li>• 3 customers awaiting response</li>
             </ul>
           </div>
 
-          {/* TABLE (FIXED VISIBILITY) */}
+          {/* TABLE */}
           <div className="space-y-3 text-base">
 
             <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
@@ -140,24 +150,23 @@ export default function Home() {
           </div>
 
         </div>
-
       </div>
 
       {/* FEATURES */}
       <div className="py-10 px-6 bg-white border-t mt-16">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
 
-          <div className="p-4">
+          <div>
             <p className="font-semibold text-gray-900">Send Quotes</p>
             <p className="text-sm text-gray-500">Create and share instantly</p>
           </div>
 
-          <div className="p-4">
+          <div>
             <p className="font-semibold text-gray-900">Track Responses</p>
             <p className="text-sm text-gray-500">Know who opened and replied</p>
           </div>
 
-          <div className="p-4">
+          <div>
             <p className="font-semibold text-gray-900">Collect Deposits</p>
             <p className="text-sm text-gray-500">Secure bookings faster</p>
           </div>

@@ -113,7 +113,7 @@ export default function Home() {
 
             <div className="p-4 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl text-white shadow-lg">
               <p className="text-sm">Revenue</p>
-              <p className="text-2xl font-bold">₹32,000</p>
+              <p className="text-2xl font-bold">32 K</p>
             </div>
 
           </div>

@@ -1,36 +1,39 @@
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-blue-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-6 py-4 border-b bg-white/70 backdrop-blur-md">
+      <div className="flex justify-between items-center px-6 py-4 border-b bg-white/80 backdrop-blur-md">
         <h1 className="text-lg font-bold tracking-tight">
           <span className="text-gray-900">Quote</span>{" "}
           <span className="text-blue-600">to Booking</span>
         </h1>
 
         <div className="flex items-center gap-4">
-          <a href="/login" className="text-gray-600 hover:text-black transition">
+          <a
+            href="/login"
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+          >
             Login
           </a>
 
           <a
             href="/signup"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
           >
             Get Started
           </a>
         </div>
       </div>
 
-      {/* 🔥 TOP SCROLL STRIP */}
-      <div className="overflow-hidden whitespace-nowrap border-b bg-gradient-to-r from-white via-slate-50 to-white">
-        <div className="animate-marquee text-sm text-gray-600 py-2">
-          <span className="mx-6">🚀 Send Quotes Faster</span>
-          <span className="mx-6">📩 Track Responses</span>
-          <span className="mx-6">💳 Collect Deposits</span>
-          <span className="mx-6">⏱️ Auto Follow-ups</span>
-          <span className="mx-6">📊 Real-time Status</span>
+      {/* 🔥 TOP SCROLL STRIP (FIXED DIRECTION + SIZE) */}
+      <div className="overflow-hidden border-b bg-white">
+        <div className="animate-marquee text-base font-medium text-gray-600 py-3 whitespace-nowrap">
+          <span className="mx-8">🚀 Send Quotes Faster</span>
+          <span className="mx-8">📩 Track Responses Easily</span>
+          <span className="mx-8">💳 Collect Deposits Securely</span>
+          <span className="mx-8">⏱️ Automated Follow-ups</span>
+          <span className="mx-8">📊 Real-time Business Status</span>
         </div>
       </div>
 
@@ -71,7 +74,7 @@ export default function Home() {
         </p>
       </div>
 
-      {/* 🔥 REALISTIC DASHBOARD PREVIEW */}
+      {/* DASHBOARD PREVIEW */}
       <div className="mt-10 flex justify-center px-6">
 
         <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full">
@@ -80,58 +83,58 @@ export default function Home() {
           <div className="grid grid-cols-4 gap-4 mb-6">
 
             <div className="p-4 bg-blue-50 rounded-xl">
-              <p className="text-xs text-blue-600">Total Quotes</p>
+              <p className="text-sm text-blue-600">Total Quotes</p>
               <p className="text-2xl font-bold text-blue-700">18</p>
             </div>
 
             <div className="p-4 bg-yellow-50 rounded-xl">
-              <p className="text-xs text-yellow-600">Awaiting</p>
+              <p className="text-sm text-yellow-600">Awaiting</p>
               <p className="text-2xl font-bold text-yellow-700">6</p>
             </div>
 
             <div className="p-4 bg-green-50 rounded-xl">
-              <p className="text-xs text-green-600">Paid</p>
+              <p className="text-sm text-green-600">Paid</p>
               <p className="text-2xl font-bold text-green-700">4</p>
             </div>
 
             <div className="p-4 bg-purple-50 rounded-xl">
-              <p className="text-xs text-purple-600">Revenue</p>
+              <p className="text-sm text-purple-600">Revenue</p>
               <p className="text-2xl font-bold text-purple-700">₹32K</p>
             </div>
 
           </div>
 
-          {/* ATTENTION BOX */}
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl">
-            <p className="text-sm font-semibold text-red-600 mb-2">
-              ⚠ Needs Attention
+          {/* ⚡ SOFT ATTENTION (NO RED) */}
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
+            <p className="text-sm font-semibold text-yellow-700 mb-2">
+              Needs Attention
             </p>
-            <ul className="text-sm text-red-500 space-y-1">
+            <ul className="text-sm text-yellow-600 space-y-1">
               <li>• 2 quotes expiring today</li>
-              <li>• 1 approved but not paid</li>
-              <li>• 3 customers not responded</li>
+              <li>• 1 approved but pending payment</li>
+              <li>• 3 customers awaiting response</li>
             </ul>
           </div>
 
-          {/* TABLE */}
-          <div className="space-y-3 text-sm">
+          {/* TABLE (FIXED VISIBILITY) */}
+          <div className="space-y-3 text-base">
 
-            <div className="flex justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
-              <span>Rahul</span>
+            <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
+              <span className="font-medium text-gray-900">Rahul</span>
               <span>₹5000</span>
-              <span className="text-yellow-600 font-medium">Awaiting</span>
+              <span className="text-yellow-600 font-semibold">Awaiting</span>
             </div>
 
-            <div className="flex justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
-              <span>Ankit</span>
+            <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
+              <span className="font-medium text-gray-900">Ankit</span>
               <span>₹8000</span>
-              <span className="text-blue-600 font-medium">Approved</span>
+              <span className="text-blue-600 font-semibold">Approved</span>
             </div>
 
-            <div className="flex justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
-              <span>Sneha</span>
+            <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
+              <span className="font-medium text-gray-900">Sneha</span>
               <span>₹3000</span>
-              <span className="text-green-600 font-medium">Paid</span>
+              <span className="text-green-600 font-semibold">Paid</span>
             </div>
 
           </div>
@@ -141,7 +144,7 @@ export default function Home() {
       </div>
 
       {/* FEATURES */}
-      <div className="py-10 px-6 bg-slate-50 border-t mt-16">
+      <div className="py-10 px-6 bg-white border-t mt-16">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
 
           <div className="p-4">

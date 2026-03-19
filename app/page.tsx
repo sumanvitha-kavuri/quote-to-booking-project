@@ -46,8 +46,10 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-white to-slate-50">
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-blue-50 via-white to-indigo-100 overflow-hidden">
 
+  {/* 🔥 Soft Glow Behind Text */}
+  <div className="absolute top-20 w-[500px] h-[500px] bg-blue-300 opacity-20 blur-3xl rounded-full"></div>
         <div className="mb-4 px-4 py-1 text-sm bg-indigo-100 text-indigo-700 rounded-full">
           Workflow Automation for Service Businesses
         </div>

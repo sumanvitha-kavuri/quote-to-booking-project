@@ -22,7 +22,6 @@ export default async function QuotePage({ params }: any) {
     .order("created_at", { ascending: false })
 
   if (error) {
-    console.log(error)
     return <div className="p-10">Error loading quote</div>
   }
 
@@ -31,51 +30,85 @@ export default async function QuotePage({ params }: any) {
   }
 
   return (
-    <main className="p-10 max-w-xl">
+    <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex justify-center p-6">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Quote Details
-      </h1>
+      <div className="w-full max-w-xl bg-white border rounded-2xl shadow-xl p-6">
 
-      <div className="space-y-4">
-        <p><b>Customer:</b> {quote.customer_name}</p>
-        <p><b>Email:</b> {quote.customer_email}</p>
-        <p><b>Total Amount:</b> ${quote.amount}</p>
-        <p><b>Deposit Required:</b> ${quote.deposit_amount}</p>
-        <p><b>Status:</b> {quote.status}</p>
-        <p><b>Payment:</b> {quote.payment_status}</p>
-      </div>
+        {/* HEADER */}
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Quote Details
+        </h1>
 
-      {quote.status === "pending" && (
-        <>
-          <AcceptQuoteButton quoteId={quote.id} />
-          <RequestChangeButton quoteId={quote.id} />
-          <DeclineQuoteButton quoteId={quote.id} />
-          <AskQuestionBox quoteId={quote.id} />
-        </>
-      )}
+        {/* SUMMARY CARD */}
+        <div className="space-y-3 mb-6">
 
-      <PayDepositButton
-        amount={quote.deposit_amount}
-        quoteId={quote.id}
-      />
+          <p><span className="font-medium">Customer:</span> {quote.customer_name}</p>
+          <p><span className="font-medium">Email:</span> {quote.customer_email}</p>
 
-      {/* 🔥 Timeline */}
-      <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4">Timeline</h2>
-
-        {events?.length === 0 && (
-          <p className="text-sm text-gray-500">No activity yet</p>
-        )}
-
-        {events?.map((event: any) => (
-          <div key={event.id} className="border p-3 rounded mb-2">
-            <p className="text-sm">{event.message}</p>
-            <p className="text-xs text-gray-500">
-              {new Date(event.created_at).toLocaleString()}
+          <div className="p-4 bg-slate-50 rounded-lg">
+            <p className="text-sm text-gray-500">Total Amount</p>
+            <p className="text-xl font-bold text-gray-900">
+              ₹{quote.amount}
             </p>
           </div>
-        ))}
+
+          <div className="p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-600">Deposit Required</p>
+            <p className="text-xl font-bold text-blue-700">
+              ₹{quote.deposit_amount}
+            </p>
+          </div>
+
+          <div className="flex justify-between text-sm mt-2">
+            <span>Status:</span>
+            <span className="font-medium">{quote.status}</span>
+          </div>
+
+          <div className="flex justify-between text-sm">
+            <span>Payment:</span>
+            <span className="font-medium">{quote.payment_status}</span>
+          </div>
+
+        </div>
+
+        {/* ACTIONS */}
+        {quote.status === "pending" && (
+          <div className="space-y-3 mb-6">
+
+            <AcceptQuoteButton quoteId={quote.id} />
+            <PayDepositButton amount={quote.deposit_amount} quoteId={quote.id} />
+
+            <div className="flex gap-2">
+              <RequestChangeButton quoteId={quote.id} />
+              <DeclineQuoteButton quoteId={quote.id} />
+            </div>
+
+            <AskQuestionBox quoteId={quote.id} />
+
+          </div>
+        )}
+
+        {/* TIMELINE */}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-3">Timeline</h2>
+
+          {events?.length === 0 && (
+            <p className="text-sm text-gray-500">No activity yet</p>
+          )}
+
+          <div className="space-y-2">
+            {events?.map((event: any) => (
+              <div key={event.id} className="border rounded-lg p-3 bg-white shadow-sm">
+                <p className="text-sm">{event.message}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(event.created_at).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
       </div>
 
     </main>

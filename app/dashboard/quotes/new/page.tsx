@@ -18,18 +18,28 @@ export default function NewQuotePage() {
 
     setLoading(true)
 
-    const { data, error } = await supabase
-      .from("quotes")
-      .insert([
-        {
-          customer_name: customerName,
-          customer_email: customerEmail,
-          amount: Number(amount),
-          deposit_amount: Number(depositAmount),
-          status: "pending"
-        }
-      ])
-      .select()
+// 🔥 get logged-in user
+const { data: { user } } = await supabase.auth.getUser()
+
+if (!user) {
+  alert("You must be logged in")
+  setLoading(false)
+  return
+}
+
+const { data, error } = await supabase
+  .from("quotes")
+  .insert([
+    {
+      customer_name: customerName,
+      customer_email: customerEmail,
+      amount: Number(amount),
+      deposit_amount: Number(depositAmount),
+      status: "pending",
+      user_id: user.id,   // ⭐ THIS IS THE KEY FIX
+    }
+  ])
+  .select()
 
     if (error) {
       console.log("Supabase error:", error)

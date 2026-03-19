@@ -10,7 +10,6 @@ export default function Home() {
         </h1>
 
         <div className="flex items-center gap-4">
-          {/* Highlighted Login */}
           <a
             href="/login"
             className="px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition"
@@ -27,7 +26,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 🔥 SCROLL STRIP (WORKING LOOP) */}
+      {/* SCROLL STRIP */}
       <div className="overflow-hidden border-b bg-white py-3">
         <div className="animate-marquee flex gap-10 text-base font-medium text-gray-700">
 
@@ -37,7 +36,6 @@ export default function Home() {
           <span>⏱️ Automated Follow-ups</span>
           <span>📊 Real-time Business Status</span>
 
-          {/* duplicate for seamless loop */}
           <span>🚀 Send Quotes Faster</span>
           <span>📩 Track Responses Easily</span>
           <span>💳 Collect Deposits Securely</span>
@@ -73,7 +71,7 @@ export default function Home() {
 
           <a
             href="/login"
-            className="bg-white border border-gray-300 px-6 py-3 rounded-lg text-lg hover:bg-gray-100 transition"
+            className="px-6 py-3 rounded-lg text-lg font-medium text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition shadow-sm"
           >
             Login
           </a>
@@ -84,8 +82,9 @@ export default function Home() {
         </p>
       </div>
 
-      {/* DASHBOARD PREVIEW */}
-      <div className="mt-10 flex justify-center px-6">
+      {/* DASHBOARD SECTION BACKGROUND */}
+      <div className="mt-10 w-full bg-gradient-to-b from-transparent via-blue-50 to-indigo-100 py-16 flex justify-center px-6">
+
         <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full">
 
           {/* STATS */}
@@ -106,7 +105,6 @@ export default function Home() {
               <p className="text-2xl font-bold text-green-800">4</p>
             </div>
 
-            {/* 💰 STRONG REVENUE CARD */}
             <div className="p-4 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl text-white shadow-lg">
               <p className="text-sm">Revenue</p>
               <p className="text-2xl font-bold">₹32,000</p>
@@ -114,7 +112,7 @@ export default function Home() {
 
           </div>
 
-          {/* SOFT ATTENTION */}
+          {/* ATTENTION */}
           <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
             <p className="text-sm font-semibold text-blue-700 mb-2">
               Needs Attention
@@ -131,19 +129,19 @@ export default function Home() {
 
             <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
               <span className="font-medium text-gray-900">Rahul</span>
-              <span>₹5000</span>
+              <span className="font-semibold text-gray-900">₹5,000</span>
               <span className="text-yellow-600 font-semibold">Awaiting</span>
             </div>
 
             <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
               <span className="font-medium text-gray-900">Ankit</span>
-              <span>₹8000</span>
+              <span className="font-semibold text-gray-900">₹8,000</span>
               <span className="text-blue-600 font-semibold">Approved</span>
             </div>
 
             <div className="flex justify-between p-3 bg-white border rounded-lg shadow-sm">
               <span className="font-medium text-gray-900">Sneha</span>
-              <span>₹3000</span>
+              <span className="font-semibold text-gray-900">₹3,000</span>
               <span className="text-green-600 font-semibold">Paid</span>
             </div>
 

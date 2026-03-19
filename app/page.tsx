@@ -85,9 +85,10 @@ export default function Home() {
       </div>
 
       {/* 🔥 DASHBOARD SECTION WITH REAL BACKGROUND */}
-      <div className="mt-16 w-full relative py-20 flex justify-center px-6 bg-gradient-to-b from-white via-blue-50 to-indigo-100">
+<div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-blue-50 via-white to-indigo-100 overflow-hidden">
 
-        {/* GLOW EFFECT */}
+  {/* 🔥 Soft Glow Behind Text */}
+  <div className="absolute top-20 w-[500px] h-[500px] bg-blue-300 opacity-20 blur-3xl rounded-full"></div>
         <div className="absolute top-0 w-[600px] h-[600px] bg-blue-200 opacity-30 blur-3xl rounded-full"></div>
 
         <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full relative z-10">

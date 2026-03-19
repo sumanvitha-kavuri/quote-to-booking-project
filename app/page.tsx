@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-blue-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-blue-100 flex flex-col">
 
       {/* NAVBAR */}
       <div className="flex justify-between items-center px-6 py-4 border-b bg-white/70 backdrop-blur-md">
@@ -23,26 +23,33 @@ export default function Home() {
         </div>
       </div>
 
+      {/* 🔥 TOP SCROLL STRIP */}
+      <div className="overflow-hidden whitespace-nowrap border-b bg-gradient-to-r from-white via-slate-50 to-white">
+        <div className="animate-marquee text-sm text-gray-600 py-2">
+          <span className="mx-6">🚀 Send Quotes Faster</span>
+          <span className="mx-6">📩 Track Responses</span>
+          <span className="mx-6">💳 Collect Deposits</span>
+          <span className="mx-6">⏱️ Auto Follow-ups</span>
+          <span className="mx-6">📊 Real-time Status</span>
+        </div>
+      </div>
+
       {/* HERO */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
 
-        {/* Badge */}
         <div className="mb-4 px-4 py-1 text-sm bg-indigo-100 text-indigo-700 rounded-full">
           Workflow Automation for Service Businesses
         </div>
 
-        {/* Heading */}
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-gray-900">
           Turn Quotes into{" "}
           <span className="text-blue-600">Booked Jobs</span>
         </h1>
 
-        {/* Subtext */}
         <p className="text-gray-600 text-lg mb-8 max-w-xl">
           Send quotes, track responses, collect deposits, and stop chasing customers.
         </p>
 
-        {/* CTA */}
         <div className="flex gap-4">
           <a
             href="/signup"
@@ -59,23 +66,22 @@ export default function Home() {
           </a>
         </div>
 
-        {/* Trust */}
         <p className="text-sm text-gray-400 mt-6">
           No setup required • Works on mobile & desktop
         </p>
       </div>
 
-      {/* DASHBOARD PREVIEW */}
+      {/* 🔥 REALISTIC DASHBOARD PREVIEW */}
       <div className="mt-10 flex justify-center px-6">
 
-        <div className="bg-white border rounded-2xl shadow-xl p-6 max-w-5xl w-full">
+        <div className="bg-white border rounded-2xl shadow-2xl p-6 max-w-5xl w-full">
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          {/* STATS */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
 
-            <div className="p-4 bg-slate-50 rounded-xl">
-              <p className="text-xs text-gray-500">Total Quotes</p>
-              <p className="text-2xl font-bold">18</p>
+            <div className="p-4 bg-blue-50 rounded-xl">
+              <p className="text-xs text-blue-600">Total Quotes</p>
+              <p className="text-2xl font-bold text-blue-700">18</p>
             </div>
 
             <div className="p-4 bg-yellow-50 rounded-xl">
@@ -88,9 +94,26 @@ export default function Home() {
               <p className="text-2xl font-bold text-green-700">4</p>
             </div>
 
+            <div className="p-4 bg-purple-50 rounded-xl">
+              <p className="text-xs text-purple-600">Revenue</p>
+              <p className="text-2xl font-bold text-purple-700">₹32K</p>
+            </div>
+
           </div>
 
-          {/* Table */}
+          {/* ATTENTION BOX */}
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl">
+            <p className="text-sm font-semibold text-red-600 mb-2">
+              ⚠ Needs Attention
+            </p>
+            <ul className="text-sm text-red-500 space-y-1">
+              <li>• 2 quotes expiring today</li>
+              <li>• 1 approved but not paid</li>
+              <li>• 3 customers not responded</li>
+            </ul>
+          </div>
+
+          {/* TABLE */}
           <div className="space-y-3 text-sm">
 
             <div className="flex justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
@@ -117,15 +140,8 @@ export default function Home() {
 
       </div>
 
-      {/* SCROLLING STRIP (MOVEMENT 🔥) */}
-      <div className="mt-16 overflow-hidden whitespace-nowrap border-t py-4 bg-white">
-        <div className="animate-marquee inline-block text-sm text-gray-500">
-          🚀 Send Quotes &nbsp;&nbsp; • &nbsp;&nbsp; 📩 Track Responses &nbsp;&nbsp; • &nbsp;&nbsp; 💳 Collect Deposits &nbsp;&nbsp; • &nbsp;&nbsp; 📊 Real-time Status &nbsp;&nbsp; • &nbsp;&nbsp;
-        </div>
-      </div>
-
       {/* FEATURES */}
-      <div className="py-10 px-6 bg-slate-50 border-t">
+      <div className="py-10 px-6 bg-slate-50 border-t mt-16">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
 
           <div className="p-4">

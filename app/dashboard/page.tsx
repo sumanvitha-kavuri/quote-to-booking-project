@@ -1,119 +1,66 @@
-"use client"
-
-import { useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { redirect } from "next/navigation"
 
-export default function NewQuotePage() {
-  const [customerName, setCustomerName] = useState("")
-  const [customerEmail, setCustomerEmail] = useState("")
-  const [jobDescription, setJobDescription] = useState("")
-  const [amount, setAmount] = useState("")
-  const [depositAmount, setDepositAmount] = useState("")
-  const [loading, setLoading] = useState(false)
+export default async function Dashboard() {
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const { data: { user } } = await supabase.auth.getUser()
 
-    setLoading(true)
-
-    // 🔒 GET LOGGED IN USER
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      alert("You are not logged in")
-      setLoading(false)
-      return
-    }
-
-    // 🔥 INSERT WITH user_id
-    const { error } = await supabase.from("quotes").insert([
-      {
-        customer_name: customerName,
-        customer_email: customerEmail,
-        job_description: jobDescription,
-        amount: Number(amount),
-        deposit_amount: Number(depositAmount),
-        status: "pending",
-        user_id: user.id,
-      },
-    ])
-
-    if (error) {
-      console.log("ERROR:", error)
-      alert("Error saving quote")
-      setLoading(false)
-      return
-    }
-
-    // ✅ SUCCESS
-    alert("Quote created successfully!")
-
-    // 🔄 RESET FORM
-    setCustomerName("")
-    setCustomerEmail("")
-    setJobDescription("")
-    setAmount("")
-    setDepositAmount("")
-    setLoading(false)
+  if (!user) {
+    redirect("/login")
   }
 
+  const { data: quotes } = await supabase
+    .from("quotes")
+    .select("*")
+    .eq("user_id", user.id)
+
+  const total = quotes?.length || 0
+
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <main className="min-h-screen bg-slate-50 p-6">
 
-      <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-xl">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
+          <p className="text-sm text-gray-500">
+            Overview of your quotes
+          </p>
+        </div>
 
-        <h1 className="text-2xl font-semibold mb-6 text-center">
-          Create Quote
-        </h1>
+        {/* 🔥 CREATE BUTTON */}
+        <a
+          href="/dashboard/quotes/new"
+          className="bg-slate-900 text-white px-4 py-2 rounded-lg"
+        >
+          + Create Quote
+        </a>
+      </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* STATS */}
+      <div className="mb-6">
+        <p className="text-gray-600">Total Quotes</p>
+        <p className="text-2xl font-bold">{total}</p>
+      </div>
 
-          <input
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-            placeholder="Customer Name"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-          />
+      {/* LIST */}
+      <div className="bg-white p-4 rounded-xl border">
 
-          <input
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-            placeholder="Customer Email"
-            value={customerEmail}
-            onChange={(e) => setCustomerEmail(e.target.value)}
-          />
+        <h2 className="font-semibold mb-4">Recent Quotes</h2>
 
-          <input
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-            placeholder="Job Description"
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-          />
+        {quotes?.length === 0 && (
+          <p className="text-sm text-gray-500">No quotes yet</p>
+        )}
 
-          <input
-            type="number"
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-            placeholder="Total Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-
-          <input
-            type="number"
-            className="border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-            placeholder="Deposit Amount"
-            value={depositAmount}
-            onChange={(e) => setDepositAmount(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition disabled:opacity-50"
-          >
-            {loading ? "Creating..." : "Create Quote"}
-          </button>
-
-        </form>
+        <div className="space-y-3">
+          {quotes?.map((q: any) => (
+            <div key={q.id} className="p-3 border rounded">
+              <p className="font-medium">{q.customer_name}</p>
+              <p className="text-sm text-gray-500">{q.customer_email}</p>
+              <p className="text-sm">₹{q.amount}</p>
+            </div>
+          ))}
+        </div>
 
       </div>
 

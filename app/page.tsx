@@ -6,6 +6,7 @@ import AuthModal from "@/components/AuthModal"
 export default function Home() {
 
   const [showModal, setShowModal] = useState(false)
+  const [mode, setMode] = useState<"login" | "signup">("login")
 
   return (
     <div className="min-h-screen bg-white flex flex-col relative">
@@ -19,14 +20,20 @@ export default function Home() {
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setMode("login")
+              setShowModal(true)
+            }}
             className="px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 transition"
           >
             Login
           </button>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setMode("signup")
+              setShowModal(true)
+            }}
             className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-slate-800 transition"
           >
             Get Started
@@ -54,7 +61,6 @@ export default function Home() {
       {/* HERO */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
 
-        {/* Glow */}
         <div className="absolute top-20 w-[500px] h-[500px] bg-slate-300 opacity-20 blur-3xl rounded-full"></div>
 
         <div className="mb-4 px-4 py-1 text-sm bg-gray-100 text-gray-600 rounded-full">
@@ -72,14 +78,20 @@ export default function Home() {
 
         <div className="flex gap-4">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setMode("signup")
+              setShowModal(true)
+            }}
             className="bg-slate-900 text-white px-6 py-3 rounded-lg text-lg shadow-sm hover:bg-slate-800 transition"
           >
             Get Started
           </button>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setMode("login")
+              setShowModal(true)
+            }}
             className="px-6 py-3 rounded-lg text-lg font-medium text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 transition shadow-sm"
           >
             Login
@@ -145,28 +157,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FEATURES */}
-      <div className="py-10 px-6 bg-white border-t">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div>
-            <p className="font-semibold text-gray-900">Send Quotes</p>
-            <p className="text-sm text-gray-500">Create and share instantly</p>
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900">Track Responses</p>
-            <p className="text-sm text-gray-500">Know who opened and replied</p>
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900">Collect Deposits</p>
-            <p className="text-sm text-gray-500">Secure bookings faster</p>
-          </div>
-        </div>
-      </div>
-
       {/* MODAL */}
-      {showModal && <AuthModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <AuthModal
+          initialMode={mode}
+          onClose={() => setShowModal(false)}
+        />
+      )}
 
     </div>
   )

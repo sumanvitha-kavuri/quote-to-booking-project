@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 
@@ -11,6 +11,17 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+
+  // 🔥 AUTO REDIRECT IF ALREADY LOGGED IN
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        router.push("/dashboard")
+      }
+    }
+    checkUser()
+  }, [router])
 
   const handleLogin = async () => {
     setErrorMsg("")
@@ -38,8 +49,15 @@ export default function Login() {
   }
 
   return (
-    <div className="space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleLogin()
+      }}
+      className="space-y-6"
+    >
 
+      {/* HEADER */}
       <div className="text-center">
         <h2 className="text-2xl font-semibold text-gray-900">
           Welcome back
@@ -49,36 +67,43 @@ export default function Login() {
         </p>
       </div>
 
+      {/* INPUTS */}
       <div className="space-y-4">
 
         <input
+          name="email"
           type="email"
           placeholder="Email"
           className="input"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
+          name="password"
           type="password"
           placeholder="Password"
           className="input"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
       </div>
 
+      {/* ERROR */}
       {errorMsg && (
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
+      {/* BUTTON */}
       <button
-        onClick={handleLogin}
+        type="submit"
         disabled={loading}
-        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition"
+        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition disabled:opacity-50"
       >
         {loading ? "Logging in..." : "Login"}
       </button>
 
-    </div>
+    </form>
   )
 }

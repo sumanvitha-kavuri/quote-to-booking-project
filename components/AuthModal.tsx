@@ -9,29 +9,39 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [business, setBusiness] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   // 🔥 EMAIL SIGNUP
   const handleSignup = async () => {
+    setErrorMsg("")
+
+    if (!name || !business || !email || !password || !confirmPassword) {
+      setErrorMsg("All fields are required")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match")
+      return
+    }
+
     setLoading(true)
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     })
 
     if (error) {
-      alert(error.message)
+      setErrorMsg(error.message)
       setLoading(false)
       return
     }
 
-    // 👉 later we will store this in users table
-    console.log({
-      name,
-      business,
-      email,
-    })
+    // 👉 next step: save to DB (we'll do next)
+    console.log({ name, business, email })
 
     onClose()
   }
@@ -55,7 +65,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       {/* MODAL */}
       <div className="relative w-[90%] max-w-4xl h-[80vh] bg-white rounded-3xl shadow-2xl flex overflow-hidden">
 
-        {/* LEFT PANEL (UPGRADED) */}
+        {/* LEFT PANEL */}
         <div className="hidden md:flex flex-1 bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-12 flex-col justify-between">
 
           <div>
@@ -68,7 +78,6 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
             </p>
           </div>
 
-          {/* MINI FEATURES */}
           <div className="space-y-3 text-sm opacity-90">
             <p>✔ Send quotes instantly</p>
             <p>✔ Track responses in real-time</p>
@@ -80,7 +89,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
         {/* RIGHT SIDE */}
         <div className="flex-1 flex items-center justify-center px-10">
 
-          <div className="w-full max-w-md space-y-6">
+          <div className="w-full max-w-md space-y-5">
 
             {/* CLOSE */}
             <button
@@ -100,7 +109,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
               </p>
             </div>
 
-            {/* INPUTS */}
+            {/* FORM */}
             <div className="space-y-4">
 
               <div>
@@ -137,7 +146,21 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                 />
               </div>
 
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Confirm Password</p>
+                <input
+                  type="password"
+                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+
             </div>
+
+            {/* ERROR */}
+            {errorMsg && (
+              <p className="text-sm text-red-500">{errorMsg}</p>
+            )}
 
             {/* BUTTON */}
             <button
@@ -155,7 +178,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
-            {/* GOOGLE BUTTON */}
+            {/* GOOGLE */}
             <button
               onClick={handleGoogle}
               className="w-full border py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50"

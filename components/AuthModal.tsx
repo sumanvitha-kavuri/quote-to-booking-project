@@ -11,10 +11,11 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // 🔥 EMAIL SIGNUP
   const handleSignup = async () => {
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
@@ -25,34 +26,58 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       return
     }
 
+    // 👉 later we will store this in users table
+    console.log({
+      name,
+      business,
+      email,
+    })
+
     onClose()
+  }
+
+  // 🔥 GOOGLE SIGNUP
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+    })
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-      {/* 🔥 BACKGROUND BLUR */}
+      {/* BACKDROP */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-md transition"
+        className="absolute inset-0 bg-black/40 backdrop-blur-md"
         onClick={onClose}
       />
 
-      {/* 🔥 BIG MODAL */}
-      <div className="relative w-[90%] max-w-4xl h-[80vh] bg-white rounded-3xl shadow-2xl flex animate-fadeIn overflow-hidden">
+      {/* MODAL */}
+      <div className="relative w-[90%] max-w-4xl h-[80vh] bg-white rounded-3xl shadow-2xl flex overflow-hidden">
 
-        {/* LEFT EMPTY SPACE (for premium feel) */}
-        <div className="hidden md:flex flex-1 bg-gray-50 items-center justify-center">
-          <div className="text-center px-10">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+        {/* LEFT PANEL (UPGRADED) */}
+        <div className="hidden md:flex flex-1 bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-12 flex-col justify-between">
+
+          <div>
+            <h2 className="text-3xl font-bold mb-4">
               Quote to Booking
             </h2>
-            <p className="text-gray-500 text-sm">
-              Send quotes. Get paid. Book faster.
+
+            <p className="text-sm opacity-90">
+              Turn quotes into confirmed jobs without chasing customers.
             </p>
           </div>
+
+          {/* MINI FEATURES */}
+          <div className="space-y-3 text-sm opacity-90">
+            <p>✔ Send quotes instantly</p>
+            <p>✔ Track responses in real-time</p>
+            <p>✔ Collect deposits securely</p>
+          </div>
+
         </div>
 
-        {/* RIGHT FORM */}
+        {/* RIGHT SIDE */}
         <div className="flex-1 flex items-center justify-center px-10">
 
           <div className="w-full max-w-md space-y-6">
@@ -67,42 +92,50 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
 
             {/* TITLE */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-semibold text-gray-900">
                 Create Account
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Start managing your quotes professionally
+                Set up your business profile
               </p>
             </div>
 
             {/* INPUTS */}
             <div className="space-y-4">
 
-              <input
-                placeholder="Full Name"
-                className="w-full border-b p-3 outline-none focus:border-blue-600"
-                onChange={(e) => setName(e.target.value)}
-              />
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Full Name</p>
+                <input
+                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
 
-              <input
-                placeholder="Business Name"
-                className="w-full border-b p-3 outline-none focus:border-blue-600"
-                onChange={(e) => setBusiness(e.target.value)}
-              />
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Business Name</p>
+                <input
+                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  onChange={(e) => setBusiness(e.target.value)}
+                />
+              </div>
 
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full border-b p-3 outline-none focus:border-blue-600"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Email</p>
+                <input
+                  type="email"
+                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full border-b p-3 outline-none focus:border-blue-600"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Password</p>
+                <input
+                  type="password"
+                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
 
             </div>
 
@@ -110,12 +143,31 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
             <button
               onClick={handleSignup}
               disabled={loading}
-              className="w-full bg-black text-white py-3 rounded-lg text-lg font-medium hover:bg-gray-900 transition"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
             >
               {loading ? "Creating..." : "Create Account"}
             </button>
 
-            {/* LOGIN LINK */}
+            {/* DIVIDER */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-gray-200" />
+              <p className="text-xs text-gray-400">OR</p>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
+            {/* GOOGLE BUTTON */}
+            <button
+              onClick={handleGoogle}
+              className="w-full border py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+
+            {/* LOGIN */}
             <p className="text-sm text-gray-500 text-center">
               Already have an account?{" "}
               <button className="text-blue-600 font-medium hover:underline">

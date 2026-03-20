@@ -69,3 +69,6 @@ html {
 * {
   transition: all 0.2s ease;
 }
+.input {
+  @apply w-full border border-gray-200 p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none;
+}

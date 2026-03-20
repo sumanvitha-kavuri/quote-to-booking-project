@@ -10,19 +10,21 @@ export default function AuthModal({ initialMode, onClose }: any) {
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
 
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative">
 
+        {/* CLOSE */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-black text-lg"
+          className="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"
         >
           ✕
         </button>
 
+        {/* CONTENT */}
         {mode === "login" ? (
           <>
             <Login />
-            <p className="text-sm text-center mt-4 text-gray-500">
+            <p className="text-sm text-center mt-5 text-gray-500">
               Don’t have an account?{" "}
               <button
                 onClick={() => setMode("signup")}
@@ -35,7 +37,7 @@ export default function AuthModal({ initialMode, onClose }: any) {
         ) : (
           <>
             <Signup />
-            <p className="text-sm text-center mt-4 text-gray-500">
+            <p className="text-sm text-center mt-5 text-gray-500">
               Already have an account?{" "}
               <button
                 onClick={() => setMode("login")}

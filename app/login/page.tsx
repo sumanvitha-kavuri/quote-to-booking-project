@@ -38,38 +38,43 @@ export default function Login() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
 
-      <h2 className="text-2xl font-semibold text-center">
-        Welcome back
-      </h2>
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Welcome back
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Login to your account
+        </p>
+      </div>
 
-      <p className="text-sm text-gray-500 text-center">
-        Login to your account
-      </p>
+      <div className="space-y-4">
 
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <input
+          type="email"
+          placeholder="Email"
+          className="input"
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <input
+          type="password"
+          placeholder="Password"
+          className="input"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+      </div>
 
       {errorMsg && (
-        <p className="text-sm text-red-500">{errorMsg}</p>
+        <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
       <button
         onClick={handleLogin}
         disabled={loading}
-        className="w-full bg-slate-900 text-white py-3 rounded-lg text-lg font-medium hover:bg-slate-800 transition"
+        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition"
       >
         {loading ? "Logging in..." : "Login"}
       </button>

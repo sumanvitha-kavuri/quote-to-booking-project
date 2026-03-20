@@ -13,7 +13,6 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
 
-  // 🔥 EMAIL SIGNUP
   const handleSignup = async () => {
     setErrorMsg("")
 
@@ -40,13 +39,9 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       return
     }
 
-    // 👉 next step: save to DB (we'll do next)
-    console.log({ name, business, email })
-
     onClose()
   }
 
-  // 🔥 GOOGLE SIGNUP
   const handleGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -63,33 +58,33 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       />
 
       {/* MODAL */}
-      <div className="relative w-[90%] max-w-4xl h-[80vh] bg-white rounded-3xl shadow-2xl flex overflow-hidden">
+      <div className="relative w-[90%] max-w-4xl min-h-[70vh] bg-white rounded-3xl shadow-2xl flex overflow-hidden">
 
         {/* LEFT PANEL */}
-        <div className="hidden md:flex flex-1 bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-12 flex-col justify-between">
+        <div className="hidden md:flex flex-1 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-12 flex-col justify-between">
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-semibold mb-4 tracking-tight">
               Quote to Booking
             </h2>
 
-            <p className="text-sm opacity-90">
+            <p className="text-sm text-gray-300 leading-relaxed">
               Turn quotes into confirmed jobs without chasing customers.
             </p>
           </div>
 
-          <div className="space-y-3 text-sm opacity-90">
-            <p>✔ Send quotes instantly</p>
-            <p>✔ Track responses in real-time</p>
-            <p>✔ Collect deposits securely</p>
+          <div className="space-y-3 text-sm text-gray-300">
+            <p>✓ Send quotes instantly</p>
+            <p>✓ Track responses in real-time</p>
+            <p>✓ Collect deposits securely</p>
           </div>
 
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="flex-1 flex items-center justify-center px-10">
+        <div className="flex-1 flex items-center justify-center px-12 py-12">
 
-          <div className="w-full max-w-md space-y-5">
+          <div className="w-full max-w-md space-y-6">
 
             {/* CLOSE */}
             <button
@@ -115,7 +110,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
               <div>
                 <p className="text-sm text-gray-500 mb-1">Full Name</p>
                 <input
-                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  className="w-full border-b p-2 outline-none focus:border-slate-900"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
@@ -123,7 +118,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
               <div>
                 <p className="text-sm text-gray-500 mb-1">Business Name</p>
                 <input
-                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  className="w-full border-b p-2 outline-none focus:border-slate-900"
                   onChange={(e) => setBusiness(e.target.value)}
                 />
               </div>
@@ -132,7 +127,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                 <p className="text-sm text-gray-500 mb-1">Email</p>
                 <input
                   type="email"
-                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  className="w-full border-b p-2 outline-none focus:border-slate-900"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -141,7 +136,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                 <p className="text-sm text-gray-500 mb-1">Password</p>
                 <input
                   type="password"
-                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  className="w-full border-b p-2 outline-none focus:border-slate-900"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
@@ -150,7 +145,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                 <p className="text-sm text-gray-500 mb-1">Confirm Password</p>
                 <input
                   type="password"
-                  className="w-full border-b p-2 outline-none focus:border-blue-600"
+                  className="w-full border-b p-2 outline-none focus:border-slate-900"
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
@@ -166,7 +161,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
             <button
               onClick={handleSignup}
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+              className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition"
             >
               {loading ? "Creating..." : "Create Account"}
             </button>

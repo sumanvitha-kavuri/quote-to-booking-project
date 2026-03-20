@@ -54,7 +54,6 @@ export default function Signup() {
       email: user.email,
       name,
       business_name: business,
-      role: "owner",
     })
 
     if (dbError) {

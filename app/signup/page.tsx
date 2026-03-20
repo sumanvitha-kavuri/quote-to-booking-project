@@ -69,7 +69,7 @@ export default function Signup() {
     setLoading(false)
 
     // ✅ SUCCESS → redirect
-    router.push("/login")
+    router.push("/thank-you")
   }
 
   return (

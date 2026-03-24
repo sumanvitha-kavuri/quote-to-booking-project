@@ -18,28 +18,29 @@ export default function NewQuotePage() {
 
     setLoading(true)
 
-// 🔥 get logged-in user
-const { data: { user } } = await supabase.auth.getUser()
+    // 🔒 get logged-in user
+    const { data: { user } } = await supabase.auth.getUser()
 
-if (!user) {
-  alert("You must be logged in")
-  setLoading(false)
-  return
-}
-
-const { data, error } = await supabase
-  .from("quotes")
-  .insert([
-    {
-      customer_name: customerName,
-      customer_email: customerEmail,
-      amount: Number(amount),
-      deposit_amount: Number(depositAmount),
-      status: "pending",
-      user_id: user.id,   // ⭐ THIS IS THE KEY FIX
+    if (!user) {
+      alert("You must be logged in")
+      setLoading(false)
+      return
     }
-  ])
-  .select()
+
+    // 🔥 insert quote
+    const { data, error } = await supabase
+      .from("quotes")
+      .insert([
+        {
+          customer_name: customerName,
+          customer_email: customerEmail,
+          amount: Number(amount),
+          deposit_amount: Number(depositAmount),
+          status: "pending",
+          user_id: user.id,
+        }
+      ])
+      .select()
 
     if (error) {
       console.log("Supabase error:", error)
@@ -51,11 +52,10 @@ const { data, error } = await supabase
     const id = data?.[0]?.id
     const link = `https://quote-to-booking-project.vercel.app/quote/${id}`
 
-    // 🔥 UI first (fast response)
     setQuoteLink(link)
     setLoading(false)
 
-    // 🔥 background tasks (no await)
+    // 🔥 background stuff
     logEvent(id, "quote_created", "Quote created")
 
     fetch(`${window.location.origin}/api/send-quote-email`, {
@@ -76,7 +76,7 @@ const { data, error } = await supabase
   return (
     <main className="min-h-screen bg-white text-black flex items-center justify-center p-6">
   
-      <div className="w-full max-w-2xl bg-white p-10 rounded-2xl shadow-lg text-black">
+      <div className="w-full max-w-2xl bg-white p-10 rounded-2xl shadow-lg">
 
         <h1 className="text-3xl font-semibold mb-8 text-center">
           Create Quote

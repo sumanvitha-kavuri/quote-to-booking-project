@@ -12,15 +12,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
 
-  // 🔥 AUTO REDIRECT IF ALREADY LOGGED IN
+  // ✅ SAFE redirect (runs once, no loop)
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        router.push("/dashboard")
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession()
+
+      if (data.session) {
+        router.replace("/dashboard") // ✅ IMPORTANT
       }
     }
-    checkUser()
+
+    checkSession()
   }, [router])
 
   const handleLogin = async () => {
@@ -44,8 +46,12 @@ export default function Login() {
       return
     }
 
+    // 🔥 ensure session is stored
+    await supabase.auth.getSession()
+
     setLoading(false)
-    router.push("/dashboard")
+
+    router.replace("/dashboard") // ✅ NOT push
   }
 
   return (
@@ -57,7 +63,6 @@ export default function Login() {
       className="space-y-6"
     >
 
-      {/* HEADER */}
       <div className="text-center">
         <h2 className="text-2xl font-semibold text-gray-900">
           Welcome back
@@ -67,7 +72,6 @@ export default function Login() {
         </p>
       </div>
 
-      {/* INPUTS */}
       <div className="space-y-4">
 
         <input
@@ -90,12 +94,10 @@ export default function Login() {
 
       </div>
 
-      {/* ERROR */}
       {errorMsg && (
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
-      {/* BUTTON */}
       <button
         type="submit"
         disabled={loading}

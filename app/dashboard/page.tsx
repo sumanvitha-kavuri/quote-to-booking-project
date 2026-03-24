@@ -1,20 +1,46 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 
-export default async function Dashboard() {
+export default function Dashboard() {
+  const router = useRouter()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const [user, setUser] = useState<any>(null)
+  const [quotes, setQuotes] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (!user) {
-    redirect("/login")
+  useEffect(() => {
+    init()
+  }, [])
+
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      router.replace("/login")
+      return
+    }
+
+    setUser(user)
+
+    const { data, error } = await supabase
+      .from("quotes")
+      .select("*")
+      .eq("user_id", user.id)
+
+    if (error) {
+      console.log("Error fetching quotes:", error)
+    }
+
+    setQuotes(data || [])
+    setLoading(false)
   }
 
-  const { data: quotes } = await supabase
-    .from("quotes")
-    .select("*")
-    .eq("user_id", user.id)
-
-  const total = quotes?.length || 0
+  if (loading) {
+    return <p className="p-10">Loading dashboard...</p>
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
@@ -24,11 +50,10 @@ export default async function Dashboard() {
         <div>
           <h1 className="text-2xl font-semibold">Dashboard</h1>
           <p className="text-sm text-gray-500">
-            Overview of your quotes
+            Logged in as: {user?.email}
           </p>
         </div>
 
-        {/* 🔥 CREATE BUTTON */}
         <a
           href="/dashboard/quotes/new"
           className="bg-slate-900 text-white px-4 py-2 rounded-lg"
@@ -40,27 +65,23 @@ export default async function Dashboard() {
       {/* STATS */}
       <div className="mb-6">
         <p className="text-gray-600">Total Quotes</p>
-        <p className="text-2xl font-bold">{total}</p>
+        <p className="text-2xl font-bold">{quotes.length}</p>
       </div>
 
       {/* LIST */}
-      <div className="bg-white p-4 rounded-xl border">
+      <div className="bg-white p-4 rounded-xl border space-y-3">
 
-        <h2 className="font-semibold mb-4">Recent Quotes</h2>
-
-        {quotes?.length === 0 && (
-          <p className="text-sm text-gray-500">No quotes yet</p>
+        {quotes.length === 0 && (
+          <p className="text-gray-500">No quotes yet</p>
         )}
 
-        <div className="space-y-3">
-          {quotes?.map((q: any) => (
-            <div key={q.id} className="p-3 border rounded">
-              <p className="font-medium">{q.customer_name}</p>
-              <p className="text-sm text-gray-500">{q.customer_email}</p>
-              <p className="text-sm">₹{q.amount}</p>
-            </div>
-          ))}
-        </div>
+        {quotes.map((q) => (
+          <div key={q.id} className="p-3 border rounded">
+            <p className="font-medium">{q.customer_name}</p>
+            <p className="text-sm text-gray-500">{q.customer_email}</p>
+            <p className="text-sm">₹{q.amount}</p>
+          </div>
+        ))}
 
       </div>
 

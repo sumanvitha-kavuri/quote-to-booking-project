@@ -60,6 +60,12 @@ export default function Dashboard() {
         >
           + Create Quote
         </a>
+        <a
+  href="/dashboard/profile"
+  className="text-sm text-gray-600 hover:underline"
+>
+  Profile
+</a>
       </div>
 
       {/* STATS */}

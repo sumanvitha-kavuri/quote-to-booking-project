@@ -9,7 +9,7 @@ export default function Dashboard() {
   const router = useRouter()
 
   const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<any>({})
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -28,14 +28,14 @@ export default function Dashboard() {
 
     setUser(user)
 
-    // ✅ fetch profile (name)
+    // ✅ fetch name
     const { data: profileData } = await supabase
       .from("users")
       .select("*")
       .eq("id", user.id)
       .single()
 
-    setProfile(profileData)
+    setProfile(profileData || {})
 
     const { data } = await supabase
       .from("quotes")
@@ -59,11 +59,16 @@ export default function Dashboard() {
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
 
-  // 🔍 SEARCH
-  const filteredQuotes = quotes.filter(q =>
-    q.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-    q.customer_email?.toLowerCase().includes(search.toLowerCase())
-  )
+  // 🔍 SEARCH (FIXED)
+  const filteredQuotes = quotes.filter(q => {
+    const text = search.toLowerCase()
+
+    return (
+      q.customer_name?.toLowerCase().includes(text) ||
+      q.customer_email?.toLowerCase().includes(text) ||
+      q.status?.toLowerCase().includes(text)
+    )
+  })
 
   function getStatusColor(status: string) {
     if (status === "paid") return "text-green-400"
@@ -72,7 +77,11 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-gray-400">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-gray-400">
+        Loading...
+      </div>
+    )
   }
 
   return (
@@ -82,7 +91,7 @@ export default function Dashboard() {
       <div className="flex justify-between items-center px-6 py-5 border-b border-white/10">
 
         <h1 className="text-lg font-semibold">
-          <span>Quote</span> <span className="text-blue-500">to Booking</span>
+          Quote <span className="text-blue-500">to Booking</span>
         </h1>
 
         <div className="flex items-center gap-5">
@@ -91,7 +100,7 @@ export default function Dashboard() {
             <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
-          <button>
+          <button onClick={() => alert("Notifications coming soon")}>
             <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
@@ -115,11 +124,11 @@ export default function Dashboard() {
         <div>
           <h2 className="text-3xl font-semibold">Dashboard</h2>
           <p className="text-gray-400 text-sm mt-1">
-            Welcome back, {profile?.name || user?.email}
+            Welcome back, {profile?.name ? profile.name : user?.email}
           </p>
         </div>
 
-        {/* 🔥 ACTION REQUIRED */}
+        {/* ACTION REQUIRED */}
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
 
           <h3 className="text-yellow-400 font-medium mb-3">
@@ -181,15 +190,23 @@ export default function Dashboard() {
 
         </div>
 
-        {/* 🔍 SEARCH BAR */}
+        {/* SEARCH */}
         <div className="relative">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+
           <input
-            placeholder="Search by name or email..."
-            className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
+            placeholder="Search by name, email, or status..."
+            className="w-full pl-9 pr-10 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
+          <button
+            className="absolute right-3 top-2.5 text-gray-400"
+            onClick={() => setSearch(search)}
+          >
+            →
+          </button>
         </div>
 
         {/* QUOTES */}
@@ -210,8 +227,8 @@ export default function Dashboard() {
               {filteredQuotes.map((q) => (
                 <div
                   key={q.id}
-                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition cursor-pointer"
                   onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition cursor-pointer"
                 >
                   <div>
                     <p className="font-medium">{q.customer_name}</p>

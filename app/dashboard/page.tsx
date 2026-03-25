@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false) // ✅ ADDED
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   useEffect(() => {
     init()
@@ -47,7 +47,6 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔍 SEARCH + FILTER
   const filteredQuotes = quotes.filter(q => {
     const text = search.toLowerCase()
 
@@ -114,7 +113,6 @@ export default function Dashboard() {
             Profile
           </button>
 
-          {/* 🔥 SAFE LOGOUT */}
           <button
             onClick={() => setShowLogoutConfirm(true)}
             className="text-gray-300 hover:text-red-400 text-sm"
@@ -128,12 +126,26 @@ export default function Dashboard() {
       {/* CONTENT */}
       <div className="p-6 max-w-6xl mx-auto space-y-8">
 
-        {/* HEADER */}
-        <div>
-          <h2 className="text-3xl font-semibold">Dashboard</h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Welcome back, {profile?.name || user?.email}
-          </p>
+        {/* ✅ NEW HEADER */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+
+          <div>
+            <h2 className="text-3xl font-semibold">
+              Welcome, {profile?.name || user?.email?.split("@")[0]}
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              Here’s what’s happening with your quotes
+            </p>
+          </div>
+
+          {/* ➕ CREATE QUOTE */}
+          <button
+            onClick={() => router.push("/dashboard/create")}
+            className="bg-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-500 transition text-sm font-medium"
+          >
+            + Create Quote
+          </button>
+
         </div>
 
         {/* ACTION REQUIRED */}
@@ -196,12 +208,10 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* QUOTES */}
+        {/* QUOTES (unchanged) */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
-          {/* FILTERS */}
           <div className="flex gap-2 mb-4">
             {["all", "pending", "accepted", "paid"].map((f) => (
               <button
@@ -224,7 +234,6 @@ export default function Dashboard() {
             </p>
           ) : (
             <div className="space-y-3">
-
               {filteredQuotes.map((q) => (
                 <div
                   key={q.id}
@@ -252,30 +261,24 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-
             </div>
           )}
-
         </div>
 
       </div>
 
-      {/* 🔥 LOGOUT CONFIRM MODAL */}
+      {/* LOGOUT MODAL (unchanged) */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-
           <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 w-[300px] text-center">
-
             <h3 className="text-lg font-medium mb-2">
               Confirm Logout
             </h3>
-
             <p className="text-sm text-gray-400 mb-5">
               Are you sure you want to logout?
             </p>
 
             <div className="flex gap-3">
-
               <button
                 onClick={() => setShowLogoutConfirm(false)}
                 className="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10"
@@ -292,11 +295,8 @@ export default function Dashboard() {
               >
                 Logout
               </button>
-
             </div>
-
           </div>
-
         </div>
       )}
 

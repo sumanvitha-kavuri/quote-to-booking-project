@@ -2,16 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
-import { useRouter } from "next/navigation"
 
-export default function ProfilePage() {
-  const router = useRouter()
-
+export default function Profile() {
   const [user, setUser] = useState<any>(null)
-  const [name, setName] = useState("")
-  const [business, setBusiness] = useState("")
+  const [profile, setProfile] = useState<any>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState("")
 
   useEffect(() => {
     loadProfile()
@@ -19,11 +16,7 @@ export default function ProfilePage() {
 
   async function loadProfile() {
     const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      router.replace("/login")
-      return
-    }
+    if (!user) return
 
     setUser(user)
 
@@ -33,105 +26,147 @@ export default function ProfilePage() {
       .eq("id", user.id)
       .single()
 
-    if (data) {
-      setName(data.name || "")
-      setBusiness(data.business_name || "")
-    }
-
+    setProfile(data || {})
     setLoading(false)
   }
 
+  // ✅ SAVE PROFILE
   async function handleSave() {
     setSaving(true)
+    setMessage("")
 
     const { error } = await supabase
       .from("users")
       .update({
-        name,
-        business_name: business,
+        name: profile.name,
+        business_name: profile.business_name,
       })
       .eq("id", user.id)
 
     if (error) {
-      alert("Error saving")
-      setSaving(false)
-      return
+      setMessage(error.message)
+    } else {
+      setMessage("Profile updated successfully")
     }
 
-    alert("Profile updated")
     setSaving(false)
   }
 
+  // ✅ IMAGE UPLOAD
+  async function handleImageUpload(e: any) {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const filePath = `${user.id}-${Date.now()}`
+
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file)
+
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    const { data } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(filePath)
+
+    const imageUrl = data.publicUrl
+
+    await supabase
+      .from("users")
+      .update({ avatar_url: imageUrl })
+      .eq("id", user.id)
+
+    setProfile({ ...profile, avatar_url: imageUrl })
+  }
+
   if (loading) {
-    return <p className="p-10">Loading...</p>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-gray-400">
+        Loading...
+      </div>
+    )
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-[#0B0F19] text-white p-6">
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Profile</h1>
+      <div className="max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
 
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut()
-            router.replace("/login")
-          }}
-          className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
-        >
-          Logout
-        </button>
-      </div>
+        <h1 className="text-2xl font-semibold text-center">
+          Your Profile
+        </h1>
 
-      {/* CARD */}
-      <div className="max-w-xl bg-white p-6 rounded-xl shadow border space-y-4">
+        {/* IMAGE */}
+        <div className="flex flex-col items-center gap-3">
 
-        <div>
-          <label className="text-sm text-gray-500">Full Name</label>
+          <img
+            src={profile.avatar_url || "https://via.placeholder.com/100"}
+            className="w-24 h-24 rounded-full object-cover border border-white/10"
+          />
+
           <input
-            className="w-full border p-2 rounded mt-1"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            type="file"
+            onChange={handleImageUpload}
+            className="text-sm"
+          />
+
+        </div>
+
+        {/* NAME */}
+        <div>
+          <p className="text-sm text-gray-400 mb-1">Full Name</p>
+          <input
+            value={profile.name || ""}
+            onChange={(e) =>
+              setProfile({ ...profile, name: e.target.value })
+            }
+            className="w-full p-3 rounded-lg bg-white/5 border border-white/10 outline-none"
           />
         </div>
 
+        {/* BUSINESS */}
         <div>
-          <label className="text-sm text-gray-500">Business Name</label>
+          <p className="text-sm text-gray-400 mb-1">Business Name</p>
           <input
-            className="w-full border p-2 rounded mt-1"
-            value={business}
-            onChange={(e) => setBusiness(e.target.value)}
+            value={profile.business_name || ""}
+            onChange={(e) =>
+              setProfile({ ...profile, business_name: e.target.value })
+            }
+            className="w-full p-3 rounded-lg bg-white/5 border border-white/10 outline-none"
           />
         </div>
 
+        {/* EMAIL */}
         <div>
-          <label className="text-sm text-gray-500">Email</label>
+          <p className="text-sm text-gray-400 mb-1">Email</p>
           <input
-            className="w-full border p-2 rounded mt-1 bg-gray-100"
             value={user?.email}
             disabled
+            className="w-full p-3 rounded-lg bg-white/5 border border-white/10 opacity-60"
           />
         </div>
 
+        {/* MESSAGE */}
+        {message && (
+          <p className="text-sm text-center text-green-400">
+            {message}
+          </p>
+        )}
+
+        {/* SAVE */}
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-slate-900 text-white px-4 py-2 rounded-lg mt-4"
+          className="w-full bg-blue-600 py-3 rounded-lg font-medium hover:bg-blue-500 transition"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>
 
       </div>
 
-      {/* ACTIVITY */}
-      <div className="mt-8 max-w-xl bg-white p-6 rounded-xl border">
-        <h2 className="font-semibold mb-2">Activity</h2>
-        <p className="text-sm text-gray-500">
-          Last login: Just now
-        </p>
-      </div>
-
-    </main>
+    </div>
   )
 }

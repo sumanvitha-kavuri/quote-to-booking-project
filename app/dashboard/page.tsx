@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all")
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
+  // 🔔 notifications
   const [showNotifications, setShowNotifications] = useState(false)
   const [seenNotifications, setSeenNotifications] = useState(false)
 
@@ -23,7 +24,7 @@ export default function Dashboard() {
     init()
   }, [])
 
-  // 🔄 AUTO REFRESH (detect customer actions)
+  // 🔄 auto refresh (detect customer updates)
   useEffect(() => {
     const interval = setInterval(() => {
       init()
@@ -32,16 +33,16 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // 🔔 CLOSE DROPDOWN ON OUTSIDE CLICK
+  // 🔔 close dropdown when clicking outside
   useEffect(() => {
-    function handleClickOutside(e: any) {
+    const handleClick = (e: any) => {
       if (!e.target.closest(".notif-wrapper")) {
         setShowNotifications(false)
       }
     }
 
-    document.addEventListener("click", handleClickOutside)
-    return () => document.removeEventListener("click", handleClickOutside)
+    document.addEventListener("click", handleClick)
+    return () => document.removeEventListener("click", handleClick)
   }, [])
 
   async function init() {
@@ -128,11 +129,10 @@ export default function Dashboard() {
 
           {/* 🔔 NOTIFICATIONS */}
           <div className="relative notif-wrapper">
-
             <button
               onClick={() => {
                 setShowNotifications(!showNotifications)
-                setSeenNotifications(true) // ✅ mark as seen
+                setSeenNotifications(true)
               }}
             >
               <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
@@ -146,7 +146,6 @@ export default function Dashboard() {
 
             {showNotifications && (
               <div className="absolute right-0 mt-3 w-72 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-4 z-50">
-
                 <h3 className="text-sm text-gray-300 mb-3">Notifications</h3>
 
                 {pending === 0 && unpaidQuotes.length === 0 ? (
@@ -182,7 +181,6 @@ export default function Dashboard() {
                 )}
               </div>
             )}
-
           </div>
 
           <button
@@ -205,8 +203,8 @@ export default function Dashboard() {
       {/* CONTENT */}
       <div className="p-6 max-w-6xl mx-auto space-y-8">
 
+        {/* HEADER */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-
           <div>
             <h2 className="text-3xl font-semibold">
               Welcome, {profile?.name || user?.email?.split("@")[0]}
@@ -222,45 +220,88 @@ export default function Dashboard() {
           >
             + Create Quote
           </button>
-
         </div>
 
-        {/* (rest of your UI unchanged) */}
-      </div>
+        {/* ACTION REQUIRED */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+          <h3 className="text-yellow-400 font-medium mb-3">Action Required</h3>
 
-      {/* LOGOUT MODAL */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 w-[300px] text-center">
-            <h3 className="text-lg font-medium mb-2">
-              Confirm Logout
-            </h3>
-            <p className="text-sm text-gray-400 mb-5">
-              Are you sure you want to logout?
-            </p>
+          <div className="space-y-2 text-sm">
+            {pending > 0 && (
+              <div onClick={() => setSearch("pending")} className="cursor-pointer">
+                • {pending} pending quotes
+              </div>
+            )}
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={async () => {
-                  await supabase.auth.signOut()
-                  router.replace("/")
-                }}
-                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500"
-              >
-                Logout
-              </button>
-            </div>
+            {unpaidQuotes.length > 0 && (
+              <div onClick={() => setSearch("accepted")} className="cursor-pointer">
+                • {unpaidQuotes.length} accepted but not paid
+              </div>
+            )}
           </div>
         </div>
-      )}
 
+        {/* STATS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Total</p>
+            <p className="text-2xl font-semibold">{total}</p>
+          </div>
+
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Pending</p>
+            <p className="text-2xl font-semibold">{pending}</p>
+          </div>
+
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Accepted</p>
+            <p className="text-2xl font-semibold">{accepted}</p>
+          </div>
+
+          <div className="p-4 bg-blue-600/20 border border-blue-500/20 rounded-xl">
+            <p className="text-sm text-blue-400">Revenue</p>
+            <p className="text-2xl font-semibold text-blue-400">₹{revenue}</p>
+          </div>
+        </div>
+
+        {/* SEARCH */}
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+          <input
+            placeholder="Search..."
+            className="w-full pl-9 py-2 rounded-lg bg-white/5 border border-white/10"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* QUOTES */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
+
+          {filteredQuotes.map((q) => (
+            <div key={q.id} className="flex justify-between p-4 border-b border-white/10">
+              <div>
+                <p>{q.customer_name}</p>
+                <p className="text-sm text-gray-400">{q.customer_email}</p>
+              </div>
+
+              <div className="flex gap-4 items-center">
+                <span>₹{q.amount}</span>
+                <span className={getStatusColor(q.status)}>{q.status}</span>
+
+                <button
+                  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                  className="bg-blue-600 px-3 py-1 rounded"
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
     </main>
   )
 }

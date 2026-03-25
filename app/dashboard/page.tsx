@@ -13,7 +13,7 @@ export default function Dashboard() {
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-  const [filter, setFilter] = useState("all") // ✅ ADDED
+  const [filter, setFilter] = useState("all")
 
   useEffect(() => {
     init()
@@ -46,7 +46,7 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔥 UPDATED SEARCH + FILTER
+  // 🔍 SEARCH + FILTER
   const filteredQuotes = quotes.filter(q => {
     const text = search.toLowerCase()
 
@@ -113,10 +113,13 @@ export default function Dashboard() {
             Profile
           </button>
 
+          {/* 🔥 UPDATED LOGOUT */}
           <button
             onClick={async () => {
               await supabase.auth.signOut()
-              router.replace("/login")
+              setTimeout(() => {
+                router.replace("/")
+              }, 300)
             }}
             className="text-gray-300 hover:text-red-400 text-sm"
           >
@@ -202,7 +205,7 @@ export default function Dashboard() {
 
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
-          {/* ✅ FILTER BUTTONS */}
+          {/* FILTERS */}
           <div className="flex gap-2 mb-4">
             {["all", "pending", "accepted", "paid"].map((f) => (
               <button
@@ -243,13 +246,12 @@ export default function Dashboard() {
                       {q.status}
                     </span>
 
-                    {/* ✅ VIEW BUTTON */}
-                 <button
-  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-  className="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition"
->
-  View
-</button>
+                    <button
+                      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                      className="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition"
+                    >
+                      View
+                    </button>
 
                   </div>
                 </div>

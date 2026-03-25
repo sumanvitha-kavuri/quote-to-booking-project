@@ -15,7 +15,7 @@ export default function Home() {
       <div className="flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-md">
         <h1 className="text-lg font-semibold tracking-tight">
           <span className="text-white">Quote</span>{" "}
-          <span className="text-blue-500">Flow</span>
+          <span className="text-blue-500">to Booking</span>
         </h1>
 
         <div className="flex items-center gap-4">

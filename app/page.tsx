@@ -8,32 +8,34 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [mode, setMode] = useState<"login" | "signup">("login")
 
+  // 🔥 CENTRAL HANDLER (fixes click issues)
+  const openModal = (type: "login" | "signup") => {
+    setMode(type)
+    setShowModal(true)
+  }
+
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col relative">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-md">
+      <div className="flex justify-between items-center px-4 sm:px-8 py-5 border-b border-white/10 backdrop-blur-md">
         <h1 className="text-lg font-semibold tracking-tight">
           <span className="text-white">Quote</span>{" "}
-          <span className="text-blue-500">Flow</span>
+          <span className="text-blue-500">to Booking</span>
         </h1>
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => {
-              setMode("login")
-              setShowModal(true)
-            }}
+            type="button"
+            onClick={() => openModal("login")}
             className="px-4 py-2 rounded-lg text-gray-300 hover:text-white transition"
           >
             Login
           </button>
 
           <button
-            onClick={() => {
-              setMode("signup")
-              setShowModal(true)
-            }}
+            type="button"
+            onClick={() => openModal("signup")}
             className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500 transition"
           >
             Get Started
@@ -44,7 +46,6 @@ export default function Home() {
       {/* HERO */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center overflow-hidden">
 
-        {/* glow */}
         <div className="absolute w-[600px] h-[600px] bg-blue-600 opacity-20 blur-3xl rounded-full"></div>
 
         <div className="mb-4 px-4 py-1 text-sm bg-white/10 text-gray-300 rounded-full">
@@ -60,26 +61,25 @@ export default function Home() {
           Send quotes, track approvals, and collect deposits — all in one seamless flow.
         </p>
 
-        <div className="flex gap-4">
+        {/* 🔥 MOBILE FIX */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+
           <button
-            onClick={() => {
-              setMode("signup")
-              setShowModal(true)
-            }}
-            className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition shadow-lg"
+            type="button"
+            onClick={() => openModal("signup")}
+            className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition shadow-lg w-full sm:w-auto"
           >
             Get Started
           </button>
 
           <button
-            onClick={() => {
-              setMode("login")
-              setShowModal(true)
-            }}
-            className="px-6 py-3 rounded-lg text-lg text-gray-300 bg-white/5 border border-white/10 hover:bg-white/10 transition"
+            type="button"
+            onClick={() => openModal("login")}
+            className="px-6 py-3 rounded-lg text-lg text-gray-300 bg-white/5 border border-white/10 hover:bg-white/10 transition w-full sm:w-auto"
           >
             Login
           </button>
+
         </div>
 
         <p className="text-sm text-gray-500 mt-6">
@@ -119,7 +119,7 @@ export default function Home() {
       <div className="py-20 px-6 flex justify-center">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-5xl w-full shadow-2xl">
 
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
 
             <div className="p-4 bg-white/10 rounded-xl">
               <p className="text-sm text-gray-400">Total Quotes</p>
@@ -173,22 +173,22 @@ export default function Home() {
         </h2>
 
         <button
-          onClick={() => {
-            setMode("signup")
-            setShowModal(true)
-          }}
+          type="button"
+          onClick={() => openModal("signup")}
           className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition"
         >
           Start Free
         </button>
       </div>
 
-      {/* MODAL */}
+      {/* 🔥 MODAL FIX (VERY IMPORTANT) */}
       {showModal && (
-        <AuthModal
-          initialMode={mode}
-          onClose={() => setShowModal(false)}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <AuthModal
+            initialMode={mode}
+            onClose={() => setShowModal(false)}
+          />
+        </div>
       )}
 
     </div>

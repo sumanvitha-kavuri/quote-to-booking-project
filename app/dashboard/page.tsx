@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
     init()
@@ -34,6 +35,7 @@ export default function Dashboard() {
     setLoading(false)
   }
 
+  // 🔥 CALCULATIONS
   const total = quotes.length
   const pending = quotes.filter(q => q.status === "pending").length
   const accepted = quotes.filter(q => q.status === "accepted").length
@@ -42,6 +44,12 @@ export default function Dashboard() {
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
+
+  // 🔍 SEARCH FILTER
+  const filteredQuotes = quotes.filter(q =>
+    q.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
+    q.customer_email?.toLowerCase().includes(search.toLowerCase())
+  )
 
   function getStatusColor(status: string) {
     if (status === "paid") return "text-green-400"
@@ -110,6 +118,25 @@ export default function Dashboard() {
           </a>
         </div>
 
+        {/* 🔥 ACTION REQUIRED */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+
+          <h3 className="text-yellow-400 font-medium mb-2">
+            Action Required
+          </h3>
+
+          <div className="text-sm text-gray-300 space-y-1">
+            {pending > 0 && <p>• {pending} quotes are still pending</p>}
+            {(accepted - paid) > 0 && (
+              <p>• {accepted - paid} accepted but not paid</p>
+            )}
+            {pending === 0 && accepted === paid && (
+              <p>All caught up 🎉</p>
+            )}
+          </div>
+
+        </div>
+
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
@@ -137,6 +164,14 @@ export default function Dashboard() {
 
         </div>
 
+        {/* 🔍 SEARCH */}
+        <input
+          placeholder="Search quotes..."
+          className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
         {/* QUOTES */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
 
@@ -144,14 +179,23 @@ export default function Dashboard() {
             Recent Quotes
           </h3>
 
-          {quotes.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 text-sm">
-              No quotes yet — create your first one 🚀
+          {filteredQuotes.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-400 mb-3">
+                No quotes found
+              </p>
+
+              <a
+                href="/dashboard/quotes/new"
+                className="text-blue-500 hover:underline"
+              >
+                Create your first quote →
+              </a>
             </div>
           ) : (
             <div className="space-y-3">
 
-              {quotes.map((q) => (
+              {filteredQuotes.map((q) => (
                 <div
                   key={q.id}
                   className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition"

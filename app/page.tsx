@@ -1,196 +1,309 @@
 "use client"
 
-import { useState } from "react"
-import AuthModal from "@/components/AuthModal"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
+import { Home, Bell, Search } from "lucide-react"
 
-export default function Home() {
+export default function Dashboard() {
+  const router = useRouter()
 
-  const [showModal, setShowModal] = useState(false)
-  const [mode, setMode] = useState<"login" | "signup">("login")
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>({})
+  const [quotes, setQuotes] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState("")
+  const [filter, setFilter] = useState("all")
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-  // 🔥 CENTRAL HANDLER (fixes click issues)
-  const openModal = (type: "login" | "signup") => {
-    setMode(type)
-    setShowModal(true)
+  useEffect(() => {
+    init()
+  }, [])
+
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      router.replace("/login")
+      return
+    }
+
+    setUser(user)
+
+    const { data: profileData } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single()
+
+    setProfile(profileData || {})
+
+    const { data } = await supabase
+      .from("quotes")
+      .select("*")
+      .eq("user_id", user.id)
+
+    setQuotes(data || [])
+    setLoading(false)
+  }
+
+  // SEARCH + FILTER
+  const filteredQuotes = quotes.filter(q => {
+    const text = search.toLowerCase()
+
+    const matchesSearch =
+      q.customer_name?.toLowerCase().includes(text) ||
+      q.customer_email?.toLowerCase().includes(text) ||
+      q.status?.toLowerCase().includes(text)
+
+    const matchesFilter =
+      filter === "all" ? true : q.status === filter
+
+    return matchesSearch && matchesFilter
+  })
+
+  const pendingQuotes = quotes.filter(q => q.status === "pending")
+  const unpaidQuotes = quotes.filter(q => q.status === "accepted")
+
+  const total = quotes.length
+  const pending = pendingQuotes.length
+  const accepted = quotes.filter(q => q.status === "accepted").length
+
+  const revenue = quotes
+    .filter(q => q.status === "paid")
+    .reduce((sum, q) => sum + (q.amount || 0), 0)
+
+  function getStatusColor(status: string) {
+    if (status === "paid") return "text-green-400"
+    if (status === "accepted") return "text-blue-400"
+    return "text-yellow-400"
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-gray-400">
+        Loading...
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col relative">
+    <main className="min-h-screen bg-[#0B0F19] text-white">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-4 sm:px-8 py-5 border-b border-white/10 backdrop-blur-md">
-        <h1 className="text-lg font-semibold tracking-tight">
-          <span className="text-white">Quote</span>{" "}
-          <span className="text-blue-500">to Booking</span>
+      <div className="flex justify-between items-center px-6 py-5 border-b border-white/10">
+
+        <h1 className="text-lg font-semibold">
+          Quote <span className="text-blue-500">to Booking</span>
         </h1>
 
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => openModal("login")}
-            className="px-4 py-2 rounded-lg text-gray-300 hover:text-white transition"
-          >
-            Login
+        <div className="flex items-center gap-5">
+
+          <button onClick={() => router.push("/")}>
+            <Home className="w-5 h-5 text-gray-300 hover:text-white" />
+          </button>
+
+          <button onClick={() => alert("Notifications coming soon")}>
+            <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
           <button
-            type="button"
-            onClick={() => openModal("signup")}
-            className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500 transition"
+            onClick={() => router.push("/dashboard/profile")}
+            className="text-gray-300 hover:text-white text-sm"
           >
-            Get Started
+            Profile
           </button>
+
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            className="text-gray-300 hover:text-red-400 text-sm"
+          >
+            Logout
+          </button>
+
         </div>
       </div>
 
-      {/* HERO */}
-      <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center overflow-hidden">
+      {/* CONTENT */}
+      <div className="p-6 max-w-6xl mx-auto space-y-8">
 
-        <div className="absolute w-[600px] h-[600px] bg-blue-600 opacity-20 blur-3xl rounded-full"></div>
+        {/* 🔥 UPDATED HEADER */}
+        <div>
+          <h2 className="text-3xl font-semibold">
+            Welcome back,{" "}
+            <span className="text-blue-500">
+              {profile?.name || user?.email}
+            </span>
+          </h2>
 
-        <div className="mb-4 px-4 py-1 text-sm bg-white/10 text-gray-300 rounded-full">
-          Built for service businesses
+          <p className="text-gray-400 text-sm mt-1">
+            Here’s what’s happening with your quotes today
+          </p>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-3xl">
-          Close deals faster with{" "}
-          <span className="text-blue-500">instant quotes & payments</span>
-        </h1>
+        {/* ACTION REQUIRED */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+          <h3 className="text-yellow-400 font-medium mb-3">
+            Action Required
+          </h3>
 
-        <p className="text-gray-400 text-lg mb-8 max-w-xl">
-          Send quotes, track approvals, and collect deposits — all in one seamless flow.
-        </p>
+          <div className="space-y-2 text-sm">
 
-        {/* 🔥 MOBILE FIX */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            {pending > 0 && (
+              <div onClick={() => setSearch("pending")} className="cursor-pointer">
+                • {pending} {pending === 1 ? "quote is" : "quotes are"} pending
+              </div>
+            )}
 
-          <button
-            type="button"
-            onClick={() => openModal("signup")}
-            className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition shadow-lg w-full sm:w-auto"
-          >
-            Get Started
-          </button>
+            {unpaidQuotes.length > 0 && (
+              <div onClick={() => setSearch("accepted")} className="cursor-pointer">
+                • {unpaidQuotes.length} accepted but not paid
+              </div>
+            )}
 
-          <button
-            type="button"
-            onClick={() => openModal("login")}
-            className="px-6 py-3 rounded-lg text-lg text-gray-300 bg-white/5 border border-white/10 hover:bg-white/10 transition w-full sm:w-auto"
-          >
-            Login
-          </button>
-
+          </div>
         </div>
 
-        <p className="text-sm text-gray-500 mt-6">
-          No setup required • Works on mobile & desktop
-        </p>
-      </div>
+        {/* STATS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Total</p>
+            <p className="text-2xl font-semibold">{total}</p>
+          </div>
 
-      {/* HOW IT WORKS */}
-      <div className="py-20 px-6 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold mb-12">How it works</h2>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Pending</p>
+            <p className="text-2xl font-semibold">{pending}</p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
-            <h3 className="text-lg font-medium mb-2">Create Quote</h3>
-            <p className="text-gray-400 text-sm">
-              Generate quotes in seconds with all details.
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Accepted</p>
+            <p className="text-2xl font-semibold">{accepted}</p>
+          </div>
+
+          <div className="p-4 bg-blue-600/20 border border-blue-500/20 rounded-xl">
+            <p className="text-sm text-blue-400">Revenue</p>
+            <p className="text-2xl font-semibold text-blue-400">
+              ₹{revenue}
             </p>
           </div>
-
-          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
-            <h3 className="text-lg font-medium mb-2">Share Link</h3>
-            <p className="text-gray-400 text-sm">
-              Send a simple link to your customer.
-            </p>
-          </div>
-
-          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
-            <h3 className="text-lg font-medium mb-2">Get Paid</h3>
-            <p className="text-gray-400 text-sm">
-              Customer accepts and pays instantly.
-            </p>
-          </div>
         </div>
-      </div>
 
-      {/* DASHBOARD PREVIEW */}
-      <div className="py-20 px-6 flex justify-center">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-5xl w-full shadow-2xl">
+        {/* SEARCH */}
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-
-            <div className="p-4 bg-white/10 rounded-xl">
-              <p className="text-sm text-gray-400">Total Quotes</p>
-              <p className="text-2xl font-semibold">18</p>
-            </div>
-
-            <div className="p-4 bg-yellow-500/10 rounded-xl">
-              <p className="text-sm text-yellow-400">Awaiting</p>
-              <p className="text-2xl font-semibold">6</p>
-            </div>
-
-            <div className="p-4 bg-green-500/10 rounded-xl">
-              <p className="text-sm text-green-400">Paid</p>
-              <p className="text-2xl font-semibold">4</p>
-            </div>
-
-            <div className="p-4 bg-blue-600 rounded-xl">
-              <p className="text-sm opacity-80">Revenue</p>
-              <p className="text-2xl font-semibold">₹32,000</p>
-            </div>
-
-          </div>
-
-          <div className="space-y-3 text-base">
-            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
-              <span>Rahul</span>
-              <span>₹5,000</span>
-              <span className="text-yellow-400">Awaiting</span>
-            </div>
-
-            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
-              <span>Ankit</span>
-              <span>₹8,000</span>
-              <span className="text-blue-400">Approved</span>
-            </div>
-
-            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
-              <span>Sneha</span>
-              <span>₹3,000</span>
-              <span className="text-green-400">Paid</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* FINAL CTA */}
-      <div className="text-center py-20 px-6">
-        <h2 className="text-3xl font-semibold mb-4">
-          Ready to stop chasing clients?
-        </h2>
-
-        <button
-          type="button"
-          onClick={() => openModal("signup")}
-          className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition"
-        >
-          Start Free
-        </button>
-      </div>
-
-      {/* 🔥 MODAL FIX (VERY IMPORTANT) */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <AuthModal
-            initialMode={mode}
-            onClose={() => setShowModal(false)}
+          <input
+            placeholder="Search by name, email, or status..."
+            className="w-full pl-9 pr-10 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
+        </div>
+
+        {/* QUOTES */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+
+          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
+
+          <div className="flex gap-2 mb-4">
+            {["all", "pending", "accepted", "paid"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1 text-xs rounded-full border ${
+                  filter === f
+                    ? "bg-blue-600 border-blue-500"
+                    : "bg-white/5 border-white/10"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+
+          {filteredQuotes.length === 0 ? (
+            <p className="text-gray-400 text-sm">
+              No matching quotes found
+            </p>
+          ) : (
+            <div className="space-y-3">
+
+              {filteredQuotes.map((q) => (
+                <div
+                  key={q.id}
+                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10"
+                >
+                  <div>
+                    <p className="font-medium">{q.customer_name}</p>
+                    <p className="text-sm text-gray-400">{q.customer_email}</p>
+                  </div>
+
+                  <div className="flex items-center gap-6">
+                    <p>₹{q.amount}</p>
+
+                    <span className={getStatusColor(q.status)}>
+                      {q.status}
+                    </span>
+
+                    <button
+                      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                      className="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition"
+                    >
+                      View
+                    </button>
+
+                  </div>
+                </div>
+              ))}
+
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
+      {/* LOGOUT MODAL */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+          <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 w-[300px] text-center">
+
+            <h3 className="text-lg font-medium mb-2">
+              Confirm Logout
+            </h3>
+
+            <p className="text-sm text-gray-400 mb-5">
+              Are you sure you want to logout?
+            </p>
+
+            <div className="flex gap-3">
+
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut()
+                  router.replace("/")
+                }}
+                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500"
+              >
+                Logout
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
       )}
 
-    </div>
+    </main>
   )
 }

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
+import { Eye, EyeOff } from "lucide-react"
 
 export default function Signup() {
   const router = useRouter()
@@ -12,13 +13,29 @@ export default function Signup() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+
+  const getStrength = (pass: string) => {
+    let score = 0
+    if (pass.length > 5) score++
+    if (pass.length > 8) score++
+    if (/[A-Z]/.test(pass)) score++
+    if (/[0-9]/.test(pass)) score++
+    if (/[^A-Za-z0-9]/.test(pass)) score++
+
+    if (score <= 2) return { label: "Weak", color: "bg-red-500", width: "33%" }
+    if (score <= 4) return { label: "Medium", color: "bg-yellow-500", width: "66%" }
+    return { label: "Strong", color: "bg-green-500", width: "100%" }
+  }
+
+  const strength = getStrength(password)
 
   const handleSignup = async () => {
     setErrorMsg("")
 
-    // ✅ VALIDATION
     if (!name || !business || !email || !password || !confirmPassword) {
       setErrorMsg("All fields are required")
       return
@@ -31,7 +48,6 @@ export default function Signup() {
 
     setLoading(true)
 
-    // ✅ STEP 1: AUTH SIGNUP
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -51,109 +67,102 @@ export default function Signup() {
       return
     }
 
-    // ✅ STEP 2: INSERT INTO USERS TABLE
     const { error: dbError } = await supabase.from("users").insert({
       id: userId,
-      email: email,
-      name: name,
+      email,
+      name,
       business_name: business,
     })
 
     if (dbError) {
-      console.log("DB ERROR:", dbError)
       setErrorMsg(dbError.message)
       setLoading(false)
       return
     }
 
     setLoading(false)
-
-    // ✅ SUCCESS → redirect
     router.push("/thank-you")
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 flex flex-col items-center justify-center px-4">
+    <div className="space-y-4">
 
-      {/* BRAND */}
-      <h1 className="text-xl font-semibold mb-6">
-        <span className="text-gray-900">Quote</span>{" "}
-        <span className="text-slate-700">to Booking</span>
-      </h1>
+      <input
+        placeholder="Full Name"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setName(e.target.value)}
+      />
 
-      {/* CARD */}
-      <div className="w-full max-w-md bg-white border rounded-2xl shadow-xl p-8 space-y-5">
+      <input
+        placeholder="Business Name"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setBusiness(e.target.value)}
+      />
 
-        <h2 className="text-2xl font-semibold text-center">
-          Create your account
-        </h2>
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-        <p className="text-sm text-gray-500 text-center">
-          Start sending quotes and getting paid faster
-        </p>
-
-        {/* INPUTS */}
+      {/* PASSWORD */}
+      <div className="relative">
         <input
-          placeholder="Full Name"
-          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          placeholder="Business Name"
-          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-          onChange={(e) => setBusiness(e.target.value)}
-        />
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
-          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
+          className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
           onChange={(e) => setPassword(e.target.value)}
         />
 
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+
+      {/* STRENGTH */}
+      {password && (
+        <div>
+          <div className="h-2 bg-gray-200 rounded">
+            <div className={`h-2 rounded ${strength.color}`} style={{ width: strength.width }} />
+          </div>
+          <p className="text-xs mt-1">Strength: {strength.label}</p>
+        </div>
+      )}
+
+      {/* CONFIRM PASSWORD */}
+      <div className="relative">
         <input
-          type="password"
+          type={showConfirm ? "text" : "password"}
           placeholder="Confirm Password"
-          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none"
+          className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
-        {/* ERROR */}
-        {errorMsg && (
-          <p className="text-sm text-red-500 text-center">{errorMsg}</p>
-        )}
-
-        {/* BUTTON */}
         <button
-          onClick={handleSignup}
-          disabled={loading}
-          className="w-full bg-slate-900 text-white py-3 rounded-lg text-lg font-medium hover:bg-slate-800 transition"
+          type="button"
+          onClick={() => setShowConfirm(!showConfirm)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
         >
-          {loading ? "Creating..." : "Create Account"}
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
-
-        {/* LOGIN */}
-        <p className="text-sm text-center text-gray-500">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
-            Login
-          </a>
-        </p>
-
       </div>
 
-      <p className="text-xs text-gray-400 mt-6">
-        No setup required • Works on mobile & desktop
-      </p>
+      {errorMsg && (
+        <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+      )}
 
+      <button
+        onClick={handleSignup}
+        disabled={loading}
+        className="w-full bg-slate-900 text-white py-3 rounded-lg"
+      >
+        {loading ? "Creating..." : "Create Account"}
+      </button>
     </div>
   )
 }

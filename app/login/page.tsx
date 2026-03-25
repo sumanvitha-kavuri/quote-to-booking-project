@@ -15,23 +15,6 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("")
   const [infoMsg, setInfoMsg] = useState("")
 
-  // Password strength
-  const getStrength = (pass: string) => {
-    let score = 0
-    if (pass.length > 5) score++
-    if (pass.length > 8) score++
-    if (/[A-Z]/.test(pass)) score++
-    if (/[0-9]/.test(pass)) score++
-    if (/[^A-Za-z0-9]/.test(pass)) score++
-
-    if (score <= 2) return { label: "Weak", color: "bg-red-500" }
-    if (score === 3 || score === 4)
-      return { label: "Medium", color: "bg-yellow-500" }
-    return { label: "Strong", color: "bg-green-500" }
-  }
-
-  const strength = getStrength(password)
-
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession()
@@ -95,7 +78,6 @@ export default function Login() {
       }}
       className="space-y-6"
     >
-      {/* HEADER */}
       <div className="text-center">
         <h2 className="text-2xl font-semibold text-gray-900">
           Welcome back
@@ -105,7 +87,6 @@ export default function Login() {
         </p>
       </div>
 
-      {/* INPUTS */}
       <div className="space-y-4">
 
         {/* EMAIL */}
@@ -133,7 +114,6 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {/* 👁️ ICON */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -142,28 +122,6 @@ export default function Login() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
-          {/* 🔒 PASSWORD STRENGTH */}
-          {password && (
-            <div className="mt-2">
-              <div className="h-2 w-full bg-gray-200 rounded">
-                <div
-                  className={`h-2 rounded ${strength.color}`}
-                  style={{
-                    width:
-                      strength.label === "Weak"
-                        ? "33%"
-                        : strength.label === "Medium"
-                        ? "66%"
-                        : "100%",
-                  }}
-                />
-              </div>
-              <p className="text-xs mt-1 text-gray-600">
-                Strength: {strength.label}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* FORGOT PASSWORD */}
@@ -179,7 +137,6 @@ export default function Login() {
 
       </div>
 
-      {/* MESSAGES */}
       {errorMsg && (
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
@@ -188,7 +145,6 @@ export default function Login() {
         <p className="text-sm text-green-600 text-center">{infoMsg}</p>
       )}
 
-      {/* BUTTON */}
       <button
         type="submit"
         disabled={loading}

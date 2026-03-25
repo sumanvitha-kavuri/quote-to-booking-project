@@ -20,11 +20,10 @@ export default function AuthModal({ initialMode, onClose }: any) {
           ✕
         </button>
 
-        {/* CONTENT */}
         {mode === "login" ? (
-          <div className="space-y-4">
+          <>
             <Login />
-            <p className="text-sm text-center text-gray-500">
+            <p className="text-sm text-center mt-5 text-gray-500">
               Don’t have an account?{" "}
               <button
                 onClick={() => setMode("signup")}
@@ -33,11 +32,13 @@ export default function AuthModal({ initialMode, onClose }: any) {
                 Sign up
               </button>
             </p>
-          </div>
+          </>
         ) : (
-          <div className="space-y-4">
-            <Signup />
-            <p className="text-sm text-center text-gray-500">
+          <>
+            {/* ✅ PASS SWITCH FUNCTION */}
+            <Signup switchToLogin={() => setMode("login")} />
+
+            <p className="text-sm text-center mt-5 text-gray-500">
               Already have an account?{" "}
               <button
                 onClick={() => setMode("login")}
@@ -46,8 +47,9 @@ export default function AuthModal({ initialMode, onClose }: any) {
                 Login
               </button>
             </p>
-          </div>
+          </>
         )}
+
       </div>
     </div>
   )

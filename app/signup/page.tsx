@@ -2,11 +2,9 @@
 
 import { useState } from "react"
 import { supabase } from "@/lib/supabase"
-import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 
-export default function Signup() {
-  const router = useRouter()
+export default function Signup({ switchToLogin }: any) {
 
   const [name, setName] = useState("")
   const [business, setBusiness] = useState("")
@@ -89,9 +87,9 @@ export default function Signup() {
     // ✅ SUCCESS MESSAGE
     setInfoMsg("Registered successfully")
 
-    // ⏳ DELAY → REDIRECT TO LOGIN
+    // ✅ SWITCH MODAL → LOGIN
     setTimeout(() => {
-      router.replace("/login")
+      switchToLogin()
     }, 1500)
   }
 
@@ -156,7 +154,10 @@ export default function Signup() {
       {password && (
         <div>
           <div className="h-2 bg-gray-200 rounded">
-            <div className={`h-2 rounded ${strength.color}`} style={{ width: strength.width }} />
+            <div
+              className={`h-2 rounded ${strength.color}`}
+              style={{ width: strength.width }}
+            />
           </div>
           <p className="text-xs mt-1 text-gray-600">
             Strength: {strength.label}
@@ -164,7 +165,7 @@ export default function Signup() {
         </div>
       )}
 
-      {/* CONFIRM PASSWORD */}
+      {/* CONFIRM */}
       <div className="relative">
         <input
           type={showConfirm ? "text" : "password"}

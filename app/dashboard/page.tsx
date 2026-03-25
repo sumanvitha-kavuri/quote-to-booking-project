@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
-import { Home, Bell, Search } from "lucide-react"
+import { Home, Bell } from "lucide-react"
 
 export default function Dashboard() {
   const router = useRouter()
@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [filter, setFilter] = useState("all")
 
   useEffect(() => {
     init()
@@ -45,27 +46,18 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔥 CALCULATIONS
-  const pendingQuotes = quotes.filter(q => q.status === "pending")
-  const unpaidQuotes = quotes.filter(q => q.status === "accepted")
-
-  const total = quotes.length
-  const pending = pendingQuotes.length
-  const accepted = quotes.filter(q => q.status === "accepted").length
-
-  const revenue = quotes
-    .filter(q => q.status === "paid")
-    .reduce((sum, q) => sum + (q.amount || 0), 0)
-
-  // 🔍 SEARCH
+  // 🔥 FILTER + SEARCH LOGIC
   const filteredQuotes = quotes.filter(q => {
     const text = search.toLowerCase()
 
-    return (
+    const matchesSearch =
       q.customer_name?.toLowerCase().includes(text) ||
-      q.customer_email?.toLowerCase().includes(text) ||
-      q.status?.toLowerCase().includes(text)
-    )
+      q.customer_email?.toLowerCase().includes(text)
+
+    const matchesFilter =
+      filter === "all" ? true : q.status === filter
+
+    return matchesSearch && matchesFilter
   })
 
   function getStatusColor(status: string) {
@@ -123,7 +115,7 @@ export default function Dashboard() {
       </div>
 
       {/* CONTENT */}
-      <div className="p-6 max-w-6xl mx-auto space-y-8">
+      <div className="p-6 max-w-6xl mx-auto space-y-6">
 
         {/* HEADER */}
         <div>
@@ -133,104 +125,73 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* ACTION REQUIRED */}
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+        {/* 🔥 FILTERS */}
+        <div className="flex gap-2 flex-wrap">
 
-          <h3 className="text-yellow-400 font-medium mb-3">
-            Action Required
-          </h3>
-
-          <div className="space-y-2 text-sm">
-
-            {pending > 0 && (
-              <div
-                className="cursor-pointer hover:text-white"
-                onClick={() => setSearch("pending")}
-              >
-                • {pending} {pending === 1 ? "quote is" : "quotes are"} pending
-              </div>
-            )}
-
-            {unpaidQuotes.length > 0 && (
-              <div
-                className="cursor-pointer hover:text-white"
-                onClick={() => setSearch("accepted")}
-              >
-                • {unpaidQuotes.length} accepted but not paid
-              </div>
-            )}
-
-            {pending === 0 && unpaidQuotes.length === 0 && (
-              <p>All caught up 🎉</p>
-            )}
-
-          </div>
+          {["all", "pending", "accepted", "paid"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1 rounded-full text-sm border transition ${
+                filter === f
+                  ? "bg-blue-600 border-blue-500"
+                  : "bg-white/5 border-white/10 hover:bg-white/10"
+              }`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
 
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Total</p>
-            <p className="text-2xl font-semibold">{total}</p>
-          </div>
-
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Pending</p>
-            <p className="text-2xl font-semibold">{pending}</p>
-          </div>
-
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Accepted</p>
-            <p className="text-2xl font-semibold">{accepted}</p>
-          </div>
-
-          <div className="p-4 bg-blue-600/20 border border-blue-500/20 rounded-xl">
-            <p className="text-sm text-blue-400">Revenue</p>
-            <p className="text-2xl font-semibold text-blue-400">
-              ₹{revenue}
-            </p>
-          </div>
-
-        </div>
-
-        {/* SEARCH */}
+        {/* 🔍 SEARCH WITH DROPDOWN */}
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
 
           <input
-            placeholder="Search by name, email, or status..."
-            className="w-full pl-9 pr-10 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
+            placeholder="Search by name or email..."
+            className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <button
-            className="absolute right-3 top-2.5 text-gray-400"
-            onClick={() => setSearch(search)}
-          >
-            →
-          </button>
+          {search && (
+            <div className="absolute w-full mt-2 bg-[#111827] border border-white/10 rounded-lg max-h-60 overflow-y-auto z-10">
+
+              {filteredQuotes.length === 0 ? (
+                <div className="p-3 text-gray-400 text-sm">
+                  No results found
+                </div>
+              ) : (
+                filteredQuotes.slice(0, 5).map((q) => (
+                  <div
+                    key={q.id}
+                    onClick={() => {
+                      setSearch("")
+                      router.push(`/dashboard/quotes/${q.id}`)
+                    }}
+                    className="p-3 hover:bg-white/10 cursor-pointer"
+                  >
+                    <p className="text-sm">{q.customer_name}</p>
+                    <p className="text-xs text-gray-400">
+                      {q.customer_email}
+                    </p>
+                  </div>
+                ))
+              )}
+
+            </div>
+          )}
+
         </div>
 
-        {/* QUOTES */}
+        {/* QUOTES LIST */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
 
-          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
+          <h3 className="mb-4 text-gray-300">Quotes</h3>
 
           {filteredQuotes.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-400 mb-2">
-                No results found for "{search}"
-              </p>
-
-              <button
-                onClick={() => setSearch("")}
-                className="text-blue-500 text-sm hover:underline"
-              >
-                Clear search
-              </button>
+            <div className="text-center py-10 text-gray-400">
+              No quotes available
             </div>
           ) : (
             <div className="space-y-3">
@@ -238,19 +199,29 @@ export default function Dashboard() {
               {filteredQuotes.map((q) => (
                 <div
                   key={q.id}
-                  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition cursor-pointer"
+                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10"
                 >
                   <div>
                     <p className="font-medium">{q.customer_name}</p>
                     <p className="text-sm text-gray-400">{q.customer_email}</p>
                   </div>
 
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4">
+
                     <p>₹{q.amount}</p>
+
                     <span className={getStatusColor(q.status)}>
                       {q.status}
                     </span>
+
+                    {/* VIEW BUTTON */}
+                    <button
+                      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                      className="px-3 py-1 text-sm bg-blue-600 rounded-md hover:bg-blue-500"
+                    >
+                      View
+                    </button>
+
                   </div>
                 </div>
               ))}

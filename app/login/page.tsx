@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
@@ -15,21 +15,9 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("")
   const [infoMsg, setInfoMsg] = useState("")
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (data.session) {
-        setInfoMsg("Login successful")
-
-setTimeout(() => {
-  router.replace("/dashboard")
-}, 1500)
-      }
-    }
-    checkSession()
-  }, [router])
-
   const handleLogin = async () => {
+    if (loading) return
+
     setErrorMsg("")
     setInfoMsg("")
 
@@ -53,7 +41,13 @@ setTimeout(() => {
 
     await supabase.auth.getSession()
     setLoading(false)
-    router.replace("/dashboard")
+
+    // ✅ SUCCESS MESSAGE + DELAY
+    setInfoMsg("Login successful")
+
+    setTimeout(() => {
+      router.replace("/dashboard")
+    }, 1500)
   }
 
   const handleForgotPassword = async () => {
@@ -82,6 +76,7 @@ setTimeout(() => {
       }}
       className="space-y-6"
     >
+      {/* HEADER */}
       <div className="text-center">
         <h2 className="text-2xl font-semibold text-gray-900">
           Welcome back
@@ -91,6 +86,7 @@ setTimeout(() => {
         </p>
       </div>
 
+      {/* INPUTS */}
       <div className="space-y-4">
 
         {/* EMAIL */}
@@ -141,14 +137,17 @@ setTimeout(() => {
 
       </div>
 
+      {/* ERROR */}
       {errorMsg && (
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
+      {/* SUCCESS */}
       {infoMsg && (
         <p className="text-sm text-green-600 text-center">{infoMsg}</p>
       )}
 
+      {/* BUTTON */}
       <button
         type="submit"
         disabled={loading}

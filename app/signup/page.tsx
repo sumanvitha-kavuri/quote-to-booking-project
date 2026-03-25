@@ -90,7 +90,7 @@ export default function Signup({ switchToLogin }: any) {
     // ✅ SWITCH MODAL → LOGIN
     setTimeout(() => {
       switchToLogin()
-    }, 1500)
+    }, 500)
   }
 
   return (

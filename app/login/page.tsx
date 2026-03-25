@@ -47,7 +47,7 @@ export default function Login() {
 
     setTimeout(() => {
       router.replace("/dashboard")
-    }, 1500)
+    }, 500)
   }
 
   const handleForgotPassword = async () => {

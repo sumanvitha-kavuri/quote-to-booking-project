@@ -1,3 +1,4 @@
+console.log("NEW DASHBOARD LOADED")
 "use client"
 
 import { useEffect, useState } from "react"

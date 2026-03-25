@@ -11,9 +11,9 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>({})
   const [quotes, setQuotes] = useState<any[]>([])
-  const [prevQuotes, setPrevQuotes] = useState<any[]>([]) // ✅ track changes
+  const [prevQuotes, setPrevQuotes] = useState<any[]>([])
 
-  const [notifications, setNotifications] = useState<string[]>([]) // ✅ real notifications
+  const [notifications, setNotifications] = useState<string[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
   const [seenNotifications, setSeenNotifications] = useState(false)
 
@@ -26,7 +26,6 @@ export default function Dashboard() {
     init()
   }, [])
 
-  // 🔄 polling (detect customer actions)
   useEffect(() => {
     const interval = setInterval(() => {
       init()
@@ -34,7 +33,6 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // 🔥 ACTION-BASED NOTIFICATIONS
   useEffect(() => {
     if (prevQuotes.length === 0) {
       setPrevQuotes(quotes)
@@ -47,7 +45,6 @@ export default function Dashboard() {
       const old = prevQuotes.find(p => p.id === q.id)
       if (!old) return
 
-      // status changes
       if (old.status !== q.status) {
         if (q.status === "accepted") {
           newNotifications.push("Customer accepted a quote")
@@ -60,7 +57,6 @@ export default function Dashboard() {
         }
       }
 
-      // option selected
       if (old.selected_option !== q.selected_option && q.selected_option) {
         newNotifications.push("Customer selected an option")
       }
@@ -116,11 +112,8 @@ export default function Dashboard() {
     return matchesSearch && matchesFilter
   })
 
-  const pendingQuotes = quotes.filter(q => q.status === "pending")
-  const unpaidQuotes = quotes.filter(q => q.status === "accepted")
-
   const total = quotes.length
-  const pending = pendingQuotes.length
+  const pending = quotes.filter(q => q.status === "pending").length
   const accepted = quotes.filter(q => q.status === "accepted").length
 
   const revenue = quotes
@@ -183,13 +176,11 @@ export default function Dashboard() {
                   <p className="text-gray-400 text-sm">No new notifications</p>
                 ) : (
                   <div className="space-y-2 text-sm">
-
                     {notifications.map((n, i) => (
                       <div key={i} className="p-2 rounded-lg hover:bg-white/5">
                         🔔 {n}
                       </div>
                     ))}
-
                   </div>
                 )}
               </div>
@@ -217,19 +208,14 @@ export default function Dashboard() {
       <div className="p-6 max-w-6xl mx-auto space-y-8">
 
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-3xl font-semibold">
-              Welcome, {profile?.name || user?.email?.split("@")[0]}
-            </h2>
-            <p className="text-gray-400 text-sm mt-1">
-              Here’s what’s happening with your quotes
-            </p>
-          </div>
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-semibold">
+            Welcome, {profile?.name || user?.email?.split("@")[0]}
+          </h2>
 
           <button
             onClick={() => router.push("/dashboard/create")}
-            className="bg-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-500 transition text-sm font-medium"
+            className="bg-blue-600 px-5 py-2.5 rounded-lg"
           >
             + Create Quote
           </button>
@@ -237,42 +223,37 @@ export default function Dashboard() {
 
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Total</p>
-            <p className="text-2xl font-semibold">{total}</p>
+          <div className="p-4 bg-white/5 rounded-xl">
+            <p>Total</p>
+            <p>{total}</p>
           </div>
 
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Pending</p>
-            <p className="text-2xl font-semibold">{pending}</p>
+          <div className="p-4 bg-white/5 rounded-xl">
+            <p>Pending</p>
+            <p>{pending}</p>
           </div>
 
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-sm text-gray-400">Accepted</p>
-            <p className="text-2xl font-semibold">{accepted}</p>
+          <div className="p-4 bg-white/5 rounded-xl">
+            <p>Accepted</p>
+            <p>{accepted}</p>
           </div>
 
-          <div className="p-4 bg-blue-600/20 border border-blue-500/20 rounded-xl">
-            <p className="text-sm text-blue-400">Revenue</p>
-            <p className="text-2xl font-semibold text-blue-400">₹{revenue}</p>
+          <div className="p-4 bg-blue-600/20 rounded-xl">
+            <p>Revenue</p>
+            <p>₹{revenue}</p>
           </div>
         </div>
 
         {/* SEARCH */}
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-          <input
-            placeholder="Search..."
-            className="w-full pl-9 py-2 rounded-lg bg-white/5 border border-white/10"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        <input
+          placeholder="Search..."
+          className="w-full p-2 rounded bg-white/5"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
         {/* QUOTES */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
-
+        <div>
           {filteredQuotes.map((q) => (
             <div key={q.id} className="flex justify-between p-4 border-b border-white/10">
               <div>
@@ -283,13 +264,6 @@ export default function Dashboard() {
               <div className="flex gap-4 items-center">
                 <span>₹{q.amount}</span>
                 <span className={getStatusColor(q.status)}>{q.status}</span>
-
-                <button
-                  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                  className="bg-blue-600 px-3 py-1 rounded"
-                >
-                  View
-                </button>
               </div>
             </div>
           ))}

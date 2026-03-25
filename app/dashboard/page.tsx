@@ -11,39 +11,69 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>({})
   const [quotes, setQuotes] = useState<any[]>([])
+  const [prevQuotes, setPrevQuotes] = useState<any[]>([]) // ✅ track changes
+
+  const [notifications, setNotifications] = useState<string[]>([]) // ✅ real notifications
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [seenNotifications, setSeenNotifications] = useState(false)
+
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-  // 🔔 notifications
-  const [showNotifications, setShowNotifications] = useState(false)
-  const [seenNotifications, setSeenNotifications] = useState(false)
-
   useEffect(() => {
     init()
   }, [])
 
-  // 🔄 auto refresh (detect customer updates)
+  // 🔄 polling (detect customer actions)
   useEffect(() => {
     const interval = setInterval(() => {
       init()
     }, 5000)
-
     return () => clearInterval(interval)
   }, [])
 
-  // 🔔 close dropdown when clicking outside
+  // 🔥 ACTION-BASED NOTIFICATIONS
   useEffect(() => {
-    const handleClick = (e: any) => {
-      if (!e.target.closest(".notif-wrapper")) {
-        setShowNotifications(false)
-      }
+    if (prevQuotes.length === 0) {
+      setPrevQuotes(quotes)
+      return
     }
 
-    document.addEventListener("click", handleClick)
-    return () => document.removeEventListener("click", handleClick)
-  }, [])
+    const newNotifications: string[] = []
+
+    quotes.forEach((q) => {
+      const old = prevQuotes.find(p => p.id === q.id)
+      if (!old) return
+
+      // status changes
+      if (old.status !== q.status) {
+        if (q.status === "accepted") {
+          newNotifications.push("Customer accepted a quote")
+        }
+        if (q.status === "rejected") {
+          newNotifications.push("Customer rejected a quote")
+        }
+        if (q.status === "paid") {
+          newNotifications.push("Payment received")
+        }
+      }
+
+      // option selected
+      if (old.selected_option !== q.selected_option && q.selected_option) {
+        newNotifications.push("Customer selected an option")
+      }
+    })
+
+    if (newNotifications.length > 0) {
+      setNotifications(prev => [...newNotifications, ...prev])
+      setSeenNotifications(false)
+    }
+
+    setPrevQuotes(quotes)
+
+  }, [quotes])
 
   async function init() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -128,7 +158,7 @@ export default function Dashboard() {
           </button>
 
           {/* 🔔 NOTIFICATIONS */}
-          <div className="relative notif-wrapper">
+          <div className="relative">
             <button
               onClick={() => {
                 setShowNotifications(!showNotifications)
@@ -137,45 +167,28 @@ export default function Dashboard() {
             >
               <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
 
-              {!seenNotifications && (pending + unpaidQuotes.length) > 0 && (
+              {!seenNotifications && notifications.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-1.5 rounded-full">
-                  {pending + unpaidQuotes.length}
+                  {notifications.length}
                 </span>
               )}
             </button>
 
             {showNotifications && (
               <div className="absolute right-0 mt-3 w-72 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-4 z-50">
+
                 <h3 className="text-sm text-gray-300 mb-3">Notifications</h3>
 
-                {pending === 0 && unpaidQuotes.length === 0 ? (
+                {notifications.length === 0 ? (
                   <p className="text-gray-400 text-sm">No new notifications</p>
                 ) : (
                   <div className="space-y-2 text-sm">
 
-                    {pending > 0 && (
-                      <div
-                        onClick={() => {
-                          setSearch("pending")
-                          setShowNotifications(false)
-                        }}
-                        className="p-2 rounded-lg hover:bg-white/5 cursor-pointer"
-                      >
-                        🔔 {pending} pending {pending === 1 ? "quote" : "quotes"}
+                    {notifications.map((n, i) => (
+                      <div key={i} className="p-2 rounded-lg hover:bg-white/5">
+                        🔔 {n}
                       </div>
-                    )}
-
-                    {unpaidQuotes.length > 0 && (
-                      <div
-                        onClick={() => {
-                          setSearch("accepted")
-                          setShowNotifications(false)
-                        }}
-                        className="p-2 rounded-lg hover:bg-white/5 cursor-pointer"
-                      >
-                        💰 {unpaidQuotes.length} unpaid accepted quotes
-                      </div>
-                    )}
+                    ))}
 
                   </div>
                 )}
@@ -220,25 +233,6 @@ export default function Dashboard() {
           >
             + Create Quote
           </button>
-        </div>
-
-        {/* ACTION REQUIRED */}
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
-          <h3 className="text-yellow-400 font-medium mb-3">Action Required</h3>
-
-          <div className="space-y-2 text-sm">
-            {pending > 0 && (
-              <div onClick={() => setSearch("pending")} className="cursor-pointer">
-                • {pending} pending quotes
-              </div>
-            )}
-
-            {unpaidQuotes.length > 0 && (
-              <div onClick={() => setSearch("accepted")} className="cursor-pointer">
-                • {unpaidQuotes.length} accepted but not paid
-              </div>
-            )}
-          </div>
         </div>
 
         {/* STATS */}
@@ -302,6 +296,7 @@ export default function Dashboard() {
         </div>
 
       </div>
+
     </main>
   )
 }

@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
+import { Home, Bell, Search } from "lucide-react"
 
 export default function Dashboard() {
   const router = useRouter()
 
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>({})
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-  const [filter, setFilter] = useState("all") // ✅ ADDED
 
   useEffect(() => {
     init()
@@ -27,6 +28,14 @@ export default function Dashboard() {
 
     setUser(user)
 
+    const { data: profileData } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single()
+
+    setProfile(profileData || {})
+
     const { data } = await supabase
       .from("quotes")
       .select("*")
@@ -36,67 +45,76 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔥 FIXED SEARCH + FILTER LOGIC
-  const filteredQuotes = quotes.filter((q) => {
-    const text = search.toLowerCase()
+  // 🔥 CALCULATIONS
+  const pendingQuotes = quotes.filter(q => q.status === "pending")
+  const unpaidQuotes = quotes.filter(q => q.status === "accepted")
 
-    const matchesSearch =
-      q.customer_name?.toLowerCase().includes(text) ||
-      q.customer_email?.toLowerCase().includes(text) ||
-      q.status?.toLowerCase().includes(text)
-
-    const matchesFilter =
-      filter === "all" ? true : q.status === filter
-
-    return matchesSearch && matchesFilter
-  })
-
-  // 🔥 CALCULATIONS (unchanged)
   const total = quotes.length
-  const pending = quotes.filter(q => q.status === "pending").length
+  const pending = pendingQuotes.length
   const accepted = quotes.filter(q => q.status === "accepted").length
-  const paid = quotes.filter(q => q.status === "paid").length
 
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
 
+  // 🔍 SEARCH
+  const filteredQuotes = quotes.filter(q => {
+    const text = search.toLowerCase()
+
+    return (
+      q.customer_name?.toLowerCase().includes(text) ||
+      q.customer_email?.toLowerCase().includes(text) ||
+      q.status?.toLowerCase().includes(text)
+    )
+  })
+
   function getStatusColor(status: string) {
-    if (status === "paid") return "bg-green-500/10 text-green-400"
-    if (status === "accepted") return "bg-blue-500/10 text-blue-400"
-    return "bg-yellow-500/10 text-yellow-400"
+    if (status === "paid") return "text-green-400"
+    if (status === "accepted") return "text-blue-400"
+    return "text-yellow-400"
   }
 
   if (loading) {
-    return <div className="p-10 text-white">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-gray-400">
+        Loading...
+      </div>
+    )
   }
 
   return (
-    <main className="min-h-screen bg-[#0f0f0f] text-white">
+    <main className="min-h-screen bg-[#0B0F19] text-white">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
+      <div className="flex justify-between items-center px-6 py-5 border-b border-white/10">
 
         <h1 className="text-lg font-semibold">
-          Quote<span className="text-gray-400"> to Booking</span>
+          Quote <span className="text-blue-500">to Booking</span>
         </h1>
 
-        <div className="flex items-center gap-6 text-sm">
+        <div className="flex items-center gap-5">
 
-          <button className="text-gray-400 hover:text-white">
-            Notifications
+          <button onClick={() => router.push("/")}>
+            <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
-          <a href="/dashboard/profile" className="text-gray-400 hover:text-white">
-            Profile
-          </a>
+          <button onClick={() => alert("Notifications coming soon")}>
+            <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
+          </button>
 
           <button
-            className="text-gray-400 hover:text-white"
+            onClick={() => router.push("/dashboard/profile")}
+            className="text-gray-300 hover:text-white text-sm"
+          >
+            Profile
+          </button>
+
+          <button
             onClick={async () => {
               await supabase.auth.signOut()
               router.replace("/login")
             }}
+            className="text-gray-300 hover:text-red-400 text-sm"
           >
             Logout
           </button>
@@ -105,118 +123,140 @@ export default function Dashboard() {
       </div>
 
       {/* CONTENT */}
-      <div className="p-6 space-y-6">
+      <div className="p-6 max-w-6xl mx-auto space-y-8">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-semibold">Dashboard</h2>
-            <p className="text-gray-500 text-sm">
-              Welcome back, {user?.email}
-            </p>
+        <div>
+          <h2 className="text-3xl font-semibold">Dashboard</h2>
+          <p className="text-gray-400 text-sm mt-1">
+            Welcome back, {profile?.name || user?.email}
+          </p>
+        </div>
+
+        {/* ACTION REQUIRED */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+
+          <h3 className="text-yellow-400 font-medium mb-3">
+            Action Required
+          </h3>
+
+          <div className="space-y-2 text-sm">
+
+            {pending > 0 && (
+              <div
+                className="cursor-pointer hover:text-white"
+                onClick={() => setSearch("pending")}
+              >
+                • {pending} {pending === 1 ? "quote is" : "quotes are"} pending
+              </div>
+            )}
+
+            {unpaidQuotes.length > 0 && (
+              <div
+                className="cursor-pointer hover:text-white"
+                onClick={() => setSearch("accepted")}
+              >
+                • {unpaidQuotes.length} accepted but not paid
+              </div>
+            )}
+
+            {pending === 0 && unpaidQuotes.length === 0 && (
+              <p>All caught up 🎉</p>
+            )}
+
           </div>
 
-          <a
-            href="/dashboard/quotes/new"
-            className="bg-white text-black px-4 py-2 rounded-lg font-medium hover:opacity-90"
-          >
-            + Create Quote
-          </a>
         </div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-          <div className="bg-[#1a1a1a] p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">Total</p>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Total</p>
             <p className="text-2xl font-semibold">{total}</p>
           </div>
 
-          <div className="bg-[#1a1a1a] p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">Pending</p>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Pending</p>
             <p className="text-2xl font-semibold">{pending}</p>
           </div>
 
-          <div className="bg-[#1a1a1a] p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">Accepted</p>
+          <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+            <p className="text-sm text-gray-400">Accepted</p>
             <p className="text-2xl font-semibold">{accepted}</p>
           </div>
 
-          <div className="bg-[#1a1a1a] p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">Revenue</p>
-            <p className="text-2xl font-semibold">₹{revenue}</p>
+          <div className="p-4 bg-blue-600/20 border border-blue-500/20 rounded-xl">
+            <p className="text-sm text-blue-400">Revenue</p>
+            <p className="text-2xl font-semibold text-blue-400">
+              ₹{revenue}
+            </p>
           </div>
 
         </div>
 
         {/* SEARCH */}
-        <input
-          placeholder="Search..."
-          className="w-full px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white outline-none"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
 
-        {/* QUOTES LIST */}
-        <div className="bg-[#1a1a1a] rounded-xl p-4">
+          <input
+            placeholder="Search by name, email, or status..."
+            className="w-full pl-9 pr-10 py-2 rounded-lg bg-white/5 border border-white/10 text-white outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-          <h3 className="mb-2 font-medium text-gray-300">
-            Recent Quotes
-          </h3>
+          <button
+            className="absolute right-3 top-2.5 text-gray-400"
+            onClick={() => setSearch(search)}
+          >
+            →
+          </button>
+        </div>
 
-          {/* ✅ FILTER BUTTONS */}
-          <div className="flex gap-2 mb-4 flex-wrap">
-            {["all", "pending", "accepted", "paid"].map((f) => (
+        {/* QUOTES */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+
+          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
+
+          {filteredQuotes.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-400 mb-2">
+                No results found for "{search}"
+              </p>
+
               <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-1 rounded-full text-xs border ${
-                  filter === f
-                    ? "bg-blue-600 border-blue-500"
-                    : "bg-white/5 border-white/10"
-                }`}
+                onClick={() => setSearch("")}
+                className="text-blue-500 text-sm hover:underline"
               >
-                {f}
+                Clear search
               </button>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
 
-          {/* EMPTY STATE */}
-          {filteredQuotes.length === 0 && (
-            <p className="text-gray-500 text-sm">
-              {search || filter !== "all"
-                ? "No matching quotes found"
-                : "No quotes yet"}
-            </p>
+              {filteredQuotes.map((q) => (
+                <div
+                  key={q.id}
+                  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition cursor-pointer"
+                >
+                  <div>
+                    <p className="font-medium">{q.customer_name}</p>
+                    <p className="text-sm text-gray-400">{q.customer_email}</p>
+                  </div>
+
+                  <div className="flex items-center gap-6">
+                    <p>₹{q.amount}</p>
+                    <span className={getStatusColor(q.status)}>
+                      {q.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+            </div>
           )}
-
-          <div className="space-y-3">
-
-            {filteredQuotes.map((q) => (
-              <div
-                key={q.id}
-                className="flex justify-between items-center p-3 bg-[#111] rounded-lg border border-white/5"
-              >
-                <div>
-                  <p className="font-medium">{q.customer_name}</p>
-                  <p className="text-sm text-gray-500">{q.customer_email}</p>
-                </div>
-
-                <div className="flex items-center gap-6">
-
-                  <p className="font-medium">₹{q.amount}</p>
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(q.status)}`}
-                  >
-                    {q.status}
-                  </span>
-
-                </div>
-              </div>
-            ))}
-
-          </div>
 
         </div>
 

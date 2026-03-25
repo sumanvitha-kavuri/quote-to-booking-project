@@ -17,31 +17,28 @@ export default function Signup() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+  const [infoMsg, setInfoMsg] = useState("")
 
-const getStrength = (pass: string) => {
-  let score = 0
+  const getStrength = (pass: string) => {
+    let score = 0
+    if (pass.length >= 8) score++
+    if (pass.length >= 12) score++
+    if (/[A-Z]/.test(pass)) score++
+    if (/[0-9]/.test(pass)) score++
+    if (/[^A-Za-z0-9]/.test(pass)) score++
 
-  if (pass.length >= 8) score++        // base requirement
-  if (pass.length >= 12) score++       // strong length
-  if (/[A-Z]/.test(pass)) score++
-  if (/[0-9]/.test(pass)) score++
-  if (/[^A-Za-z0-9]/.test(pass)) score++
-
-  if (score <= 2) {
-    return { label: "Weak", color: "bg-red-500", width: "25%" }
+    if (score <= 2) return { label: "Weak", color: "bg-red-500", width: "25%" }
+    if (score <= 4) return { label: "Medium", color: "bg-yellow-500", width: "60%" }
+    return { label: "Strong", color: "bg-green-500", width: "100%" }
   }
-
-  if (score === 3 || score === 4) {
-    return { label: "Medium", color: "bg-yellow-500", width: "60%" }
-  }
-
-  return { label: "Strong", color: "bg-green-500", width: "100%" }
-}
 
   const strength = getStrength(password)
 
   const handleSignup = async () => {
+    if (loading) return
+
     setErrorMsg("")
+    setInfoMsg("")
 
     if (!name || !business || !email || !password || !confirmPassword) {
       setErrorMsg("All fields are required")
@@ -88,7 +85,14 @@ const getStrength = (pass: string) => {
     }
 
     setLoading(false)
-    router.push("/thank-you")
+
+    // ✅ SUCCESS MESSAGE
+    setInfoMsg("Registered successfully")
+
+    // ⏳ DELAY → REDIRECT TO LOGIN
+    setTimeout(() => {
+      router.replace("/login")
+    }, 1500)
   }
 
   return (
@@ -110,86 +114,71 @@ const getStrength = (pass: string) => {
       </div>
 
       {/* NAME */}
-      <div className="space-y-1">
-        <p className="text-sm text-gray-700 font-medium">Full Name</p>
-        <input
-          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
+      <input
+        placeholder="Full Name"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setName(e.target.value)}
+      />
 
       {/* BUSINESS */}
-      <div className="space-y-1">
-        <p className="text-sm text-gray-700 font-medium">Business Name</p>
-        <input
-          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-          onChange={(e) => setBusiness(e.target.value)}
-        />
-      </div>
+      <input
+        placeholder="Business Name"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setBusiness(e.target.value)}
+      />
 
       {/* EMAIL */}
-      <div className="space-y-1">
-        <p className="text-sm text-gray-700 font-medium">Email</p>
-        <input
-          type="email"
-          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
       {/* PASSWORD */}
-      <div className="space-y-1">
-        <p className="text-sm text-gray-700 font-medium">Password</p>
-        <div className="relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
-
-        {/* STRENGTH */}
-        {password && (
-          <div>
-            <div className="h-2 bg-gray-200 rounded mt-2">
-              <div
-                className={`h-2 rounded ${strength.color}`}
-                style={{ width: strength.width }}
-              />
-            </div>
-            <p className="text-xs mt-1 text-gray-600">
-              Strength: {strength.label}
-            </p>
-          </div>
-        )}
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
 
-      {/* CONFIRM */}
-      <div className="space-y-1">
-        <p className="text-sm text-gray-700 font-medium">
-          Confirm Password
-        </p>
-        <div className="relative">
-          <input
-            type={showConfirm ? "text" : "password"}
-            className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirm(!showConfirm)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-          >
-            {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+      {/* STRENGTH */}
+      {password && (
+        <div>
+          <div className="h-2 bg-gray-200 rounded">
+            <div className={`h-2 rounded ${strength.color}`} style={{ width: strength.width }} />
+          </div>
+          <p className="text-xs mt-1 text-gray-600">
+            Strength: {strength.label}
+          </p>
         </div>
+      )}
+
+      {/* CONFIRM PASSWORD */}
+      <div className="relative">
+        <input
+          type={showConfirm ? "text" : "password"}
+          placeholder="Confirm Password"
+          className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirm(!showConfirm)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        >
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
 
       {/* ERROR */}
@@ -197,11 +186,16 @@ const getStrength = (pass: string) => {
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
+      {/* SUCCESS */}
+      {infoMsg && (
+        <p className="text-sm text-green-600 text-center">{infoMsg}</p>
+      )}
+
       {/* BUTTON */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition"
+        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium"
       >
         {loading ? "Creating..." : "Create Account"}
       </button>

@@ -22,11 +22,15 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all")
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
+  // 🔍 NEW SEARCH STATES
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false)
+  const [searchResults, setSearchResults] = useState<any[]>([])
+
   useEffect(() => {
     init()
   }, [])
 
-  // 🔄 auto refresh
+  // 🔄 polling
   useEffect(() => {
     const interval = setInterval(() => {
       init()
@@ -34,7 +38,7 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // 🔥 ACTION-BASED NOTIFICATIONS
+  // 🔔 notifications logic
   useEffect(() => {
     if (prevQuotes.length === 0) {
       setPrevQuotes(quotes)
@@ -48,15 +52,9 @@ export default function Dashboard() {
       if (!old) return
 
       if (old.status !== q.status) {
-        if (q.status === "accepted") {
-          newNotifications.push("Customer accepted a quote")
-        }
-        if (q.status === "rejected") {
-          newNotifications.push("Customer rejected a quote")
-        }
-        if (q.status === "paid") {
-          newNotifications.push("Payment received")
-        }
+        if (q.status === "accepted") newNotifications.push("Customer accepted a quote")
+        if (q.status === "rejected") newNotifications.push("Customer rejected a quote")
+        if (q.status === "paid") newNotifications.push("Payment received")
       }
 
       if (old.selected_option !== q.selected_option && q.selected_option) {
@@ -71,6 +69,28 @@ export default function Dashboard() {
 
     setPrevQuotes(quotes)
   }, [quotes])
+
+  // 🔍 SEARCH DROPDOWN LOGIC
+  useEffect(() => {
+    const text = search.trim().toLowerCase()
+
+    if (!text) {
+      setSearchResults([])
+      setShowSearchDropdown(false)
+      return
+    }
+
+    const results = quotes.filter((q) =>
+      (q.customer_name || "").toLowerCase().includes(text) ||
+      (q.customer_email || "").toLowerCase().includes(text) ||
+      (q.status || "").toLowerCase().includes(text) ||
+      String(q.amount || "").includes(text)
+    )
+
+    setSearchResults(results.slice(0, 5))
+    setShowSearchDropdown(true)
+
+  }, [search, quotes])
 
   async function init() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -98,23 +118,6 @@ export default function Dashboard() {
     setQuotes(data || [])
     setLoading(false)
   }
-
-  // 🔥 FIXED SEARCH + FILTER
-  const filteredQuotes = quotes.filter((q) => {
-    const text = search.trim().toLowerCase()
-
-    const matchesSearch =
-      !text ||
-      (q.customer_name || "").toLowerCase().includes(text) ||
-      (q.customer_email || "").toLowerCase().includes(text) ||
-      (q.status || "").toLowerCase().includes(text) ||
-      String(q.amount || "").includes(text)
-
-    const matchesFilter =
-      filter === "all" || q.status === filter
-
-    return matchesSearch && matchesFilter
-  })
 
   const total = quotes.length
   const pending = quotes.filter(q => q.status === "pending").length
@@ -173,19 +176,16 @@ export default function Dashboard() {
 
             {showNotifications && (
               <div className="absolute right-0 mt-3 w-72 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-4 z-50">
-
                 <h3 className="text-sm text-gray-300 mb-3">Notifications</h3>
 
                 {notifications.length === 0 ? (
                   <p className="text-gray-400 text-sm">No new notifications</p>
                 ) : (
-                  <div className="space-y-2 text-sm">
-                    {notifications.map((n, i) => (
-                      <div key={i} className="p-2 rounded-lg hover:bg-white/5">
-                        🔔 {n}
-                      </div>
-                    ))}
-                  </div>
+                  notifications.map((n, i) => (
+                    <div key={i} className="p-2 hover:bg-white/5 rounded">
+                      🔔 {n}
+                    </div>
+                  ))
                 )}
               </div>
             )}
@@ -248,40 +248,77 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* SEARCH */}
+        {/* 🔍 SEARCH */}
         <div className="relative">
+
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+
           <input
-            placeholder="Search by name, email, status, or amount..."
-            className="w-full pl-9 py-2 rounded-lg bg-white/5 border border-white/10 outline-none"
+            placeholder="Search..."
+            className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
+          {/* 🔽 DROPDOWN */}
+          {showSearchDropdown && (
+            <div className="absolute w-full mt-2 bg-[#111827] border border-white/10 rounded-xl shadow-lg z-50">
+
+              {searchResults.length === 0 ? (
+                <p className="p-3 text-sm text-gray-400">No results found</p>
+              ) : (
+                searchResults.map((q) => (
+                  <div
+                    key={q.id}
+                    onClick={() => {
+                      setSearch("")
+                      setShowSearchDropdown(false)
+
+                      document
+                        .getElementById(`quote-${q.id}`)
+                        ?.scrollIntoView({ behavior: "smooth" })
+                    }}
+                    className="flex justify-between items-center p-3 hover:bg-white/5 cursor-pointer"
+                  >
+                    <div>
+                      <p className="text-sm">{q.customer_name}</p>
+                      <p className="text-xs text-gray-400">{q.customer_email}</p>
+                    </div>
+
+                    <span className="text-gray-400">→</span>
+                  </div>
+                ))
+              )}
+
+            </div>
+          )}
+
         </div>
 
         {/* QUOTES */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
-          {filteredQuotes.length === 0 ? (
-            <p className="text-gray-400 text-sm">No matching quotes</p>
-          ) : (
-            filteredQuotes.map((q) => (
-              <div key={q.id} className="flex justify-between p-4 border-b border-white/10">
-                <div>
-                  <p>{q.customer_name}</p>
-                  <p className="text-sm text-gray-400">{q.customer_email}</p>
-                </div>
-
-                <div className="flex gap-4 items-center">
-                  <span>₹{q.amount}</span>
-                  <span className={getStatusColor(q.status)}>
-                    {q.status}
-                  </span>
-                </div>
+          {quotes.map((q) => (
+            <div
+              id={`quote-${q.id}`}
+              key={q.id}
+              className="flex justify-between p-4 border-b border-white/10"
+            >
+              <div>
+                <p>{q.customer_name}</p>
+                <p className="text-sm text-gray-400">{q.customer_email}</p>
               </div>
-            ))
-          )}
+
+              <div className="flex gap-4 items-center">
+                <span>₹{q.amount}</span>
+                <span className={getStatusColor(q.status)}>
+                  {q.status}
+                </span>
+              </div>
+            </div>
+          ))}
+
         </div>
 
       </div>

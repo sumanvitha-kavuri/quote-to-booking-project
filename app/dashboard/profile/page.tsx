@@ -10,7 +10,6 @@ export default function Profile() {
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
-  const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -41,9 +40,6 @@ export default function Profile() {
   }
 
   async function handleSave() {
-    setSaving(true)
-    setMessage("")
-
     const { error } = await supabase
       .from("users")
       .update({
@@ -52,15 +48,11 @@ export default function Profile() {
       })
       .eq("id", user.id)
 
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setMessage("Profile updated successfully")
+    if (!error) {
       setEditing(false)
       setOriginalProfile(profile)
+      setMessage("Saved successfully")
     }
-
-    setSaving(false)
   }
 
   function handleCancel() {
@@ -68,26 +60,33 @@ export default function Profile() {
     setEditing(false)
   }
 
-  // 🔥 STATS (unique section)
   const totalQuotes = quotes.length
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
 
-  if (loading) {
-    return <div className="p-10 text-white">Loading...</div>
-  }
+  if (loading) return <div className="p-10 text-white">Loading...</div>
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white p-6">
 
-      <div className="max-w-xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
 
-        {/* PROFILE CARD */}
+        {/* 🔥 HEADER (premium feel) */}
+        <div className="bg-gradient-to-r from-blue-600/20 to-transparent border border-blue-500/20 rounded-2xl p-6">
+          <h1 className="text-2xl font-semibold">
+            {profile.name || "Your Profile"}
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            {user.email}
+          </p>
+        </div>
+
+        {/* 🔥 PROFILE DETAILS */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5">
 
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold">Profile</h1>
+            <h2 className="font-medium">Account Details</h2>
 
             {!editing ? (
               <button
@@ -97,24 +96,17 @@ export default function Profile() {
                 Edit
               </button>
             ) : (
-              <div className="flex gap-3">
-                <button
-                  onClick={handleCancel}
-                  className="text-gray-400 text-sm"
-                >
+              <div className="flex gap-3 text-sm">
+                <button onClick={handleCancel} className="text-gray-400">
                   Cancel
                 </button>
-                <button
-                  onClick={handleSave}
-                  className="text-blue-500 text-sm"
-                >
+                <button onClick={handleSave} className="text-blue-500">
                   Save
                 </button>
               </div>
             )}
           </div>
 
-          {/* NAME */}
           <div>
             <p className="text-sm text-gray-400 mb-1">Full Name</p>
             <input
@@ -127,7 +119,6 @@ export default function Profile() {
             />
           </div>
 
-          {/* BUSINESS */}
           <div>
             <p className="text-sm text-gray-400 mb-1">Business Name</p>
             <input
@@ -140,11 +131,10 @@ export default function Profile() {
             />
           </div>
 
-          {/* EMAIL */}
           <div>
             <p className="text-sm text-gray-400 mb-1">Email</p>
             <input
-              value={user?.email}
+              value={user.email}
               disabled
               className="w-full p-3 rounded-lg bg-white/5 border border-white/10 opacity-60"
             />
@@ -158,23 +148,21 @@ export default function Profile() {
 
         </div>
 
-        {/* 🔥 UNIQUE: ACCOUNT SUMMARY */}
+        {/* 🔥 ACCOUNT SUMMARY */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
 
-          <h2 className="text-lg font-medium mb-4">
-            Account Summary
-          </h2>
+          <h2 className="font-medium mb-4">Account Summary</h2>
 
           <div className="grid grid-cols-2 gap-4 text-center">
 
-            <div>
+            <div className="bg-white/5 rounded-lg p-4">
               <p className="text-xl font-semibold">{totalQuotes}</p>
-              <p className="text-gray-400 text-sm">Total Quotes</p>
+              <p className="text-gray-400 text-sm">Quotes</p>
             </div>
 
-            <div>
+            <div className="bg-white/5 rounded-lg p-4">
               <p className="text-xl font-semibold">₹{revenue}</p>
-              <p className="text-gray-400 text-sm">Total Revenue</p>
+              <p className="text-gray-400 text-sm">Revenue</p>
             </div>
 
           </div>

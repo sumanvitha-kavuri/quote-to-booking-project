@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
 export default function Profile() {
+  const router = useRouter()
+
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>({})
   const [originalProfile, setOriginalProfile] = useState<any>({})
@@ -70,9 +73,17 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white p-6">
 
+      {/* 🔙 BACK BUTTON */}
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="mb-4 text-sm text-blue-400 hover:underline"
+      >
+        ← Back to Dashboard
+      </button>
+
       <div className="max-w-2xl mx-auto space-y-6">
 
-        {/* 🔥 HEADER (premium feel) */}
+        {/* 🔥 HEADER */}
         <div className="bg-gradient-to-r from-blue-600/20 to-transparent border border-blue-500/20 rounded-2xl p-6">
           <h1 className="text-2xl font-semibold">
             {profile.name || "Your Profile"}

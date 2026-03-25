@@ -19,7 +19,11 @@ export default function Login() {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession()
       if (data.session) {
-        router.replace("/dashboard")
+        setInfoMsg("Login successful")
+
+setTimeout(() => {
+  router.replace("/dashboard")
+}, 1500)
       }
     }
     checkSession()

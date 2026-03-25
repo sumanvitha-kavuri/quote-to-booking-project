@@ -244,12 +244,12 @@ export default function Dashboard() {
                     </span>
 
                     {/* ✅ VIEW BUTTON */}
-                    <button
-                      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                      className="px-3 py-1 text-xs bg-blue-600 rounded-md"
-                    >
-                      View
-                    </button>
+                 <button
+  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+  className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-500 rounded-lg transition"
+>
+  View
+</button>
 
                   </div>
                 </div>

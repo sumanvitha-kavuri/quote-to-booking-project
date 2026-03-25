@@ -18,19 +18,25 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
 
-  // ✅ strength
-  const getStrength = (pass: string) => {
-    let score = 0
-    if (pass.length >= 6) score++
-    if (pass.length >= 10) score++
-    if (/[A-Z]/.test(pass)) score++
-    if (/[0-9]/.test(pass)) score++
-    if (/[^A-Za-z0-9]/.test(pass)) score++
+const getStrength = (pass: string) => {
+  let score = 0
 
-    if (score <= 2) return { label: "Weak", color: "bg-red-500", width: "33%" }
-    if (score <= 4) return { label: "Medium", color: "bg-yellow-500", width: "66%" }
-    return { label: "Strong", color: "bg-green-500", width: "100%" }
+  if (pass.length >= 8) score++        // base requirement
+  if (pass.length >= 12) score++       // strong length
+  if (/[A-Z]/.test(pass)) score++
+  if (/[0-9]/.test(pass)) score++
+  if (/[^A-Za-z0-9]/.test(pass)) score++
+
+  if (score <= 2) {
+    return { label: "Weak", color: "bg-red-500", width: "25%" }
   }
+
+  if (score === 3 || score === 4) {
+    return { label: "Medium", color: "bg-yellow-500", width: "60%" }
+  }
+
+  return { label: "Strong", color: "bg-green-500", width: "100%" }
+}
 
   const strength = getStrength(password)
 

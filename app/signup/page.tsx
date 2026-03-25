@@ -18,7 +18,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
 
-  // ✅ FIXED strength logic
+  // ✅ strength
   const getStrength = (pass: string) => {
     let score = 0
     if (pass.length >= 6) score++
@@ -86,143 +86,119 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 flex flex-col items-center justify-center px-4">
-
-      {/* BRAND */}
-      <h1 className="text-xl font-semibold mb-6">
-        <span className="text-gray-900">Quote</span>{" "}
-        <span className="text-slate-700">to Booking</span>
-      </h1>
-
-      {/* CARD */}
-      <div className="w-full max-w-md bg-white border rounded-2xl shadow-xl p-8 space-y-5">
-
-        <h2 className="text-2xl font-semibold text-center">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSignup()
+      }}
+      className="space-y-5"
+    >
+      {/* HEADER */}
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold text-gray-900">
           Create your account
         </h2>
-
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-gray-500 mt-1">
           Start sending quotes and getting paid faster
         </p>
-
-        {/* NAME */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-700 font-medium">Full Name</p>
-          <input
-            placeholder="Full Name"
-            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        {/* BUSINESS */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-700 font-medium">Business Name</p>
-          <input
-            placeholder="Business Name"
-            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-            onChange={(e) => setBusiness(e.target.value)}
-          />
-        </div>
-
-        {/* EMAIL */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-700 font-medium">Email</p>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        {/* PASSWORD */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-700 font-medium">Password</p>
-
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-
-          {/* ✅ STRENGTH */}
-          {password && (
-            <div>
-              <div className="h-2 bg-gray-200 rounded mt-2">
-                <div
-                  className={`h-2 rounded ${strength.color}`}
-                  style={{ width: strength.width }}
-                />
-              </div>
-              <p className="text-xs mt-1 text-gray-600">
-                Strength: {strength.label}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* CONFIRM PASSWORD */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-700 font-medium">Confirm Password</p>
-
-          <div className="relative">
-            <input
-              type={showConfirm ? "text" : "password"}
-              placeholder="Confirm Password"
-              className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-        </div>
-
-        {/* ERROR */}
-        {errorMsg && (
-          <p className="text-sm text-red-500 text-center">{errorMsg}</p>
-        )}
-
-        {/* BUTTON */}
-        <button
-          onClick={handleSignup}
-          disabled={loading}
-          className="w-full bg-slate-900 text-white py-3 rounded-lg text-lg font-medium hover:bg-slate-800 transition"
-        >
-          {loading ? "Creating..." : "Create Account"}
-        </button>
-
-        {/* LOGIN */}
-        <p className="text-sm text-center text-gray-500">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
-            Login
-          </a>
-        </p>
-
       </div>
 
-      <p className="text-xs text-gray-400 mt-6">
-        No setup required • Works on mobile & desktop
-      </p>
+      {/* NAME */}
+      <div className="space-y-1">
+        <p className="text-sm text-gray-700 font-medium">Full Name</p>
+        <input
+          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
 
-    </div>
+      {/* BUSINESS */}
+      <div className="space-y-1">
+        <p className="text-sm text-gray-700 font-medium">Business Name</p>
+        <input
+          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+          onChange={(e) => setBusiness(e.target.value)}
+        />
+      </div>
+
+      {/* EMAIL */}
+      <div className="space-y-1">
+        <p className="text-sm text-gray-700 font-medium">Email</p>
+        <input
+          type="email"
+          className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-slate-900 text-black"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+
+      {/* PASSWORD */}
+      <div className="space-y-1">
+        <p className="text-sm text-gray-700 font-medium">Password</p>
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+
+        {/* STRENGTH */}
+        {password && (
+          <div>
+            <div className="h-2 bg-gray-200 rounded mt-2">
+              <div
+                className={`h-2 rounded ${strength.color}`}
+                style={{ width: strength.width }}
+              />
+            </div>
+            <p className="text-xs mt-1 text-gray-600">
+              Strength: {strength.label}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* CONFIRM */}
+      <div className="space-y-1">
+        <p className="text-sm text-gray-700 font-medium">
+          Confirm Password
+        </p>
+        <div className="relative">
+          <input
+            type={showConfirm ? "text" : "password"}
+            className="w-full border p-3 rounded-lg pr-12 outline-none focus:ring-2 focus:ring-slate-900 text-black"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirm(!showConfirm)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+          >
+            {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+      </div>
+
+      {/* ERROR */}
+      {errorMsg && (
+        <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+      )}
+
+      {/* BUTTON */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition"
+      >
+        {loading ? "Creating..." : "Create Account"}
+      </button>
+    </form>
   )
 }

@@ -3,15 +3,34 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
+import { Eye, EyeOff } from "lucide-react"
 
 export default function Login() {
   const router = useRouter()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [infoMsg, setInfoMsg] = useState("")
+
+  // Password strength
+  const getStrength = (pass: string) => {
+    let score = 0
+    if (pass.length > 5) score++
+    if (pass.length > 8) score++
+    if (/[A-Z]/.test(pass)) score++
+    if (/[0-9]/.test(pass)) score++
+    if (/[^A-Za-z0-9]/.test(pass)) score++
+
+    if (score <= 2) return { label: "Weak", color: "bg-red-500" }
+    if (score === 3 || score === 4)
+      return { label: "Medium", color: "bg-yellow-500" }
+    return { label: "Strong", color: "bg-green-500" }
+  }
+
+  const strength = getStrength(password)
 
   useEffect(() => {
     const checkSession = async () => {
@@ -95,7 +114,7 @@ export default function Login() {
           <input
             type="email"
             placeholder="Enter your email"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-gray-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -104,13 +123,47 @@ export default function Login() {
         {/* PASSWORD */}
         <div className="space-y-1">
           <p className="text-sm text-gray-700 font-medium">Password</p>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-gray-400"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {/* 👁️ ICON */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          {/* 🔒 PASSWORD STRENGTH */}
+          {password && (
+            <div className="mt-2">
+              <div className="h-2 w-full bg-gray-200 rounded">
+                <div
+                  className={`h-2 rounded ${strength.color}`}
+                  style={{
+                    width:
+                      strength.label === "Weak"
+                        ? "33%"
+                        : strength.label === "Medium"
+                        ? "66%"
+                        : "100%",
+                  }}
+                />
+              </div>
+              <p className="text-xs mt-1 text-gray-600">
+                Strength: {strength.label}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* FORGOT PASSWORD */}

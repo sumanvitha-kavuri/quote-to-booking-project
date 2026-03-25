@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false) // ✅ ADDED
 
   useEffect(() => {
     init()
@@ -113,14 +114,9 @@ export default function Dashboard() {
             Profile
           </button>
 
-          {/* 🔥 UPDATED LOGOUT */}
+          {/* 🔥 SAFE LOGOUT */}
           <button
-            onClick={async () => {
-              await supabase.auth.signOut()
-              setTimeout(() => {
-                router.replace("/")
-              }, 300)
-            }}
+            onClick={() => setShowLogoutConfirm(true)}
             className="text-gray-300 hover:text-red-400 text-sm"
           >
             Logout
@@ -263,6 +259,46 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      {/* 🔥 LOGOUT CONFIRM MODAL */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+          <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 w-[300px] text-center">
+
+            <h3 className="text-lg font-medium mb-2">
+              Confirm Logout
+            </h3>
+
+            <p className="text-sm text-gray-400 mb-5">
+              Are you sure you want to logout?
+            </p>
+
+            <div className="flex gap-3">
+
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut()
+                  router.replace("/")
+                }}
+                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500"
+              >
+                Logout
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
     </main>
   )

@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [filter, setFilter] = useState("all") // ✅ ADDED
 
   useEffect(() => {
     init()
@@ -45,7 +46,21 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔥 CALCULATIONS
+  // 🔥 UPDATED SEARCH + FILTER
+  const filteredQuotes = quotes.filter(q => {
+    const text = search.toLowerCase()
+
+    const matchesSearch =
+      q.customer_name?.toLowerCase().includes(text) ||
+      q.customer_email?.toLowerCase().includes(text) ||
+      q.status?.toLowerCase().includes(text)
+
+    const matchesFilter =
+      filter === "all" ? true : q.status === filter
+
+    return matchesSearch && matchesFilter
+  })
+
   const pendingQuotes = quotes.filter(q => q.status === "pending")
   const unpaidQuotes = quotes.filter(q => q.status === "accepted")
 
@@ -56,17 +71,6 @@ export default function Dashboard() {
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
-
-  // 🔍 SEARCH
-  const filteredQuotes = quotes.filter(q => {
-    const text = search.toLowerCase()
-
-    return (
-      q.customer_name?.toLowerCase().includes(text) ||
-      q.customer_email?.toLowerCase().includes(text) ||
-      q.status?.toLowerCase().includes(text)
-    )
-  })
 
   function getStatusColor(status: string) {
     if (status === "paid") return "text-green-400"
@@ -135,7 +139,6 @@ export default function Dashboard() {
 
         {/* ACTION REQUIRED */}
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
-
           <h3 className="text-yellow-400 font-medium mb-3">
             Action Required
           </h3>
@@ -143,34 +146,22 @@ export default function Dashboard() {
           <div className="space-y-2 text-sm">
 
             {pending > 0 && (
-              <div
-                className="cursor-pointer hover:text-white"
-                onClick={() => setSearch("pending")}
-              >
+              <div onClick={() => setSearch("pending")} className="cursor-pointer">
                 • {pending} {pending === 1 ? "quote is" : "quotes are"} pending
               </div>
             )}
 
             {unpaidQuotes.length > 0 && (
-              <div
-                className="cursor-pointer hover:text-white"
-                onClick={() => setSearch("accepted")}
-              >
+              <div onClick={() => setSearch("accepted")} className="cursor-pointer">
                 • {unpaidQuotes.length} accepted but not paid
               </div>
             )}
 
-            {pending === 0 && unpaidQuotes.length === 0 && (
-              <p>All caught up 🎉</p>
-            )}
-
           </div>
-
         </div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
           <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
             <p className="text-sm text-gray-400">Total</p>
             <p className="text-2xl font-semibold">{total}</p>
@@ -192,7 +183,6 @@ export default function Dashboard() {
               ₹{revenue}
             </p>
           </div>
-
         </div>
 
         {/* SEARCH */}
@@ -205,13 +195,6 @@ export default function Dashboard() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
-          <button
-            className="absolute right-3 top-2.5 text-gray-400"
-            onClick={() => setSearch(search)}
-          >
-            →
-          </button>
         </div>
 
         {/* QUOTES */}
@@ -219,27 +202,34 @@ export default function Dashboard() {
 
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
-          {filteredQuotes.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-400 mb-2">
-                No results found for "{search}"
-              </p>
-
+          {/* ✅ FILTER BUTTONS */}
+          <div className="flex gap-2 mb-4">
+            {["all", "pending", "accepted", "paid"].map((f) => (
               <button
-                onClick={() => setSearch("")}
-                className="text-blue-500 text-sm hover:underline"
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1 text-xs rounded-full border ${
+                  filter === f
+                    ? "bg-blue-600 border-blue-500"
+                    : "bg-white/5 border-white/10"
+                }`}
               >
-                Clear search
+                {f}
               </button>
-            </div>
+            ))}
+          </div>
+
+          {filteredQuotes.length === 0 ? (
+            <p className="text-gray-400 text-sm">
+              No matching quotes found
+            </p>
           ) : (
             <div className="space-y-3">
 
               {filteredQuotes.map((q) => (
                 <div
                   key={q.id}
-                  onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition cursor-pointer"
+                  className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10"
                 >
                   <div>
                     <p className="font-medium">{q.customer_name}</p>
@@ -248,9 +238,19 @@ export default function Dashboard() {
 
                   <div className="flex items-center gap-6">
                     <p>₹{q.amount}</p>
+
                     <span className={getStatusColor(q.status)}>
                       {q.status}
                     </span>
+
+                    {/* ✅ VIEW BUTTON */}
+                    <button
+                      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                      className="px-3 py-1 text-xs bg-blue-600 rounded-md"
+                    >
+                      View
+                    </button>
+
                   </div>
                 </div>
               ))}

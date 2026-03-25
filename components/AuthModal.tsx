@@ -8,9 +8,9 @@ export default function AuthModal({ initialMode, onClose }: any) {
   const [mode, setMode] = useState<"login" | "signup">(initialMode)
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
 
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative max-h-[90vh] overflow-y-auto">
 
         {/* CLOSE */}
         <button
@@ -22,31 +22,31 @@ export default function AuthModal({ initialMode, onClose }: any) {
 
         {/* CONTENT */}
         {mode === "login" ? (
-          <>
+          <div className="space-y-4">
             <Login />
-            <p className="text-sm text-center mt-5 text-gray-500">
+            <p className="text-sm text-center text-gray-500">
               Don’t have an account?{" "}
               <button
                 onClick={() => setMode("signup")}
-                className="text-blue-600 font-medium"
+                className="text-blue-600 font-medium hover:underline"
               >
                 Sign up
               </button>
             </p>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="space-y-4">
             <Signup />
-            <p className="text-sm text-center mt-5 text-gray-500">
+            <p className="text-sm text-center text-gray-500">
               Already have an account?{" "}
               <button
                 onClick={() => setMode("login")}
-                className="text-blue-600 font-medium"
+                className="text-blue-600 font-medium hover:underline"
               >
                 Login
               </button>
             </p>
-          </>
+          </div>
         )}
       </div>
     </div>

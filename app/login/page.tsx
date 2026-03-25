@@ -50,7 +50,6 @@ export default function Login() {
     router.replace("/dashboard")
   }
 
-  // ✅ Forgot password
   const handleForgotPassword = async () => {
     setErrorMsg("")
     setInfoMsg("")
@@ -77,6 +76,7 @@ export default function Login() {
       }}
       className="space-y-6"
     >
+      {/* HEADER */}
       <div className="text-center">
         <h2 className="text-2xl font-semibold text-gray-900">
           Welcome back
@@ -86,35 +86,34 @@ export default function Login() {
         </p>
       </div>
 
+      {/* INPUTS */}
       <div className="space-y-4">
 
-        {/* ✅ Email label */}
-        <div>
-          <p className="text-sm mb-1">Email</p>
+        {/* EMAIL */}
+        <div className="space-y-1">
+          <p className="text-sm text-gray-700 font-medium">Email</p>
           <input
-            name="email"
             type="email"
-            placeholder="Email"
-            className="input"
+            placeholder="Enter your email"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
-        {/* ✅ Password label */}
-        <div>
-          <p className="text-sm mb-1">Password</p>
+        {/* PASSWORD */}
+        <div className="space-y-1">
+          <p className="text-sm text-gray-700 font-medium">Password</p>
           <input
-            name="password"
             type="password"
-            placeholder="Password"
-            className="input"
+            placeholder="Enter your password"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        {/* ✅ Forgot password */}
+        {/* FORGOT PASSWORD */}
         <div className="text-right">
           <button
             type="button"
@@ -127,14 +126,16 @@ export default function Login() {
 
       </div>
 
+      {/* MESSAGES */}
       {errorMsg && (
         <p className="text-sm text-red-500 text-center">{errorMsg}</p>
       )}
 
       {infoMsg && (
-        <p className="text-sm text-green-500 text-center">{infoMsg}</p>
+        <p className="text-sm text-green-600 text-center">{infoMsg}</p>
       )}
 
+      {/* BUTTON */}
       <button
         type="submit"
         disabled={loading}

@@ -1,191 +1,196 @@
 "use client"
 
 import { useState } from "react"
-import { supabase } from "@/lib/supabase"
+import AuthModal from "@/components/AuthModal"
 
-export default function AuthModal({
-  initialMode = "login",
-  onClose,
-}: {
-  initialMode: "login" | "signup"
-  onClose: () => void
-}) {
+export default function Home() {
 
-  const [mode, setMode] = useState(initialMode)
-  const [loading, setLoading] = useState(false)
-
-  const [name, setName] = useState("")
-  const [business, setBusiness] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  const handleAuth = async () => {
-    setLoading(true)
-
-    try {
-      if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-        })
-
-        if (error) throw error
-
-        if (data.user) {
-          await supabase.from("users").insert({
-            id: data.user.id,
-            email,
-            name,
-            business_name: business,
-          })
-        }
-
-        alert("Signup successful!")
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-
-        if (error) throw error
-
-        window.location.href = "/dashboard"
-      }
-    } catch (err: any) {
-      alert(err.message)
-    }
-
-    setLoading(false)
-  }
+  const [showModal, setShowModal] = useState(false)
+  const [mode, setMode] = useState<"login" | "signup">("login")
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col relative">
 
-      {/* BACKDROP */}
-      <div
-        onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
-      />
+      {/* NAVBAR */}
+      <div className="flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-md">
+        <h1 className="text-lg font-semibold tracking-tight">
+          <span className="text-white">Quote</span>{" "}
+          <span className="text-blue-500">Flow</span>
+        </h1>
 
-      {/* MODAL */}
-      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 animate-in fade-in zoom-in duration-200">
-
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">
-            {mode === "login" ? "Welcome back" : "Create account"}
-          </h2>
-
+        <div className="flex items-center gap-4">
           <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* TOGGLE */}
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setMode("login")}
-            className={`flex-1 py-2 rounded-md text-sm font-medium transition ${
-              mode === "login"
-                ? "bg-white shadow text-gray-900"
-                : "text-gray-500"
-            }`}
+            onClick={() => {
+              setMode("login")
+              setShowModal(true)
+            }}
+            className="px-4 py-2 rounded-lg text-gray-300 hover:text-white transition"
           >
             Login
           </button>
 
           <button
-            onClick={() => setMode("signup")}
-            className={`flex-1 py-2 rounded-md text-sm font-medium transition ${
-              mode === "signup"
-                ? "bg-white shadow text-gray-900"
-                : "text-gray-500"
-            }`}
+            onClick={() => {
+              setMode("signup")
+              setShowModal(true)
+            }}
+            className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500 transition"
           >
-            Signup
+            Get Started
           </button>
         </div>
+      </div>
 
-        {/* FORM */}
-        <div className="space-y-4">
+      {/* HERO */}
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center overflow-hidden">
 
-          {mode === "signup" && (
-            <>
-              <input
-                type="text"
-                placeholder="Your Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+        {/* glow */}
+        <div className="absolute w-[600px] h-[600px] bg-blue-600 opacity-20 blur-3xl rounded-full"></div>
 
-              <input
-                type="text"
-                placeholder="Business Name"
-                value={business}
-                onChange={(e) => setBusiness(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </>
-          )}
+        <div className="mb-4 px-4 py-1 text-sm bg-white/10 text-gray-300 rounded-full">
+          Built for service businesses
+        </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-3xl">
+          Close deals faster with{" "}
+          <span className="text-blue-500">instant quotes & payments</span>
+        </h1>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <p className="text-gray-400 text-lg mb-8 max-w-xl">
+          Send quotes, track approvals, and collect deposits — all in one seamless flow.
+        </p>
+
+        <div className="flex gap-4">
+          <button
+            onClick={() => {
+              setMode("signup")
+              setShowModal(true)
+            }}
+            className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition shadow-lg"
+          >
+            Get Started
+          </button>
 
           <button
-            onClick={handleAuth}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-500 transition"
+            onClick={() => {
+              setMode("login")
+              setShowModal(true)
+            }}
+            className="px-6 py-3 rounded-lg text-lg text-gray-300 bg-white/5 border border-white/10 hover:bg-white/10 transition"
           >
-            {loading
-              ? "Please wait..."
-              : mode === "login"
-              ? "Login"
-              : "Create Account"}
+            Login
           </button>
         </div>
 
-        {/* FOOTER */}
-        <p className="text-sm text-gray-500 mt-6 text-center">
-          {mode === "login" ? (
-            <>
-              Don’t have an account?{" "}
-              <button
-                onClick={() => setMode("signup")}
-                className="text-blue-600 font-medium"
-              >
-                Sign up
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <button
-                onClick={() => setMode("login")}
-                className="text-blue-600 font-medium"
-              >
-                Login
-              </button>
-            </>
-          )}
+        <p className="text-sm text-gray-500 mt-6">
+          No setup required • Works on mobile & desktop
         </p>
       </div>
+
+      {/* HOW IT WORKS */}
+      <div className="py-20 px-6 max-w-5xl mx-auto text-center">
+        <h2 className="text-3xl font-semibold mb-12">How it works</h2>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-lg font-medium mb-2">Create Quote</h3>
+            <p className="text-gray-400 text-sm">
+              Generate quotes in seconds with all details.
+            </p>
+          </div>
+
+          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-lg font-medium mb-2">Share Link</h3>
+            <p className="text-gray-400 text-sm">
+              Send a simple link to your customer.
+            </p>
+          </div>
+
+          <div className="p-6 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-lg font-medium mb-2">Get Paid</h3>
+            <p className="text-gray-400 text-sm">
+              Customer accepts and pays instantly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* DASHBOARD PREVIEW */}
+      <div className="py-20 px-6 flex justify-center">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-5xl w-full shadow-2xl">
+
+          <div className="grid grid-cols-4 gap-4 mb-6">
+
+            <div className="p-4 bg-white/10 rounded-xl">
+              <p className="text-sm text-gray-400">Total Quotes</p>
+              <p className="text-2xl font-semibold">18</p>
+            </div>
+
+            <div className="p-4 bg-yellow-500/10 rounded-xl">
+              <p className="text-sm text-yellow-400">Awaiting</p>
+              <p className="text-2xl font-semibold">6</p>
+            </div>
+
+            <div className="p-4 bg-green-500/10 rounded-xl">
+              <p className="text-sm text-green-400">Paid</p>
+              <p className="text-2xl font-semibold">4</p>
+            </div>
+
+            <div className="p-4 bg-blue-600 rounded-xl">
+              <p className="text-sm opacity-80">Revenue</p>
+              <p className="text-2xl font-semibold">₹32,000</p>
+            </div>
+
+          </div>
+
+          <div className="space-y-3 text-base">
+            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
+              <span>Rahul</span>
+              <span>₹5,000</span>
+              <span className="text-yellow-400">Awaiting</span>
+            </div>
+
+            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
+              <span>Ankit</span>
+              <span>₹8,000</span>
+              <span className="text-blue-400">Approved</span>
+            </div>
+
+            <div className="flex justify-between p-3 bg-white/5 rounded-lg">
+              <span>Sneha</span>
+              <span>₹3,000</span>
+              <span className="text-green-400">Paid</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* FINAL CTA */}
+      <div className="text-center py-20 px-6">
+        <h2 className="text-3xl font-semibold mb-4">
+          Ready to stop chasing clients?
+        </h2>
+
+        <button
+          onClick={() => {
+            setMode("signup")
+            setShowModal(true)
+          }}
+          className="bg-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-500 transition"
+        >
+          Start Free
+        </button>
+      </div>
+
+      {/* MODAL */}
+      {showModal && (
+        <AuthModal
+          initialMode={mode}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
     </div>
   )
 }

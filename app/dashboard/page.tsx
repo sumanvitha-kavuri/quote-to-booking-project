@@ -16,8 +16,23 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all")
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
+  // 🔔 NEW
+  const [showNotifications, setShowNotifications] = useState(false)
+
   useEffect(() => {
     init()
+  }, [])
+
+  // 🔔 CLOSE DROPDOWN ON OUTSIDE CLICK
+  useEffect(() => {
+    function handleClickOutside(e: any) {
+      if (!e.target.closest(".notif-wrapper")) {
+        setShowNotifications(false)
+      }
+    }
+
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   }, [])
 
   async function init() {
@@ -102,9 +117,59 @@ export default function Dashboard() {
             <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
-          <button onClick={() => alert("Notifications coming soon")}>
-            <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
-          </button>
+          {/* 🔔 NOTIFICATIONS */}
+          <div className="relative notif-wrapper">
+
+            <button onClick={() => setShowNotifications(!showNotifications)}>
+              <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
+
+              {(pending + unpaidQuotes.length) > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-1.5 rounded-full">
+                  {pending + unpaidQuotes.length}
+                </span>
+              )}
+            </button>
+
+            {showNotifications && (
+              <div className="absolute right-0 mt-3 w-72 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-4 z-50">
+
+                <h3 className="text-sm text-gray-300 mb-3">Notifications</h3>
+
+                {pending === 0 && unpaidQuotes.length === 0 ? (
+                  <p className="text-gray-400 text-sm">No new notifications</p>
+                ) : (
+                  <div className="space-y-2 text-sm">
+
+                    {pending > 0 && (
+                      <div
+                        onClick={() => {
+                          setSearch("pending")
+                          setShowNotifications(false)
+                        }}
+                        className="p-2 rounded-lg hover:bg-white/5 cursor-pointer"
+                      >
+                        🔔 {pending} pending {pending === 1 ? "quote" : "quotes"}
+                      </div>
+                    )}
+
+                    {unpaidQuotes.length > 0 && (
+                      <div
+                        onClick={() => {
+                          setSearch("accepted")
+                          setShowNotifications(false)
+                        }}
+                        className="p-2 rounded-lg hover:bg-white/5 cursor-pointer"
+                      >
+                        💰 {unpaidQuotes.length} unpaid accepted quotes
+                      </div>
+                    )}
+
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
 
           <button
             onClick={() => router.push("/dashboard/profile")}
@@ -126,7 +191,6 @@ export default function Dashboard() {
       {/* CONTENT */}
       <div className="p-6 max-w-6xl mx-auto space-y-8">
 
-        {/* ✅ NEW HEADER */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 
           <div>
@@ -138,7 +202,6 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* ➕ CREATE QUOTE */}
           <button
             onClick={() => router.push("/dashboard/create")}
             className="bg-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-500 transition text-sm font-medium"
@@ -158,7 +221,7 @@ export default function Dashboard() {
 
             {pending > 0 && (
               <div onClick={() => setSearch("pending")} className="cursor-pointer">
-                • {pending} {pending === 1 ? "quote is" : "quotes are"} pending
+                • {pending} pending quotes
               </div>
             )}
 
@@ -208,7 +271,7 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* QUOTES (unchanged) */}
+        {/* QUOTES */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
@@ -267,7 +330,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* LOGOUT MODAL (unchanged) */}
+      {/* LOGOUT MODAL */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/10 w-[300px] text-center">

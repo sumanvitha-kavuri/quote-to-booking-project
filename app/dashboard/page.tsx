@@ -26,6 +26,7 @@ export default function Dashboard() {
     init()
   }, [])
 
+  // 🔄 auto refresh
   useEffect(() => {
     const interval = setInterval(() => {
       init()
@@ -33,6 +34,7 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
+  // 🔥 ACTION-BASED NOTIFICATIONS
   useEffect(() => {
     if (prevQuotes.length === 0) {
       setPrevQuotes(quotes)
@@ -68,7 +70,6 @@ export default function Dashboard() {
     }
 
     setPrevQuotes(quotes)
-
   }, [quotes])
 
   async function init() {
@@ -98,16 +99,19 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  const filteredQuotes = quotes.filter(q => {
-    const text = search.toLowerCase()
+  // 🔥 FIXED SEARCH + FILTER
+  const filteredQuotes = quotes.filter((q) => {
+    const text = search.trim().toLowerCase()
 
     const matchesSearch =
-      q.customer_name?.toLowerCase().includes(text) ||
-      q.customer_email?.toLowerCase().includes(text) ||
-      q.status?.toLowerCase().includes(text)
+      !text ||
+      (q.customer_name || "").toLowerCase().includes(text) ||
+      (q.customer_email || "").toLowerCase().includes(text) ||
+      (q.status || "").toLowerCase().includes(text) ||
+      String(q.amount || "").includes(text)
 
     const matchesFilter =
-      filter === "all" ? true : q.status === filter
+      filter === "all" || q.status === filter
 
     return matchesSearch && matchesFilter
   })
@@ -245,28 +249,39 @@ export default function Dashboard() {
         </div>
 
         {/* SEARCH */}
-        <input
-          placeholder="Search..."
-          className="w-full p-2 rounded bg-white/5"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+          <input
+            placeholder="Search by name, email, status, or amount..."
+            className="w-full pl-9 py-2 rounded-lg bg-white/5 border border-white/10 outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
 
         {/* QUOTES */}
-        <div>
-          {filteredQuotes.map((q) => (
-            <div key={q.id} className="flex justify-between p-4 border-b border-white/10">
-              <div>
-                <p>{q.customer_name}</p>
-                <p className="text-sm text-gray-400">{q.customer_email}</p>
-              </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
-              <div className="flex gap-4 items-center">
-                <span>₹{q.amount}</span>
-                <span className={getStatusColor(q.status)}>{q.status}</span>
+          {filteredQuotes.length === 0 ? (
+            <p className="text-gray-400 text-sm">No matching quotes</p>
+          ) : (
+            filteredQuotes.map((q) => (
+              <div key={q.id} className="flex justify-between p-4 border-b border-white/10">
+                <div>
+                  <p>{q.customer_name}</p>
+                  <p className="text-sm text-gray-400">{q.customer_email}</p>
+                </div>
+
+                <div className="flex gap-4 items-center">
+                  <span>₹{q.amount}</span>
+                  <span className={getStatusColor(q.status)}>
+                    {q.status}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
       </div>

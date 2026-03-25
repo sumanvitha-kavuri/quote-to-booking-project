@@ -28,7 +28,6 @@ export default function Dashboard() {
 
     setUser(user)
 
-    // ✅ fetch name
     const { data: profileData } = await supabase
       .from("users")
       .select("*")
@@ -53,13 +52,12 @@ export default function Dashboard() {
   const total = quotes.length
   const pending = pendingQuotes.length
   const accepted = quotes.filter(q => q.status === "accepted").length
-  const paid = quotes.filter(q => q.status === "paid").length
 
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
 
-  // 🔍 SEARCH (FIXED)
+  // 🔍 SEARCH
   const filteredQuotes = quotes.filter(q => {
     const text = search.toLowerCase()
 
@@ -105,11 +103,18 @@ export default function Dashboard() {
           </button>
 
           <button
+            onClick={() => router.push("/dashboard/profile")}
+            className="text-gray-300 hover:text-white text-sm"
+          >
+            Profile
+          </button>
+
+          <button
             onClick={async () => {
               await supabase.auth.signOut()
               router.replace("/login")
             }}
-            className="text-gray-300 hover:text-red-400"
+            className="text-gray-300 hover:text-red-400 text-sm"
           >
             Logout
           </button>
@@ -124,7 +129,7 @@ export default function Dashboard() {
         <div>
           <h2 className="text-3xl font-semibold">Dashboard</h2>
           <p className="text-gray-400 text-sm mt-1">
-            Welcome back, {profile?.name ? profile.name : user?.email}
+            Welcome back, {profile?.name || user?.email}
           </p>
         </div>
 
@@ -216,10 +221,16 @@ export default function Dashboard() {
 
           {filteredQuotes.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-gray-400 mb-3">No quotes found</p>
-              <a href="/dashboard/quotes/new" className="text-blue-500">
-                Create your first quote →
-              </a>
+              <p className="text-gray-400 mb-2">
+                No results found for "{search}"
+              </p>
+
+              <button
+                onClick={() => setSearch("")}
+                className="text-blue-500 text-sm hover:underline"
+              >
+                Clear search
+              </button>
             </div>
           ) : (
             <div className="space-y-3">

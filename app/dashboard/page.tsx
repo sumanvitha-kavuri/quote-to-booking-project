@@ -246,7 +246,7 @@ export default function Dashboard() {
                     {/* ✅ VIEW BUTTON */}
                  <button
   onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-  className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-500 rounded-lg transition"
+  className="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition"
 >
   View
 </button>

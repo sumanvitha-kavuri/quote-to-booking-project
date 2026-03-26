@@ -136,7 +136,10 @@ export default function Dashboard() {
   const revenue = quotes
     .filter(q => q.status === "paid")
     .reduce((sum, q) => sum + (q.amount || 0), 0)
-
+const filteredQuotes = quotes.filter((q) => {
+  if (filter === "all") return true
+  return q.status === filter
+})
   function getStatusColor(status: string) {
     if (status === "paid") return "text-green-400"
     if (status === "accepted") return "text-blue-400"
@@ -293,7 +296,6 @@ export default function Dashboard() {
     ) : (
       searchResults.map((q) => (
         <div
-  id={`quote-${q.id}`}
   key={q.id}
           onClick={() => {
             setSearch("")
@@ -322,12 +324,30 @@ export default function Dashboard() {
 
         {/* QUOTES */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div className="flex gap-2 mb-4 flex-wrap">
+
+  {["all", "pending", "accepted", "paid"].map((f) => (
+    <button
+      key={f}
+      onClick={() => setFilter(f)}
+      className={`px-3 py-1 text-xs rounded-full border ${
+        filter === f
+          ? "bg-blue-600 border-blue-500"
+          : "bg-white/5 border-white/10"
+      }`}
+    >
+      {f}
+    </button>
+  ))}
+
+</div>
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
           {/* ✅ ONLY 10 */}
-          {quotes.slice(0, 10).map((q) => (
+          {filteredQuotes.slice(0, 10).map((q) => (
             <div
-              key={q.id}
+              id={`quote-${q.id}`}   // ✅ ADD HERE
+    key={q.id}
               className="flex justify-between p-4 border-b border-white/10"
             >
               <div>

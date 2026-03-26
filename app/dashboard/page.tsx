@@ -212,18 +212,31 @@ export default function Dashboard() {
       <div className="p-6 max-w-6xl mx-auto space-y-8">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-semibold">
-            Welcome, {profile?.name || user?.email?.split("@")[0]}
-          </h2>
+<div className="flex justify-between items-center">
+  <h2 className="text-3xl font-semibold">
+    Welcome, {profile?.name || user?.email?.split("@")[0]}
+  </h2>
 
-          <button
-            onClick={() => router.push("/dashboard/create")}
-            className="bg-blue-600 px-5 py-2.5 rounded-lg"
-          >
-            + Create Quote
-          </button>
-        </div>
+  <div className="flex gap-3">
+
+    {/* ✅ FIXED CREATE BUTTON */}
+    <button
+      onClick={() => router.push("/dashboard/quotes/new")}
+      className="bg-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-500"
+    >
+      + Create Quote
+    </button>
+
+    {/* ✅ NEW BUTTON */}
+    <button
+      onClick={() => router.push("/dashboard/quotes")}
+      className="bg-white/5 border border-white/10 px-5 py-2.5 rounded-lg hover:bg-white/10"
+    >
+      View All Quotes
+    </button>
+
+  </div>
+</div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

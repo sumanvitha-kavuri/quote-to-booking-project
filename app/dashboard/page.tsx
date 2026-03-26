@@ -47,6 +47,8 @@ export default function Dashboard() {
         if (q.status === "accepted") newNotifications.push("Customer accepted a quote")
         if (q.status === "rejected") newNotifications.push("Customer requested changes")
         if (q.status === "paid") newNotifications.push("Payment received")
+        if (q.status === "opened") newNotifications.push("Customer viewed the quote")
+        if (q.status === "schedule_ready") newNotifications.push("Quote is ready to schedule")
       }
     })
 
@@ -92,16 +94,25 @@ export default function Dashboard() {
     })
   }
 
-  const pendingQuotes = quotes.filter(q => q.status === "pending")
-  const acceptedQuotes = quotes.filter(q => q.status === "accepted")
-  const paidQuotes = quotes.filter(q => q.status === "paid")
-  const changeRequested = quotes.filter(q => q.status === "rejected")
-  const unpaidAccepted = quotes.filter(q => q.status === "accepted" && q.payment_status !== "paid")
+  // ✅ UPDATED LOGIC
+  const pendingQuotes = quotes.filter(
+    q => q.status === "pending" || q.status === "awaiting_response"
+  )
 
   const openedQuotes = quotes.filter(q => q.status === "opened")
 
+  const acceptedQuotes = quotes.filter(q => q.status === "accepted")
+
+  const paidQuotes = quotes.filter(q => q.status === "paid")
+
+  const changeRequested = quotes.filter(q => q.status === "rejected")
+
+  const unpaidAccepted = quotes.filter(
+    q => q.status === "accepted" && q.payment_status !== "paid"
+  )
+
   const scheduleReadyQuotes = quotes.filter(
-    q => q.status === "paid" && q.payment_status === "paid"
+    q => q.status === "schedule_ready"
   )
 
   if (loading) {
@@ -184,7 +195,9 @@ export default function Dashboard() {
           )}
 
           {openedQuotes.length > 0 && (
-            <p>• {openedQuotes.length} opened but no response</p>
+            <p className="cursor-pointer" onClick={() => handleFocus("pending")}>
+              • {openedQuotes.length} opened but no response
+            </p>
           )}
 
           {changeRequested.length > 0 && (

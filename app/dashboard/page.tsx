@@ -24,6 +24,7 @@ export default function Dashboard() {
 
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
   const [searchResults, setSearchResults] = useState<any[]>([])
+  const [showAllQuotes, setShowAllQuotes] = useState(false)
 
   useEffect(() => {
     init()
@@ -244,7 +245,8 @@ const filteredQuotes = quotes.filter((q) => {
             </button>
 
             <button
-              onClick={() => router.push("/dashboard/quotes")}
+              onClick={() => setShowAllQuotes(true)}
+              
               className="bg-white/5 border border-white/10 px-5 py-2.5 rounded-lg hover:bg-white/10"
             >
               View All Quotes
@@ -344,7 +346,7 @@ const filteredQuotes = quotes.filter((q) => {
           <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
 
           {/* ✅ ONLY 10 */}
-          {filteredQuotes.slice(0, 10).map((q) => (
+          {(showAllQuotes ? filteredQuotes : filteredQuotes.slice(0, 10)).map((q) => (
             <div
               id={`quote-${q.id}`}   // ✅ ADD HERE
     key={q.id}
@@ -366,12 +368,12 @@ const filteredQuotes = quotes.filter((q) => {
 
           {/* ✅ VIEW ALL */}
           <div className="text-center mt-4">
-            <button
-              onClick={() => router.push("/dashboard/quotes")}
-              className="text-blue-400 hover:underline"
-            >
-              View All Quotes →
-            </button>
+<button
+  onClick={() => setShowAllQuotes(true)}
+  className="text-blue-400 hover:underline"
+>
+  View All Quotes →
+</button>
           </div>
 
         </div>

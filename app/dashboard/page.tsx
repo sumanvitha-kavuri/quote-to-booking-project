@@ -18,7 +18,6 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true)
 
-  // ✅ NEW: focus state
   const [focus, setFocus] = useState<"pending" | "accepted" | "paid" | null>(null)
 
   useEffect(() => {
@@ -85,22 +84,25 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // ✅ NEW: focus handler
   function handleFocus(section: "pending" | "accepted" | "paid") {
     setFocus(section)
-
     document.getElementById(section)?.scrollIntoView({
       behavior: "smooth",
       block: "start"
     })
   }
 
-  // derived data
   const pendingQuotes = quotes.filter(q => q.status === "pending")
   const acceptedQuotes = quotes.filter(q => q.status === "accepted")
   const paidQuotes = quotes.filter(q => q.status === "paid")
   const changeRequested = quotes.filter(q => q.status === "rejected")
   const unpaidAccepted = quotes.filter(q => q.status === "accepted" && q.payment_status !== "paid")
+
+  const openedQuotes = quotes.filter(q => q.status === "opened")
+
+  const scheduleReadyQuotes = quotes.filter(
+    q => q.status === "paid" && q.payment_status === "paid"
+  )
 
   if (loading) {
     return (
@@ -115,13 +117,11 @@ export default function Dashboard() {
 
       {/* NAVBAR */}
       <div className="flex justify-between items-center px-4 md:px-6 py-5 border-b border-white/10">
-
         <h1 className="text-lg font-semibold">
           Quote <span className="text-blue-500">to Booking</span>
         </h1>
 
         <div className="flex items-center gap-4">
-
           <button onClick={() => router.push("/")}>
             <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
@@ -154,11 +154,9 @@ export default function Dashboard() {
           >
             Logout
           </button>
-
         </div>
       </div>
 
-      {/* CONTENT */}
       <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
 
         {/* HEADER */}
@@ -180,113 +178,84 @@ export default function Dashboard() {
           <h3 className="text-yellow-400 mb-2">Action Required</h3>
 
           {pendingQuotes.length > 0 && (
-            <p
-              className="cursor-pointer hover:text-yellow-300"
-              onClick={() => handleFocus("pending")}
-            >
+            <p className="cursor-pointer" onClick={() => handleFocus("pending")}>
               • {pendingQuotes.length} pending quotes
             </p>
           )}
 
+          {openedQuotes.length > 0 && (
+            <p>• {openedQuotes.length} opened but no response</p>
+          )}
+
           {changeRequested.length > 0 && (
-            <p
-              className="cursor-pointer hover:text-yellow-300"
-              onClick={() => handleFocus("pending")}
-            >
+            <p className="cursor-pointer" onClick={() => handleFocus("pending")}>
               • {changeRequested.length} change requests
             </p>
           )}
 
           {unpaidAccepted.length > 0 && (
-            <p
-              className="cursor-pointer hover:text-yellow-300"
-              onClick={() => handleFocus("accepted")}
-            >
+            <p className="cursor-pointer" onClick={() => handleFocus("accepted")}>
               • {unpaidAccepted.length} unpaid accepted quotes
             </p>
           )}
-
-          {pendingQuotes.length === 0 &&
-           changeRequested.length === 0 &&
-           unpaidAccepted.length === 0 && (
-            <p className="text-gray-400 text-sm">All caught up 🎉</p>
-          )}
         </div>
 
+        {/* EMPTY STATE */}
+        {quotes.length === 0 && (
+          <div className="bg-white/5 p-6 rounded-xl text-center">
+            <p className="text-gray-400 mb-3">No quotes yet</p>
+            <button
+              onClick={() => router.push("/dashboard/quotes/new")}
+              className="bg-blue-600 px-4 py-2 rounded"
+            >
+              Create your first quote
+            </button>
+          </div>
+        )}
+
         {/* PIPELINE */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           {/* Pending */}
-          <div
-            id="pending"
-            className={`rounded-xl p-4 transition ${
-              focus === "pending"
-                ? "bg-yellow-500/20 border border-yellow-400"
-                : "bg-white/5"
-            }`}
-          >
+          <div id="pending" className={`rounded-xl p-4 ${focus === "pending" ? "bg-yellow-500/20 border border-yellow-400" : "bg-white/5"}`}>
             <h3 className="text-yellow-400 mb-3">Pending</h3>
-
-            {pendingQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
-
             {pendingQuotes.map(q => (
-              <div
-                key={q.id}
-                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
-              >
-                <p className="text-sm">{q.customer_name}</p>
+              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
+                <p>{q.customer_name}</p>
                 <p className="text-xs text-gray-400">₹{q.amount}</p>
               </div>
             ))}
           </div>
 
           {/* Accepted */}
-          <div
-            id="accepted"
-            className={`rounded-xl p-4 transition ${
-              focus === "accepted"
-                ? "bg-blue-500/20 border border-blue-400"
-                : "bg-white/5"
-            }`}
-          >
+          <div id="accepted" className={`rounded-xl p-4 ${focus === "accepted" ? "bg-blue-500/20 border border-blue-400" : "bg-white/5"}`}>
             <h3 className="text-blue-400 mb-3">Accepted</h3>
-
-            {acceptedQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
-
             {acceptedQuotes.map(q => (
-              <div
-                key={q.id}
-                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
-              >
-                <p className="text-sm">{q.customer_name}</p>
+              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
+                <p>{q.customer_name}</p>
                 <p className="text-xs text-gray-400">₹{q.amount}</p>
               </div>
             ))}
           </div>
 
           {/* Paid */}
-          <div
-            id="paid"
-            className={`rounded-xl p-4 transition ${
-              focus === "paid"
-                ? "bg-green-500/20 border border-green-400"
-                : "bg-white/5"
-            }`}
-          >
+          <div id="paid" className={`rounded-xl p-4 ${focus === "paid" ? "bg-green-500/20 border border-green-400" : "bg-white/5"}`}>
             <h3 className="text-green-400 mb-3">Paid</h3>
-
-            {paidQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
-
             {paidQuotes.map(q => (
-              <div
-                key={q.id}
-                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
-              >
-                <p className="text-sm">{q.customer_name}</p>
+              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
+                <p>{q.customer_name}</p>
                 <p className="text-xs text-gray-400">₹{q.amount}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Ready */}
+          <div className="bg-white/5 rounded-xl p-4">
+            <h3 className="text-purple-400 mb-3">Ready</h3>
+            {scheduleReadyQuotes.map(q => (
+              <div key={q.id} className="p-3 border-b border-white/10">
+                <p>{q.customer_name}</p>
+                <p className="text-xs text-gray-400">Ready to schedule</p>
               </div>
             ))}
           </div>
@@ -296,16 +265,11 @@ export default function Dashboard() {
         {/* RECENT ACTIVITY */}
         <div className="bg-white/5 rounded-xl p-4">
           <h3 className="mb-3">Recent Activity</h3>
-
-          {notifications.length === 0 ? (
-            <p className="text-gray-400 text-sm">No activity yet</p>
-          ) : (
-            notifications.slice(0, 5).map((n, i) => (
-              <div key={i} className="p-2 border-b border-white/10 text-sm">
-                {n}
-              </div>
-            ))
-          )}
+          {notifications.slice(0, 5).map((n, i) => (
+            <div key={i} className="p-2 border-b border-white/10 text-sm">
+              {n}
+            </div>
+          ))}
         </div>
 
       </div>

@@ -18,6 +18,9 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true)
 
+  // ✅ NEW: focus state
+  const [focus, setFocus] = useState<"pending" | "accepted" | "paid" | null>(null)
+
   useEffect(() => {
     init()
   }, [])
@@ -82,9 +85,11 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // 🔥 SCROLL FUNCTION (ADDED)
-  function scrollToSection(id: string) {
-    document.getElementById(id)?.scrollIntoView({
+  // ✅ NEW: focus handler
+  function handleFocus(section: "pending" | "accepted" | "paid") {
+    setFocus(section)
+
+    document.getElementById(section)?.scrollIntoView({
       behavior: "smooth",
       block: "start"
     })
@@ -170,14 +175,14 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* 🔥 ACTION REQUIRED (FIXED) */}
+        {/* ACTION REQUIRED */}
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
           <h3 className="text-yellow-400 mb-2">Action Required</h3>
 
           {pendingQuotes.length > 0 && (
             <p
               className="cursor-pointer hover:text-yellow-300"
-              onClick={() => scrollToSection("pending")}
+              onClick={() => handleFocus("pending")}
             >
               • {pendingQuotes.length} pending quotes
             </p>
@@ -186,7 +191,7 @@ export default function Dashboard() {
           {changeRequested.length > 0 && (
             <p
               className="cursor-pointer hover:text-yellow-300"
-              onClick={() => scrollToSection("pending")}
+              onClick={() => handleFocus("pending")}
             >
               • {changeRequested.length} change requests
             </p>
@@ -195,7 +200,7 @@ export default function Dashboard() {
           {unpaidAccepted.length > 0 && (
             <p
               className="cursor-pointer hover:text-yellow-300"
-              onClick={() => scrollToSection("accepted")}
+              onClick={() => handleFocus("accepted")}
             >
               • {unpaidAccepted.length} unpaid accepted quotes
             </p>
@@ -212,7 +217,14 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           {/* Pending */}
-          <div id="pending" className="bg-white/5 rounded-xl p-4">
+          <div
+            id="pending"
+            className={`rounded-xl p-4 transition ${
+              focus === "pending"
+                ? "bg-yellow-500/20 border border-yellow-400"
+                : "bg-white/5"
+            }`}
+          >
             <h3 className="text-yellow-400 mb-3">Pending</h3>
 
             {pendingQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
@@ -230,7 +242,14 @@ export default function Dashboard() {
           </div>
 
           {/* Accepted */}
-          <div id="accepted" className="bg-white/5 rounded-xl p-4">
+          <div
+            id="accepted"
+            className={`rounded-xl p-4 transition ${
+              focus === "accepted"
+                ? "bg-blue-500/20 border border-blue-400"
+                : "bg-white/5"
+            }`}
+          >
             <h3 className="text-blue-400 mb-3">Accepted</h3>
 
             {acceptedQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
@@ -248,7 +267,14 @@ export default function Dashboard() {
           </div>
 
           {/* Paid */}
-          <div id="paid" className="bg-white/5 rounded-xl p-4">
+          <div
+            id="paid"
+            className={`rounded-xl p-4 transition ${
+              focus === "paid"
+                ? "bg-green-500/20 border border-green-400"
+                : "bg-white/5"
+            }`}
+          >
             <h3 className="text-green-400 mb-3">Paid</h3>
 
             {paidQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}

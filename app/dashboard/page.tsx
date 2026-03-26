@@ -284,6 +284,39 @@ export default function Dashboard() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          {/* 🔽 DROPDOWN (RESTORED) */}
+{showSearchDropdown && (
+  <div className="absolute w-full mt-2 bg-[#111827] border border-white/10 rounded-xl shadow-lg z-50">
+
+    {searchResults.length === 0 ? (
+      <p className="p-3 text-sm text-gray-400">No results found</p>
+    ) : (
+      searchResults.map((q) => (
+        <div
+  id={`quote-${q.id}`}
+  key={q.id}
+          onClick={() => {
+            setSearch("")
+            setShowSearchDropdown(false)
+
+            document
+              .getElementById(`quote-${q.id}`)
+              ?.scrollIntoView({ behavior: "smooth" })
+          }}
+          className="flex justify-between items-center p-3 hover:bg-white/5 cursor-pointer"
+        >
+          <div>
+            <p className="text-sm">{q.customer_name}</p>
+            <p className="text-xs text-gray-400">{q.customer_email}</p>
+          </div>
+
+          <span className="text-gray-400">→</span>
+        </div>
+      ))
+    )}
+
+  </div>
+)}
 
         </div>
 

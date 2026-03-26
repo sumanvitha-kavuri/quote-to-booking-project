@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
-import { Home, Bell, Search } from "lucide-react"
+import { Home, Bell } from "lucide-react"
 
 export default function Dashboard() {
   const router = useRouter()
@@ -15,31 +15,11 @@ export default function Dashboard() {
 
   const [notifications, setNotifications] = useState<string[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
-  const [seenNotifications, setSeenNotifications] = useState(false)
 
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState("")
-  const [filter, setFilter] = useState("all")
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
-
-  const [showSearchDropdown, setShowSearchDropdown] = useState(false)
-  const [searchResults, setSearchResults] = useState<any[]>([])
-  const [showAllQuotes, setShowAllQuotes] = useState(false)
 
   useEffect(() => {
     init()
-  }, [])
-
-  // 🔔 CLOSE NOTIFICATIONS ON OUTSIDE CLICK (FIX)
-  useEffect(() => {
-    function handleClickOutside(e: any) {
-      if (!e.target.closest(".notif-box")) {
-        setShowNotifications(false)
-      }
-    }
-
-    document.addEventListener("click", handleClickOutside)
-    return () => document.removeEventListener("click", handleClickOutside)
   }, [])
 
   // polling
@@ -65,43 +45,17 @@ export default function Dashboard() {
 
       if (old.status !== q.status) {
         if (q.status === "accepted") newNotifications.push("Customer accepted a quote")
-        if (q.status === "rejected") newNotifications.push("Customer rejected a quote")
+        if (q.status === "rejected") newNotifications.push("Customer requested changes")
         if (q.status === "paid") newNotifications.push("Payment received")
-      }
-
-      if (old.selected_option !== q.selected_option && q.selected_option) {
-        newNotifications.push("Customer selected an option")
       }
     })
 
     if (newNotifications.length > 0) {
       setNotifications(prev => [...newNotifications, ...prev])
-      setSeenNotifications(false)
     }
 
     setPrevQuotes(quotes)
   }, [quotes])
-
-  // search dropdown
-  useEffect(() => {
-    const text = search.trim().toLowerCase()
-
-    if (!text) {
-      setSearchResults([])
-      setShowSearchDropdown(false)
-      return
-    }
-
-    const results = quotes.filter((q) =>
-      (q.customer_name || "").toLowerCase().includes(text) ||
-      (q.customer_email || "").toLowerCase().includes(text) ||
-      (q.status || "").toLowerCase().includes(text) ||
-      String(q.amount || "").includes(text)
-    )
-
-    setSearchResults(results.slice(0, 5))
-    setShowSearchDropdown(true)
-  }, [search, quotes])
 
   async function init() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -130,22 +84,12 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  const total = quotes.length
-  const pending = quotes.filter(q => q.status === "pending").length
-  const accepted = quotes.filter(q => q.status === "accepted").length
-
-  const revenue = quotes
-    .filter(q => q.status === "paid")
-    .reduce((sum, q) => sum + (q.amount || 0), 0)
-const filteredQuotes = quotes.filter((q) => {
-  if (filter === "all") return true
-  return q.status === filter
-})
-  function getStatusColor(status: string) {
-    if (status === "paid") return "text-green-400"
-    if (status === "accepted") return "text-blue-400"
-    return "text-yellow-400"
-  }
+  // derived data
+  const pendingQuotes = quotes.filter(q => q.status === "pending")
+  const acceptedQuotes = quotes.filter(q => q.status === "accepted")
+  const paidQuotes = quotes.filter(q => q.status === "paid")
+  const changeRequested = quotes.filter(q => q.status === "rejected")
+  const unpaidAccepted = quotes.filter(q => q.status === "accepted" && q.payment_status !== "paid")
 
   if (loading) {
     return (
@@ -159,66 +103,44 @@ const filteredQuotes = quotes.filter((q) => {
     <main className="min-h-screen bg-[#0B0F19] text-white">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-6 py-5 border-b border-white/10">
+      <div className="flex justify-between items-center px-4 md:px-6 py-5 border-b border-white/10">
 
         <h1 className="text-lg font-semibold">
           Quote <span className="text-blue-500">to Booking</span>
         </h1>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4">
 
           <button onClick={() => router.push("/")}>
             <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
-          {/* 🔔 NOTIFICATIONS FIXED */}
-          <div className="relative notif-box">
-            <button
-              onClick={() => {
-                setShowNotifications(!showNotifications)
-                setSeenNotifications(true)
-              }}
-            >
+          {/* Notifications */}
+          <div className="relative">
+            <button onClick={() => setShowNotifications(!showNotifications)}>
               <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
-
-              {!seenNotifications && notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-1.5 rounded-full">
-                  {notifications.length}
-                </span>
-              )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-72 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-4 z-50">
-                <h3 className="text-sm text-gray-300 mb-3">Notifications</h3>
-
-                {notifications.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No new notifications</p>
-                ) : (
-                  notifications.map((n, i) => (
-                    <div key={i} className="p-2 hover:bg-white/5 rounded">
+              <div className="absolute right-0 mt-3 w-64 bg-[#111827] rounded-xl p-4 z-50">
+                {notifications.length === 0
+                  ? <p className="text-sm text-gray-400">No notifications</p>
+                  : notifications.map((n, i) => (
+                    <div key={i} className="text-sm p-2 hover:bg-white/5 rounded">
                       🔔 {n}
                     </div>
                   ))
-                )}
+                }
               </div>
             )}
           </div>
 
           <button
-            onClick={() => router.push("/dashboard/profile")}
-            className="text-gray-300 hover:text-white text-sm"
-          >
-            Profile
-          </button>
-
-          {/* ✅ LOGOUT FIXED */}
-          <button
             onClick={async () => {
               await supabase.auth.signOut()
               router.replace("/")
             }}
-            className="text-gray-300 hover:text-red-400 text-sm"
+            className="text-sm text-gray-300 hover:text-red-400"
           >
             Logout
           </button>
@@ -227,159 +149,112 @@ const filteredQuotes = quotes.filter((q) => {
       </div>
 
       {/* CONTENT */}
-      <div className="p-6 max-w-6xl mx-auto space-y-8">
+      <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-semibold">
+        <div className="flex flex-col md:flex-row justify-between gap-4">
+          <h2 className="text-2xl md:text-3xl font-semibold">
             Welcome, {profile?.name || user?.email?.split("@")[0]}
           </h2>
 
-          <div className="flex gap-3">
-
-            <button
-              onClick={() => router.push("/dashboard/quotes/new")}
-              className="bg-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-500"
-            >
-              + Create Quote
-            </button>
-
-            <button
-              onClick={() => setShowAllQuotes(true)}
-              
-              className="bg-white/5 border border-white/10 px-5 py-2.5 rounded-lg hover:bg-white/10"
-            >
-              View All Quotes
-            </button>
-
-          </div>
+          <button
+            onClick={() => router.push("/dashboard/quotes/new")}
+            className="bg-blue-600 px-4 py-2 rounded-lg"
+          >
+            + Create Quote
+          </button>
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white/5 rounded-xl">
-            <p>Total</p>
-            <p>{total}</p>
-          </div>
+        {/* ACTION REQUIRED */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+          <h3 className="text-yellow-400 mb-2">Action Required</h3>
 
-          <div className="p-4 bg-white/5 rounded-xl">
-            <p>Pending</p>
-            <p>{pending}</p>
-          </div>
+          {pendingQuotes.length > 0 && <p>• {pendingQuotes.length} pending quotes</p>}
+          {changeRequested.length > 0 && <p>• {changeRequested.length} change requests</p>}
+          {unpaidAccepted.length > 0 && <p>• {unpaidAccepted.length} unpaid accepted quotes</p>}
 
-          <div className="p-4 bg-white/5 rounded-xl">
-            <p>Accepted</p>
-            <p>{accepted}</p>
-          </div>
-
-          <div className="p-4 bg-blue-600/20 rounded-xl">
-            <p>Revenue</p>
-            <p>₹{revenue}</p>
-          </div>
+          {pendingQuotes.length === 0 &&
+           changeRequested.length === 0 &&
+           unpaidAccepted.length === 0 && (
+            <p className="text-gray-400 text-sm">All caught up 🎉</p>
+          )}
         </div>
 
-        {/* SEARCH */}
-        <div className="relative">
+        {/* PIPELINE */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+          {/* Pending */}
+          <div className="bg-white/5 rounded-xl p-4">
+            <h3 className="text-yellow-400 mb-3">Pending</h3>
 
-          <input
-            placeholder="Search..."
-            className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {/* 🔽 DROPDOWN (RESTORED) */}
-{showSearchDropdown && (
-  <div className="absolute w-full mt-2 bg-[#111827] border border-white/10 rounded-xl shadow-lg z-50">
+            {pendingQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
 
-    {searchResults.length === 0 ? (
-      <p className="p-3 text-sm text-gray-400">No results found</p>
-    ) : (
-      searchResults.map((q) => (
-        <div
-  key={q.id}
-          onClick={() => {
-            setSearch("")
-            setShowSearchDropdown(false)
-
-            document
-              .getElementById(`quote-${q.id}`)
-              ?.scrollIntoView({ behavior: "smooth" })
-          }}
-          className="flex justify-between items-center p-3 hover:bg-white/5 cursor-pointer"
-        >
-          <div>
-            <p className="text-sm">{q.customer_name}</p>
-            <p className="text-xs text-gray-400">{q.customer_email}</p>
-          </div>
-
-          <span className="text-gray-400">→</span>
-        </div>
-      ))
-    )}
-
-  </div>
-)}
-
-        </div>
-
-        {/* QUOTES */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-        <div className="flex gap-2 mb-4 flex-wrap">
-
-  {["all", "pending", "accepted", "paid"].map((f) => (
-    <button
-      key={f}
-      onClick={() => setFilter(f)}
-      className={`px-3 py-1 text-xs rounded-full border ${
-        filter === f
-          ? "bg-blue-600 border-blue-500"
-          : "bg-white/5 border-white/10"
-      }`}
-    >
-      {f}
-    </button>
-  ))}
-
-</div>
-          <h3 className="mb-4 text-gray-300">Recent Quotes</h3>
-
-          {/* ✅ ONLY 10 */}
-          {(showAllQuotes ? filteredQuotes : filteredQuotes.slice(0, 10)).map((q) => (
-            <div
-              id={`quote-${q.id}`}   // ✅ ADD HERE
-    key={q.id}
-              className="flex justify-between p-4 border-b border-white/10"
-            >
-              <div>
-                <p>{q.customer_name}</p>
-                <p className="text-sm text-gray-400">{q.customer_email}</p>
+            {pendingQuotes.map(q => (
+              <div
+                key={q.id}
+                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
+              >
+                <p className="text-sm">{q.customer_name}</p>
+                <p className="text-xs text-gray-400">₹{q.amount}</p>
               </div>
-
-              <div className="flex gap-4 items-center">
-                <span>₹{q.amount}</span>
-                <span className={getStatusColor(q.status)}>
-                  {q.status}
-                </span>
-              </div>
-            </div>
-          ))}
-
-          {/* ✅ VIEW ALL */}
-          <div className="text-center mt-4">
-<button
-  onClick={() => setShowAllQuotes(true)}
-  className="text-blue-400 hover:underline"
->
-  View All Quotes →
-</button>
+            ))}
           </div>
 
+          {/* Accepted */}
+          <div className="bg-white/5 rounded-xl p-4">
+            <h3 className="text-blue-400 mb-3">Accepted</h3>
+
+            {acceptedQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
+
+            {acceptedQuotes.map(q => (
+              <div
+                key={q.id}
+                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
+              >
+                <p className="text-sm">{q.customer_name}</p>
+                <p className="text-xs text-gray-400">₹{q.amount}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Paid */}
+          <div className="bg-white/5 rounded-xl p-4">
+            <h3 className="text-green-400 mb-3">Paid</h3>
+
+            {paidQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
+
+            {paidQuotes.map(q => (
+              <div
+                key={q.id}
+                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded"
+              >
+                <p className="text-sm">{q.customer_name}</p>
+                <p className="text-xs text-gray-400">₹{q.amount}</p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* RECENT ACTIVITY */}
+        <div className="bg-white/5 rounded-xl p-4">
+          <h3 className="mb-3">Recent Activity</h3>
+
+          {notifications.length === 0 ? (
+            <p className="text-gray-400 text-sm">No activity yet</p>
+          ) : (
+            notifications.slice(0, 5).map((n, i) => (
+              <div key={i} className="p-2 border-b border-white/10 text-sm">
+                {n}
+              </div>
+            ))
+          )}
         </div>
 
       </div>
-
     </main>
   )
 }

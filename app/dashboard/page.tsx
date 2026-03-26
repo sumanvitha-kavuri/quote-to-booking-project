@@ -22,7 +22,6 @@ export default function Dashboard() {
     init()
   }, [])
 
-  // polling
   useEffect(() => {
     const interval = setInterval(() => {
       init()
@@ -30,7 +29,6 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // notifications logic
   useEffect(() => {
     if (prevQuotes.length === 0) {
       setPrevQuotes(quotes)
@@ -84,6 +82,14 @@ export default function Dashboard() {
     setLoading(false)
   }
 
+  // 🔥 SCROLL FUNCTION (ADDED)
+  function scrollToSection(id: string) {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    })
+  }
+
   // derived data
   const pendingQuotes = quotes.filter(q => q.status === "pending")
   const acceptedQuotes = quotes.filter(q => q.status === "accepted")
@@ -115,7 +121,6 @@ export default function Dashboard() {
             <Home className="w-5 h-5 text-gray-300 hover:text-white" />
           </button>
 
-          {/* Notifications */}
           <div className="relative">
             <button onClick={() => setShowNotifications(!showNotifications)}>
               <Bell className="w-5 h-5 text-gray-300 hover:text-white" />
@@ -165,13 +170,36 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* ACTION REQUIRED */}
+        {/* 🔥 ACTION REQUIRED (FIXED) */}
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
           <h3 className="text-yellow-400 mb-2">Action Required</h3>
 
-          {pendingQuotes.length > 0 && <p>• {pendingQuotes.length} pending quotes</p>}
-          {changeRequested.length > 0 && <p>• {changeRequested.length} change requests</p>}
-          {unpaidAccepted.length > 0 && <p>• {unpaidAccepted.length} unpaid accepted quotes</p>}
+          {pendingQuotes.length > 0 && (
+            <p
+              className="cursor-pointer hover:text-yellow-300"
+              onClick={() => scrollToSection("pending")}
+            >
+              • {pendingQuotes.length} pending quotes
+            </p>
+          )}
+
+          {changeRequested.length > 0 && (
+            <p
+              className="cursor-pointer hover:text-yellow-300"
+              onClick={() => scrollToSection("pending")}
+            >
+              • {changeRequested.length} change requests
+            </p>
+          )}
+
+          {unpaidAccepted.length > 0 && (
+            <p
+              className="cursor-pointer hover:text-yellow-300"
+              onClick={() => scrollToSection("accepted")}
+            >
+              • {unpaidAccepted.length} unpaid accepted quotes
+            </p>
+          )}
 
           {pendingQuotes.length === 0 &&
            changeRequested.length === 0 &&
@@ -184,7 +212,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           {/* Pending */}
-          <div className="bg-white/5 rounded-xl p-4">
+          <div id="pending" className="bg-white/5 rounded-xl p-4">
             <h3 className="text-yellow-400 mb-3">Pending</h3>
 
             {pendingQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
@@ -202,7 +230,7 @@ export default function Dashboard() {
           </div>
 
           {/* Accepted */}
-          <div className="bg-white/5 rounded-xl p-4">
+          <div id="accepted" className="bg-white/5 rounded-xl p-4">
             <h3 className="text-blue-400 mb-3">Accepted</h3>
 
             {acceptedQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}
@@ -220,7 +248,7 @@ export default function Dashboard() {
           </div>
 
           {/* Paid */}
-          <div className="bg-white/5 rounded-xl p-4">
+          <div id="paid" className="bg-white/5 rounded-xl p-4">
             <h3 className="text-green-400 mb-3">Paid</h3>
 
             {paidQuotes.length === 0 && <p className="text-sm text-gray-400">None</p>}

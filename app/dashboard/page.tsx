@@ -18,6 +18,8 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true)
 
+  const [focus, setFocus] = useState<"pending" | "accepted" | "paid" | null>(null)
+
   useEffect(() => {
     init()
   }, [])
@@ -84,20 +86,13 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  // ===== PIPELINE CALCULATIONS =====
-  const totalPipeline = quotes.reduce((sum, q) => sum + (q.amount || 0), 0)
-
-  const moneyWaiting = quotes
-    .filter(q => q.status === "accepted" && q.payment_status !== "paid")
-    .reduce((sum, q) => sum + (q.amount || 0), 0)
-
-  const needsAction = quotes.filter(
-    q =>
-      q.status === "pending" ||
-      q.status === "awaiting_response" ||
-      q.status === "opened" ||
-      q.status === "rejected"
-  ).length
+  function handleFocus(section: "pending" | "accepted" | "paid") {
+    setFocus(section)
+    document.getElementById(section)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    })
+  }
 
   const pendingQuotes = quotes.filter(
     q => q.status === "pending" || q.status === "awaiting_response"
@@ -111,7 +106,17 @@ export default function Dashboard() {
   const unpaidAccepted = quotes.filter(
     q => q.status === "accepted" && q.payment_status !== "paid"
   )
+const totalPipelineValue = quotes.reduce((sum, q) => sum + (q.amount || 0), 0)
 
+const moneyWaiting = quotes
+  .filter(q => q.status === "accepted" && q.payment_status !== "paid")
+  .reduce((sum, q) => sum + (q.amount || 0), 0)
+
+const needsActionCount =
+  pendingQuotes.length +
+  openedQuotes.length +
+  changeRequested.length +
+  unpaidAccepted.length
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
@@ -180,47 +185,155 @@ export default function Dashboard() {
             + Create Quote
           </button>
         </div>
+{/* PIPELINE STATS */}
+<div className="grid md:grid-cols-3 gap-4">
 
-        {/* 🔥 PIPELINE CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+  {/* Total Pipeline */}
+  <div className="bg-white border rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-gray-500">Total Pipeline</p>
+    <h3 className="text-2xl font-semibold text-gray-900 mt-1">
+      ₹{totalPipelineValue.toLocaleString()}
+    </h3>
+    <p className="text-xs text-gray-400 mt-1">
+      Estimated from all quotes
+    </p>
+  </div>
 
-          <div className="bg-white p-5 rounded-2xl border shadow-sm">
-            <p className="text-sm text-gray-500">Total Pipeline</p>
-            <h3 className="text-2xl font-bold text-gray-900 mt-1">
-              ₹{totalPipeline.toLocaleString()}
-            </h3>
-            <p className="text-xs text-gray-400 mt-1">Estimated from all quotes</p>
-          </div>
+  {/* Money Waiting */}
+  <div className="bg-white border rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-gray-500">Money Waiting</p>
+    <h3 className="text-2xl font-semibold text-yellow-600 mt-1">
+      ₹{moneyWaiting.toLocaleString()}
+    </h3>
+    <p className="text-xs text-gray-400 mt-1">
+      Accepted but not paid
+    </p>
+  </div>
 
-          <div className="bg-white p-5 rounded-2xl border shadow-sm">
-            <p className="text-sm text-gray-500">Money Waiting</p>
-            <h3 className="text-2xl font-bold text-yellow-600 mt-1">
-              ₹{moneyWaiting.toLocaleString()}
-            </h3>
-            <p className="text-xs text-gray-400 mt-1">Accepted but not paid</p>
-          </div>
+  {/* Needs Action */}
+  <div className="bg-white border rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-gray-500">Needs Action</p>
+    <h3 className="text-2xl font-semibold text-red-500 mt-1">
+      {needsActionCount} quotes
+    </h3>
+    <p className="text-xs text-gray-400 mt-1">
+      Follow-ups required
+    </p>
+  </div>
 
-          <div className="bg-white p-5 rounded-2xl border shadow-sm">
-            <p className="text-sm text-gray-500">Needs Action</p>
-            <h3 className="text-2xl font-bold text-red-500 mt-1">
-              {needsAction} quotes
-            </h3>
-            <p className="text-xs text-gray-400 mt-1">Follow-ups required</p>
-          </div>
-
-        </div>
-
+</div>
         {/* ACTION REQUIRED */}
         <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-5 shadow-sm">
           <h3 className="text-yellow-800 font-semibold mb-3">Action Required</h3>
 
-          {pendingQuotes.length > 0 && <p>• {pendingQuotes.length} pending quotes</p>}
-          {openedQuotes.length > 0 && <p>• {openedQuotes.length} opened but no response</p>}
-          {changeRequested.length > 0 && <p>• {changeRequested.length} change requests</p>}
-          {unpaidAccepted.length > 0 && <p>• {unpaidAccepted.length} unpaid accepted quotes</p>}
+          {pendingQuotes.length > 0 && (
+            <p className="cursor-pointer hover:underline">
+              • {pendingQuotes.length} pending quotes
+            </p>
+          )}
+
+          {openedQuotes.length > 0 && (
+            <p className="cursor-pointer hover:underline">
+              • {openedQuotes.length} opened but no response
+            </p>
+          )}
+
+          {changeRequested.length > 0 && (
+            <p className="cursor-pointer hover:underline">
+              • {changeRequested.length} change requests
+            </p>
+          )}
+
+          {unpaidAccepted.length > 0 && (
+            <p className="cursor-pointer hover:underline">
+              • {unpaidAccepted.length} unpaid accepted quotes
+            </p>
+          )}
         </div>
 
-        {/* (KEEP YOUR EXISTING KANBAN + RECENT ACTIVITY AS IS BELOW) */}
+        {/* KANBAN */}
+        <div className="overflow-x-auto pb-4">
+          <div className="flex gap-5 min-w-max">
+
+            {[
+              { title: "Sent", key: "sent", color: "text-gray-500" },
+              { title: "Opened", key: "opened", color: "text-blue-600" },
+              { title: "Awaiting", key: "awaiting_response", color: "text-yellow-600" },
+              { title: "Accepted", key: "accepted", color: "text-green-600" },
+              { title: "Paid", key: "paid", color: "text-emerald-600" },
+              { title: "Ready", key: "schedule_ready", color: "text-purple-600" },
+              { title: "Lost", key: "rejected", color: "text-red-500" },
+            ].map((col) => {
+
+              const columnQuotes = quotes.filter(q => {
+                if (col.key === "awaiting_response") {
+                  return q.status === "pending" || q.status === "awaiting_response"
+                }
+                return q.status === col.key
+              })
+
+              return (
+                <div
+                  key={col.key}
+                  className="w-[270px] bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all"
+                >
+                  <h3 className={`mb-4 font-semibold ${col.color}`}>
+                    {col.title} ({columnQuotes.length})
+                  </h3>
+
+                  <div className="space-y-3">
+
+                    {columnQuotes.map((q) => (
+                      <div
+                        key={q.id}
+                        onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                        className="bg-white border border-gray-200 p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all"
+                      >
+                        <p className="font-semibold text-gray-900 text-sm">
+                          {q.customer_name}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          {q.customer_email}
+                        </p>
+
+                        <p className="text-base mt-1 font-semibold text-gray-900">
+                          ₹{q.amount}
+                        </p>
+
+                        <p className="text-xs text-gray-500 mt-2">
+                          {q.job_description || "Quote"}
+                        </p>
+
+                        <span className="inline-block text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 mt-2 border border-gray-200">
+                          {q.status}
+                        </span>
+                      </div>
+                    ))}
+
+                    {columnQuotes.length === 0 && (
+                      <p className="text-xs text-gray-400">
+                        No items
+                      </p>
+                    )}
+
+                  </div>
+                </div>
+              )
+            })}
+
+          </div>
+        </div>
+
+        {/* RECENT ACTIVITY */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <h3 className="mb-3 font-semibold">Recent Activity</h3>
+          {notifications.slice(0, 5).map((n, i) => (
+            <div key={i} className="p-2 border-b text-sm text-gray-600">
+              {n}
+            </div>
+          ))}
+        </div>
 
       </div>
     </main>

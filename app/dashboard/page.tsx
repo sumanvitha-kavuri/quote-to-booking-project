@@ -186,8 +186,45 @@ function timeAgo(date: string) {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
+  <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
+      {/* SIDEBAR */}
+<div className="w-64 bg-white border-r p-5 flex flex-col justify-between">
 
+  <div>
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+        {profile?.name?.[0] || "U"}
+      </div>
+      <div>
+        <p className="text-sm font-semibold">
+          {profile?.name || "User"}
+        </p>
+        <p className="text-xs text-gray-500">
+          {user?.email}
+        </p>
+      </div>
+    </div>
+
+    <div className="space-y-2 text-sm">
+      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📊 Dashboard</button>
+      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📁 All Quotes</button>
+      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">⚠️ Needs Action</button>
+      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📉 Lost Quotes</button>
+      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">🔔 Activity</button>
+    </div>
+  </div>
+
+  <button
+    onClick={async () => {
+      await supabase.auth.signOut()
+      router.replace("/")
+    }}
+    className="text-sm text-gray-500 hover:text-red-500"
+  >
+    Logout
+  </button>
+
+</div>
       {/* NAVBAR */}
       <div className="flex justify-between items-center px-4 md:px-6 py-4 bg-white border-b shadow-sm">
         <h1 className="text-lg font-semibold">
@@ -230,8 +267,7 @@ function timeAgo(date: string) {
         </div>
       </div>
 
-      <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-
+<div className="flex-1 p-4 md:p-6 max-w-6xl mx-auto space-y-6">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between gap-4">
           <h2 className="text-3xl font-semibold text-gray-900">
@@ -456,6 +492,6 @@ function timeAgo(date: string) {
         </div>
 
       </div>
-    </main>
+    </div>
   )
 }

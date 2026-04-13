@@ -253,9 +253,6 @@ function timeAgo(date: string) {
 
 </div>
 
-
-
-</div>
   {/* RIGHT SIDE (NAVBAR + CONTENT) */}
   <div className="flex-1 flex flex-col">
       {/* NAVBAR */}
@@ -287,16 +284,6 @@ function timeAgo(date: string) {
               </div>
             )}
           </div>
-
-          <button
-            onClick={async () => {
-              await supabase.auth.signOut()
-              router.replace("/")
-            }}
-            className="text-sm text-gray-500 hover:text-red-500"
-          >
-            Logout
-          </button>
         </div>
       </div>
 

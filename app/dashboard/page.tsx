@@ -190,56 +190,56 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f9fafb] text-[#6b7280]">
-        Loading Dashboard...
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
+        Loading...
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-[#f3f4f6] overflow-hidden text-[#111827]">
-      {/* SIDEBAR - Upgraded Padding, Theme and Increased Section Size */}
-      <div className="w-80 bg-[#111827] border-r border-[#1f2937] h-screen px-6 py-8 flex flex-col justify-between">
+    <div className="flex h-screen bg-gray-50 overflow-hidden text-slate-900">
+      {/* SIDEBAR - Clean White with Large Spacing */}
+      <div className="w-80 bg-white border-r border-slate-200 h-screen px-6 py-8 flex flex-col justify-between">
         <div>
-          {/* PROFILE - Professional Slate Aesthetics */}
-          <div className="flex items-center gap-4 mb-12 p-3 rounded-2xl bg-[#1f2937] border border-[#1f2937]">
-            <div className="w-12 h-12 rounded-full bg-[#374151] flex items-center justify-center text-white font-bold text-lg">
+          {/* PROFILE - Minimal Grey Style */}
+          <div className="flex items-center gap-4 mb-12 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-lg">
               {profile?.name?.[0] || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-white truncate">
+              <p className="text-sm font-bold text-slate-900 truncate">
                 {profile?.name || "User Name"}
               </p>
-              <p className="text-xs text-[#9ca3af] truncate">
+              <p className="text-xs text-slate-500 truncate">
                 {user?.email}
               </p>
             </div>
           </div>
 
-          {/* NAV - Larger spacing and sleek corporate tones */}
+          {/* NAV - Professional Spacing */}
           <div className="space-y-2">
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-[#374151] text-white text-sm font-medium shadow-lg shadow-[#374151]/10 transition-all">
-              <LayoutDashboard className="w-5 h-5 text-[#9ca3af]" />
+            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow-md transition-all">
+              <LayoutDashboard className="w-5 h-5" />
               Dashboard
             </button>
 
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-white hover:bg-[#1f2937] text-sm transition-all">
-              <FileText className="w-5 h-5 text-[#9ca3af]" />
+            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
+              <FileText className="w-5 h-5" />
               All Quotes
             </button>
 
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-white hover:bg-[#1f2937] text-sm transition-all">
-              <AlertCircle className="w-5 h-5 text-[#9ca3af]" />
+            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
+              <AlertCircle className="w-5 h-5" />
               Needs Action
             </button>
 
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-white hover:bg-[#1f2937] text-sm transition-all">
-              <BarChart3 className="w-5 h-5 text-[#9ca3af]" />
+            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
+              <BarChart3 className="w-5 h-5" />
               Lost Quotes
             </button>
 
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-white hover:bg-[#1f2937] text-sm transition-all">
-              <Bell className="w-5 h-5 text-[#9ca3af]" />
+            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
+              <Bell className="w-5 h-5" />
               Activity
             </button>
           </div>
@@ -250,7 +250,7 @@ export default function Dashboard() {
             await supabase.auth.signOut()
             router.replace("/")
           }}
-          className="w-full text-left px-5 py-3.5 rounded-xl text-sm font-medium text-[#9ca3af] hover:bg-[#1f2937] hover:text-white transition-all"
+          className="w-full text-left px-5 py-3.5 rounded-xl text-sm font-medium text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all"
         >
           Logout
         </button>
@@ -259,27 +259,27 @@ export default function Dashboard() {
       {/* RIGHT SIDE */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* NAVBAR */}
-        <div className="flex justify-between items-center px-8 py-5 bg-white border-b border-[#e5e7eb]">
-          <h1 className="text-xl font-bold text-[#111827]">
-            Quotes <span className="text-[#6b7280] font-medium">&</span> Booking
+        <div className="flex justify-between items-center px-8 py-5 bg-white border-b border-slate-200">
+          <h1 className="text-xl font-bold">
+            Quotes <span className="text-blue-600">to Booking</span>
           </h1>
 
           <div className="flex items-center gap-5">
-            <button onClick={() => router.push("/")} className="p-2 hover:bg-[#f3f4f6] rounded-full transition-all">
-              <Home className="w-5 h-5 text-[#111827]" />
+            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-100 rounded-full">
+              <Home className="w-5 h-5 text-slate-500" />
             </button>
 
             <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-[#f3f4f6] rounded-full transition-all">
-                <Bell className="w-5 h-5 text-[#111827]" />
+              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-100 rounded-full">
+                <Bell className="w-5 h-5 text-slate-500" />
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-4 w-72 bg-white border border-[#e5e7eb] rounded-2xl shadow-2xl p-4 z-50">
+                <div className="absolute right-0 mt-4 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-50">
                   {notifications.length === 0
-                    ? <p className="text-sm text-[#9ca3af] text-center py-2">No notifications</p>
+                    ? <p className="text-sm text-slate-500 text-center py-2">No notifications</p>
                     : notifications.map((n, i) => (
-                      <div key={i} className="text-sm p-3 hover:bg-[#f3f4f6] rounded-xl text-[#111827] border-b border-[#e5e7eb] last:border-0">
+                      <div key={i} className="text-sm p-3 hover:bg-slate-50 rounded-xl border-b last:border-0">
                         {n}
                       </div>
                     ))
@@ -291,53 +291,50 @@ export default function Dashboard() {
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 lg:p-12">
-          <div className="max-w-6xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-              <div>
-                <p className="text-[#6b7280] text-sm font-medium uppercase tracking-widest mb-1">Overview</p>
-                <h2 className="text-4xl font-bold text-[#111827]">
-                  Welcome back, {profile?.name || user?.email?.split("@")[0]}
-                </h2>
-              </div>
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <h2 className="text-3xl font-bold text-slate-900">
+                Welcome, {profile?.name || user?.email?.split("@")[0]}
+              </h2>
               <button
                 onClick={() => router.push("/dashboard/quotes/new")}
-                className="bg-[#111827] hover:bg-[#1f2937] text-white px-7 py-3 rounded-xl shadow-lg shadow-[#111827]/20 font-bold transition-all"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all"
               >
                 + New Quote
               </button>
             </div>
 
-            {/* PIPELINE STATS - Soft Corporate Gray Backgrounds */}
+            {/* PIPELINE STATS - Different Shades */}
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white border border-[#e5e7eb] rounded-3xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Total Pipeline</p>
-                <h3 className="text-3xl font-bold text-[#111827] mt-2">
+              <div className="bg-blue-50 border border-blue-100 rounded-3xl p-7">
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">Total Pipeline</p>
+                <h3 className="text-3xl font-black text-blue-900 mt-2">
                   ₹{totalPipelineValue.toLocaleString()}
                 </h3>
               </div>
-              <div className="bg-white border border-[#e5e7eb] rounded-3xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Money Waiting</p>
-                <h3 className="text-3xl font-bold text-[#374151] mt-2">
+              <div className="bg-amber-50 border border-amber-100 rounded-3xl p-7">
+                <p className="text-xs font-bold text-amber-600 uppercase tracking-wider">Money Waiting</p>
+                <h3 className="text-3xl font-black text-amber-900 mt-2">
                   ₹{moneyWaiting.toLocaleString()}
                 </h3>
               </div>
-              <div className="bg-white border border-[#e5e7eb] rounded-3xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-[#6b7280] uppercase tracking-wider">Needs Action</p>
-                <h3 className="text-3xl font-bold text-[#dc2626] mt-2">
-                  {needsActionCount} <span className="text-lg font-medium opacity-60">Quotes</span>
+              <div className="bg-red-50 border border-red-100 rounded-3xl p-7">
+                <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Needs Action</p>
+                <h3 className="text-3xl font-black text-red-900 mt-2">
+                  {needsActionCount} Quotes
                 </h3>
               </div>
             </div>
 
-            {/* ACTION REQUIRED - Minimal High Contrast Alert */}
-            <div className="bg-white border border-[#e5e7eb] rounded-3xl p-7 shadow-inner">
-              <h3 className="text-[#111827] font-bold mb-4 text-xs uppercase tracking-[0.2em]">Priority Follow-ups</h3>
-              <div className="space-y-3">
-                {pendingQuotes.length > 0 && <p className="text-sm text-[#6b7280] flex items-center gap-2 cursor-pointer hover:text-[#111827]">• <span>{pendingQuotes.length} pending quotes</span></p>}
-                {openedQuotes.length > 0 && <p className="text-sm text-[#6b7280] flex items-center gap-2 cursor-pointer hover:text-[#111827]">• <span>{openedQuotes.length} opened (no response)</span></p>}
-                {changeRequested.length > 0 && <p className="text-sm text-[#6b7280] flex items-center gap-2 cursor-pointer hover:text-[#111827]">• <span>{changeRequested.length} change requests</span></p>}
-                {unpaidAccepted.length > 0 && <p className="text-sm text-[#6b7280] flex items-center gap-2 cursor-pointer hover:text-[#111827]">• <span>{unpaidAccepted.length} unpaid accepted quotes</span></p>}
+            {/* ACTION REQUIRED - Pale Yellow */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-3xl p-7 shadow-sm">
+              <h3 className="text-yellow-800 font-bold mb-4 text-sm uppercase tracking-widest">⚠️ Action Required</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-yellow-900 font-medium">
+                {pendingQuotes.length > 0 && <p>• {pendingQuotes.length} pending quotes</p>}
+                {openedQuotes.length > 0 && <p>• {openedQuotes.length} opened (no response)</p>}
+                {changeRequested.length > 0 && <p>• {changeRequested.length} change requests</p>}
+                {unpaidAccepted.length > 0 && <p>• {unpaidAccepted.length} unpaid accepted quotes</p>}
               </div>
             </div>
 
@@ -345,11 +342,11 @@ export default function Dashboard() {
             <div className="overflow-x-auto pb-6">
               <div className="flex gap-6 min-w-max">
                 {[
-                  { title: "Opened", key: "opened", color: "text-[#1f2937]" },
-                  { title: "Awaiting", key: "awaiting_response", color: "text-[#374151]" },
-                  { title: "Accepted", key: "accepted", color: "text-[#4b5563]" },
-                  { title: "Paid", key: "paid", color: "text-[#6b7280]" },
-                  { title: "Ready", key: "schedule_ready", color: "text-[#9ca3af]" },
+                  { title: "OPENED", key: "opened", color: "text-blue-600", bg: "bg-blue-100" },
+                  { title: "AWAITING", key: "awaiting_response", color: "text-amber-600", bg: "bg-amber-100" },
+                  { title: "ACCEPTED", key: "accepted", color: "text-green-600", bg: "bg-green-100" },
+                  { title: "PAID", key: "paid", color: "text-emerald-600", bg: "bg-emerald-100" },
+                  { title: "READY", key: "schedule_ready", color: "text-purple-600", bg: "bg-purple-100" },
                 ].map((col) => {
                   const columnQuotes = quotes.filter(q => {
                     if (col.key === "awaiting_response") return q.status === "pending" || q.status === "awaiting_response"
@@ -357,11 +354,17 @@ export default function Dashboard() {
                   })
 
                   return (
-                    <div key={col.key} className="w-[280px] bg-white border border-[#e5e7eb] rounded-[2rem] p-5">
-                      <h3 className={`mb-5 font-bold text-sm flex items-center justify-between px-2 ${col.color}`}>
-                        {col.title} 
-                        <span className="text-[10px] bg-[#f9fafb] border border-[#e5e7eb] px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
-                      </h3>
+                    <div key={col.key} className="w-[300px]">
+                      {/* Highlighted Big Headings */}
+                      <div className={`flex items-center justify-between mb-5 px-4 py-3 rounded-2xl ${col.bg}`}>
+                        <h3 className={`font-black text-lg ${col.color}`}>
+                          {col.title}
+                        </h3>
+                        <span className={`text-sm font-bold px-2.5 py-1 rounded-full bg-white ${col.color}`}>
+                          {columnQuotes.length}
+                        </span>
+                      </div>
+
                       <div className="space-y-4">
                         {columnQuotes.map((q) => {
                           const urgency = getUrgency(q)
@@ -369,25 +372,27 @@ export default function Dashboard() {
                             <div
                               key={q.id}
                               onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                              className={`bg-white border p-5 rounded-2xl cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300
-                                ${urgency === "high" ? "border-[#dc2626]/30 bg-[#fef2f2]" : "border-[#e5e7eb]"}
+                              className={`bg-slate-50 border p-5 rounded-2xl cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300
+                                ${urgency === "high" ? "border-red-300 ring-1 ring-red-100" : "border-slate-200"}
                               `}
                             >
-                              <div className="flex justify-between items-start mb-2">
-                                <p className="font-bold text-[#111827] text-sm truncate">{q.customer_name}</p>
-                                {urgency === "high" && <div className="w-2 h-2 rounded-full bg-[#dc2626] shadow-sm animate-pulse" />}
+                              <div className="flex justify-between items-start">
+                                <p className="font-bold text-slate-900 text-sm">{q.customer_name}</p>
+                                {urgency === "high" && <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />}
                               </div>
-                              <p className="text-[10px] text-[#6b7280] truncate mb-3 italic">{q.customer_email}</p>
-                              <p className="text-lg font-bold text-[#111827]">₹{q.amount?.toLocaleString()}</p>
+                              <p className="text-xs text-slate-500 truncate mt-1">{q.customer_email}</p>
                               
-                              <div className="mt-4 pt-4 border-t border-[#f3f4f6] flex flex-col gap-2">
-                                <p className="text-[10px] text-[#6b7280] font-medium">Activity: {timeAgo(q.updated_at || q.created_at)}</p>
-                                <span className="text-[9px] px-2 py-1 rounded-lg bg-[#f3f4f6] text-[#1f2937] font-bold uppercase tracking-wider text-center">{getSmartMessage(q)}</span>
+                              <p className="text-xl font-black text-slate-900 mt-4">₹{q.amount?.toLocaleString()}</p>
+                              
+                              <div className="mt-4 pt-4 border-t border-slate-200 flex flex-col gap-2">
+                                <p className="text-[10px] text-slate-400 font-bold uppercase">Last Active: {timeAgo(q.updated_at || q.created_at)}</p>
+                                <span className="text-[10px] px-2 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-center">
+                                  {getSmartMessage(q)}
+                                </span>
                               </div>
                             </div>
                           )
                         })}
-                        {columnQuotes.length === 0 && <p className="text-[10px] text-[#6b7280] text-center italic py-4">No items active</p>}
                       </div>
                     </div>
                   )

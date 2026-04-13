@@ -126,6 +126,38 @@ const needsActionCount =
   if (q.status === "schedule_ready") return "Confirm schedule"
   return "No action"
 }
+
+function getSmartMessage(q: any) {
+  const last = new Date(q.updated_at || q.created_at).getTime()
+  const now = Date.now()
+  const diffHours = (now - last) / (1000 * 60 * 60)
+  const days = Math.floor(diffHours / 24)
+
+  if (q.status === "pending" || q.status === "opened") {
+    if (days >= 2) return `Follow-up overdue by ${days}d`
+    if (days >= 1) return `Follow up today`
+    return "Recently contacted"
+  }
+
+  if (q.status === "accepted" && q.payment_status !== "paid") {
+    if (days >= 2) return `Payment overdue by ${days}d`
+    return "Waiting for payment"
+  }
+
+  if (q.status === "rejected") {
+    return "Revise and resend"
+  }
+
+  if (q.status === "paid") {
+    return "Ready to schedule"
+  }
+
+  if (q.status === "schedule_ready") {
+    return "Confirm schedule"
+  }
+
+  return "No action needed"
+}
 function getUrgency(q: any) {
   const last = new Date(q.updated_at || q.created_at).getTime()
   const now = new Date().getTime()
@@ -352,7 +384,7 @@ function timeAgo(date: string) {
 <div className="mt-3 flex gap-2 flex-wrap">
 
   <span className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">
-    {getNextAction(q)}
+  {getSmartMessage(q)}
   </span>
 
   {/* QUICK ACTION BUTTON */}

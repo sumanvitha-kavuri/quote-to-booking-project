@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
-import { Home, Bell } from "lucide-react"
+import { 
+  Home, 
+  Bell, 
+  LayoutDashboard, 
+  FileText, 
+  AlertCircle, 
+  BarChart3 
+} from "lucide-react"
 
 export default function Dashboard() {
   const router = useRouter()
@@ -106,77 +113,81 @@ export default function Dashboard() {
   const unpaidAccepted = quotes.filter(
     q => q.status === "accepted" && q.payment_status !== "paid"
   )
-const totalPipelineValue = quotes.reduce((sum, q) => sum + (q.amount || 0), 0)
+  const totalPipelineValue = quotes.reduce((sum, q) => sum + (q.amount || 0), 0)
 
-const moneyWaiting = quotes
-  .filter(q => q.status === "accepted" && q.payment_status !== "paid")
-  .reduce((sum, q) => sum + (q.amount || 0), 0)
+  const moneyWaiting = quotes
+    .filter(q => q.status === "accepted" && q.payment_status !== "paid")
+    .reduce((sum, q) => sum + (q.amount || 0), 0)
 
-const needsActionCount =
-  pendingQuotes.length +
-  openedQuotes.length +
-  changeRequested.length +
-  unpaidAccepted.length
+  const needsActionCount =
+    pendingQuotes.length +
+    openedQuotes.length +
+    changeRequested.length +
+    unpaidAccepted.length
+
   function getNextAction(q: any) {
-  if (q.status === "pending") return "Send follow-up"
-  if (q.status === "opened") return "Follow up (customer viewed)"
-  if (q.status === "accepted" && q.payment_status !== "paid") return "Collect payment"
-  if (q.status === "rejected") return "Revise quote"
-  if (q.status === "paid") return "Schedule job"
-  if (q.status === "schedule_ready") return "Confirm schedule"
-  return "No action"
-}
-
-function getSmartMessage(q: any) {
-  const last = new Date(q.updated_at || q.created_at).getTime()
-  const now = Date.now()
-  const diffHours = (now - last) / (1000 * 60 * 60)
-  const days = Math.floor(diffHours / 24)
-
-  if (q.status === "pending" || q.status === "opened") {
-    if (days >= 2) return `Follow-up overdue by ${days}d`
-    if (days >= 1) return `Follow up today`
-    return "Recently contacted"
+    if (q.status === "pending") return "Send follow-up"
+    if (q.status === "opened") return "Follow up (customer viewed)"
+    if (q.status === "accepted" && q.payment_status !== "paid") return "Collect payment"
+    if (q.status === "rejected") return "Revise quote"
+    if (q.status === "paid") return "Schedule job"
+    if (q.status === "schedule_ready") return "Confirm schedule"
+    return "No action"
   }
 
-  if (q.status === "accepted" && q.payment_status !== "paid") {
-    if (days >= 2) return `Payment overdue by ${days}d`
-    return "Waiting for payment"
+  function getSmartMessage(q: any) {
+    const last = new Date(q.updated_at || q.created_at).getTime()
+    const now = Date.now()
+    const diffHours = (now - last) / (1000 * 60 * 60)
+    const days = Math.floor(diffHours / 24)
+
+    if (q.status === "pending" || q.status === "opened") {
+      if (days >= 2) return `Follow-up overdue by ${days}d`
+      if (days >= 1) return `Follow up today`
+      return "Recently contacted"
+    }
+
+    if (q.status === "accepted" && q.payment_status !== "paid") {
+      if (days >= 2) return `Payment overdue by ${days}d`
+      return "Waiting for payment"
+    }
+
+    if (q.status === "rejected") {
+      return "Revise and resend"
+    }
+
+    if (q.status === "paid") {
+      return "Ready to schedule"
+    }
+
+    if (q.status === "schedule_ready") {
+      return "Confirm schedule"
+    }
+
+    return "No action needed"
   }
 
-  if (q.status === "rejected") {
-    return "Revise and resend"
+  function getUrgency(q: any) {
+    const last = new Date(q.updated_at || q.created_at).getTime()
+    const now = new Date().getTime()
+    const diffHours = (now - last) / (1000 * 60 * 60)
+
+    if (diffHours > 48) return "high"
+    if (diffHours > 24) return "medium"
+    return "low"
   }
 
-  if (q.status === "paid") {
-    return "Ready to schedule"
+  function timeAgo(date: string) {
+    const diff = Date.now() - new Date(date).getTime()
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+
+    if (hours < 1) return "Just now"
+    if (hours < 24) return `${hours}h ago`
+
+    const days = Math.floor(hours / 24)
+    return `${days}d ago`
   }
 
-  if (q.status === "schedule_ready") {
-    return "Confirm schedule"
-  }
-
-  return "No action needed"
-}
-function getUrgency(q: any) {
-  const last = new Date(q.updated_at || q.created_at).getTime()
-  const now = new Date().getTime()
-  const diffHours = (now - last) / (1000 * 60 * 60)
-
-  if (diffHours > 48) return "high"
-  if (diffHours > 24) return "medium"
-  return "low"
-}
-function timeAgo(date: string) {
-  const diff = Date.now() - new Date(date).getTime()
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-
-  if (hours < 1) return "Just now"
-  if (hours < 24) return `${hours}h ago`
-
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
-}
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
@@ -186,323 +197,199 @@ function timeAgo(date: string) {
   }
 
   return (
-<div className="flex h-screen bg-gray-100">
-  {/* SIDEBAR */ }
-<div className="w-72 bg-white border-r h-screen px-5 py-6 flex flex-col justify-between">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* SIDEBAR */}
+      <div className="w-72 bg-white border-r h-screen px-5 py-6 flex flex-col justify-between">
+        <div>
+          {/* PROFILE BLOCK - Premium Gradient + Truncation */}
+          <div className="flex items-center gap-3 mb-10">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-700 font-semibold">
+              {profile?.name?.[0] || "U"}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {profile?.name || "User Name"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.email}
+              </p>
+            </div>
+          </div>
 
-  {/* TOP */}
-  <div>
-
-    {/* BRAND */}
-    <h1 className="text-xl font-semibold mb-8">
-      Quote <span className="text-blue-600">Flow</span>
-    </h1>
-
-    {/* PROFILE */}
-    <div className="flex items-center gap-4 mb-10">
-      <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold text-lg">
-        {profile?.name?.[0] || "U"}
-      </div>
-
-      <div>
-        <p className="text-base font-semibold text-gray-900 leading-none">
-          {profile?.name || "User Name"}
-        </p>
-        <p className="text-xs text-gray-500 mt-1">
-          {user?.email}
-        </p>
-      </div>
-    </div>
-
-    {/* NAV */}
-    <div className="space-y-2">
-
-      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm">
-        📊 Dashboard
-      </button>
-
-      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
-        📁 All Quotes
-      </button>
-
-      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
-        ⚠️ Needs Action
-      </button>
-
-      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
-        📉 Lost Quotes
-      </button>
-
-      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
-        🔔 Activity
-      </button>
-
-    </div>
-  </div>
-
-  {/* BOTTOM */}
-  <button
-    onClick={async () => {
-      await supabase.auth.signOut()
-      router.replace("/")
-    }}
-    className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-red-50 hover:text-red-600"
-  >
-    Logout
-  </button>
-
-</div>
-
-  {/* RIGHT SIDE (NAVBAR + CONTENT) */}
-  <div className="flex-1 flex flex-col">
-      {/* NAVBAR */}
-      <div className="flex justify-between items-center px-4 md:px-6 py-4 bg-white border-b shadow-sm">
-        <h1 className="text-lg font-semibold">
-          Quote <span className="text-blue-600">to Booking</span>
-        </h1>
-
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.push("/")}>
-            <Home className="w-5 h-5 text-gray-500 hover:text-gray-800" />
-          </button>
-
-          <div className="relative">
-            <button onClick={() => setShowNotifications(!showNotifications)}>
-              <Bell className="w-5 h-5 text-gray-500 hover:text-gray-800" />
+          {/* NAV BUTTONS - Professional Icons + No Emojis */}
+          <div className="space-y-1">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-sm font-medium">
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
             </button>
 
-            {showNotifications && (
-              <div className="absolute right-0 mt-3 w-64 bg-white border rounded-xl shadow-lg p-4 z-50">
-                {notifications.length === 0
-                  ? <p className="text-sm text-gray-500">No notifications</p>
-                  : notifications.map((n, i) => (
-                    <div key={i} className="text-sm p-2 hover:bg-gray-100 rounded">
-                      🔔 {n}
-                    </div>
-                  ))
-                }
-              </div>
-            )}
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
+              <FileText className="w-4 h-4" />
+              All Quotes
+            </button>
+
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
+              <AlertCircle className="w-4 h-4" />
+              Needs Action
+            </button>
+
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
+              <BarChart3 className="w-4 h-4" />
+              Lost Quotes
+            </button>
+
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
+              <Bell className="w-4 h-4" />
+              Activity
+            </button>
           </div>
         </div>
+
+        <button
+          onClick={async () => {
+            await supabase.auth.signOut()
+            router.replace("/")
+          }}
+          className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-red-50 hover:text-red-600"
+        >
+          Logout
+        </button>
       </div>
 
-<div className="flex-1 overflow-y-auto p-6"> 
-  <div className="max-w-6xl mx-auto space-y-6">
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row justify-between gap-4">
-          <h2 className="text-3xl font-semibold text-gray-900">
-            Welcome, {profile?.name || user?.email?.split("@")[0]}
-          </h2>
+      {/* RIGHT SIDE */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* NAVBAR */}
+        <div className="flex justify-between items-center px-4 md:px-6 py-4 bg-white border-b shadow-sm">
+          <h1 className="text-lg font-semibold text-gray-900">
+            Quote <span className="text-blue-600">to Booking</span>
+          </h1>
 
-          <button
-            onClick={() => router.push("/dashboard/quotes/new")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl shadow-sm"
-          >
-            + Create Quote
-          </button>
-        </div>
-{/* PIPELINE STATS */}
-<div className="grid md:grid-cols-3 gap-4">
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.push("/")}>
+              <Home className="w-5 h-5 text-gray-500 hover:text-gray-800" />
+            </button>
 
-  {/* Total Pipeline */}
-  <div className="bg-white border rounded-2xl p-5 shadow-sm">
-    <p className="text-sm text-gray-500">Total Pipeline</p>
-    <h3 className="text-2xl font-semibold text-gray-900 mt-1">
-      ₹{totalPipelineValue.toLocaleString()}
-    </h3>
-    <p className="text-xs text-gray-400 mt-1">
-      Estimated from all quotes
-    </p>
-  </div>
+            <div className="relative">
+              <button onClick={() => setShowNotifications(!showNotifications)}>
+                <Bell className="w-5 h-5 text-gray-500 hover:text-gray-800" />
+              </button>
 
-  {/* Money Waiting */}
-  <div className="bg-white border rounded-2xl p-5 shadow-sm">
-    <p className="text-sm text-gray-500">Money Waiting</p>
-    <h3 className="text-2xl font-semibold text-yellow-600 mt-1">
-      ₹{moneyWaiting.toLocaleString()}
-    </h3>
-    <p className="text-xs text-gray-400 mt-1">
-      Accepted but not paid
-    </p>
-  </div>
-
-  {/* Needs Action */}
-  <div className="bg-white border rounded-2xl p-5 shadow-sm">
-    <p className="text-sm text-gray-500">Needs Action</p>
-    <h3 className="text-2xl font-semibold text-red-500 mt-1">
-      {needsActionCount} quotes
-    </h3>
-    <p className="text-xs text-gray-400 mt-1">
-      Follow-ups required
-    </p>
-  </div>
-</div>
-        {/* ACTION REQUIRED */}
-        <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-5 shadow-sm">
-          <h3 className="text-yellow-800 font-semibold mb-3">Action Required</h3>
-
-          {pendingQuotes.length > 0 && (
-            <p className="cursor-pointer hover:underline">
-              • {pendingQuotes.length} pending quotes
-            </p>
-          )}
-
-          {openedQuotes.length > 0 && (
-            <p className="cursor-pointer hover:underline">
-              • {openedQuotes.length} opened but no response
-            </p>
-          )}
-
-          {changeRequested.length > 0 && (
-            <p className="cursor-pointer hover:underline">
-              • {changeRequested.length} change requests
-            </p>
-          )}
-
-          {unpaidAccepted.length > 0 && (
-            <p className="cursor-pointer hover:underline">
-              • {unpaidAccepted.length} unpaid accepted quotes
-            </p>
-          )}
-        </div>
-
-        {/* KANBAN */}
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-5 min-w-max">
-
-            {[
-              { title: "Opened", key: "opened", color: "text-blue-600" },
-              { title: "Awaiting", key: "awaiting_response", color: "text-yellow-600" },
-              { title: "Accepted", key: "accepted", color: "text-green-600" },
-              { title: "Paid", key: "paid", color: "text-emerald-600" },
-              { title: "Ready", key: "schedule_ready", color: "text-purple-600" },
-            ].map((col) => {
-
-              const columnQuotes = quotes.filter(q => {
-                if (col.key === "awaiting_response") {
-                  return q.status === "pending" || q.status === "awaiting_response"
-                }
-                return q.status === col.key
-              })
-
-              return (
-                <div
-                  key={col.key}
-                  className="w-[270px] bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all"
-                >
-                  <h3 className={`mb-4 font-semibold ${col.color}`}>
-                    {col.title} ({columnQuotes.length})
-                  </h3>
-
-                  <div className="space-y-3">
-
-                    {columnQuotes.map((q) => {
-
-  const urgency = getUrgency(q)
-
-  return (
-    <div
-      key={q.id}
-      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-      className={`bg-white border p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all
-        ${urgency === "high" ? "border-red-300" : ""}
-        ${urgency === "medium" ? "border-yellow-300" : ""}
-      `}
-    >
-      {urgency === "high" && (
-  <p className="text-xs text-red-500 font-medium mb-2">⚠️ Urgent</p>
-)}
-
-{urgency === "medium" && (
-  <p className="text-xs text-yellow-600 font-medium mb-1">⏳ Follow up soon</p>
-)}
-                        <p className="font-semibold text-gray-900 text-sm">
-                          {q.customer_name}
-                        </p>
-
-                        <p className="text-xs text-gray-500">
-                          {q.customer_email}
-                        </p>
-
-                        <p className="text-base mt-1 font-semibold text-gray-900">
-                          ₹{q.amount}
-                        </p>
-                          <p className="text-xs text-gray-500 mt-2">
-                          {q.job_description || "Quote"}
-                        </p>
-<p className="text-xs text-gray-400 mt-2">
-  Last activity: {timeAgo(q.updated_at || q.created_at)}
-</p>
-
-<div className="mt-3 flex gap-2 flex-wrap">
-
-  <span className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">
-  {getSmartMessage(q)}
-  </span>
-
-  {/* QUICK ACTION BUTTON */}
-  {q.status === "accepted" && q.payment_status !== "paid" && (
-    <button
-      onClick={(e) => {
-        e.stopPropagation()
-        router.push(`/dashboard/quotes/${q.id}`)
-      }}
-      className="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-    >
-      Collect ₹
-    </button>
-  )}
-
-  {q.status === "pending" && (
-    <button
-      onClick={(e) => {
-        e.stopPropagation()
-        router.push(`/dashboard/quotes/${q.id}`)
-      }}
-      className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-    >
-      Follow up
-    </button>
-  )}
-
-  {q.status === "paid" && (
-    <button
-      onClick={(e) => {
-        e.stopPropagation()
-        router.push(`/dashboard/quotes/${q.id}`)
-      }}
-      className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
-    >
-      Schedule
-    </button>
-  )}
-
-</div>
-                      
-
+              {showNotifications && (
+                <div className="absolute right-0 mt-3 w-64 bg-white border rounded-xl shadow-lg p-4 z-50">
+                  {notifications.length === 0
+                    ? <p className="text-sm text-gray-500">No notifications</p>
+                    : notifications.map((n, i) => (
+                      <div key={i} className="text-sm p-2 hover:bg-gray-100 rounded text-gray-700">
+                        {n}
                       </div>
-  )
-            })}
-
-                    {columnQuotes.length === 0 && (
-                      <p className="text-xs text-gray-400">
-                        No items
-                      </p>
-                    )}
-
-                  </div>
+                    ))
+                  }
                 </div>
-              )
-            })}
-
+              )}
+            </div>
           </div>
         </div>
 
+        {/* CONTENT - Localized scrolling happens here only */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-6xl mx-auto space-y-6">
+            <div className="flex flex-col md:flex-row justify-between gap-4">
+              <h2 className="text-3xl font-semibold text-gray-900">
+                Welcome, {profile?.name || user?.email?.split("@")[0]}
+              </h2>
+              <button
+                onClick={() => router.push("/dashboard/quotes/new")}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl shadow-sm"
+              >
+                + Create Quote
+              </button>
+            </div>
 
-</div>
+            {/* PIPELINE STATS */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white border rounded-2xl p-5 shadow-sm">
+                <p className="text-sm text-gray-500">Total Pipeline</p>
+                <h3 className="text-2xl font-semibold text-gray-900 mt-1">
+                  ₹{totalPipelineValue.toLocaleString()}
+                </h3>
+              </div>
+              <div className="bg-white border rounded-2xl p-5 shadow-sm">
+                <p className="text-sm text-gray-500">Money Waiting</p>
+                <h3 className="text-2xl font-semibold text-yellow-600 mt-1">
+                  ₹{moneyWaiting.toLocaleString()}
+                </h3>
+              </div>
+              <div className="bg-white border rounded-2xl p-5 shadow-sm">
+                <p className="text-sm text-gray-500">Needs Action</p>
+                <h3 className="text-2xl font-semibold text-red-500 mt-1">
+                  {needsActionCount} quotes
+                </h3>
+              </div>
+            </div>
+
+            {/* ACTION REQUIRED */}
+            <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-5 shadow-sm">
+              <h3 className="text-yellow-800 font-semibold mb-3 text-sm uppercase tracking-wider">Action Required</h3>
+              {pendingQuotes.length > 0 && <p className="cursor-pointer hover:underline text-sm text-gray-700 mb-1">• {pendingQuotes.length} pending quotes</p>}
+              {openedQuotes.length > 0 && <p className="cursor-pointer hover:underline text-sm text-gray-700 mb-1">• {openedQuotes.length} opened but no response</p>}
+              {changeRequested.length > 0 && <p className="cursor-pointer hover:underline text-sm text-gray-700 mb-1">• {changeRequested.length} change requests</p>}
+              {unpaidAccepted.length > 0 && <p className="cursor-pointer hover:underline text-sm text-gray-700">• {unpaidAccepted.length} unpaid accepted quotes</p>}
+            </div>
+
+            {/* KANBAN */}
+            <div className="overflow-x-auto pb-4">
+              <div className="flex gap-5 min-w-max">
+                {[
+                  { title: "Opened", key: "opened", color: "text-blue-600" },
+                  { title: "Awaiting", key: "awaiting_response", color: "text-yellow-600" },
+                  { title: "Accepted", key: "accepted", color: "text-green-600" },
+                  { title: "Paid", key: "paid", color: "text-emerald-600" },
+                  { title: "Ready", key: "schedule_ready", color: "text-purple-600" },
+                ].map((col) => {
+                  const columnQuotes = quotes.filter(q => {
+                    if (col.key === "awaiting_response") return q.status === "pending" || q.status === "awaiting_response"
+                    return q.status === col.key
+                  })
+
+                  return (
+                    <div key={col.key} className="w-[270px] bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all">
+                      <h3 className={`mb-4 font-semibold ${col.color}`}>
+                        {col.title} ({columnQuotes.length})
+                      </h3>
+                      <div className="space-y-3">
+                        {columnQuotes.map((q) => {
+                          const urgency = getUrgency(q)
+                          return (
+                            <div
+                              key={q.id}
+                              onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                              className={`bg-white border p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all
+                                ${urgency === "high" ? "border-red-300" : ""}
+                                ${urgency === "medium" ? "border-yellow-300" : ""}
+                              `}
+                            >
+                              {urgency === "high" && <p className="text-xs text-red-500 font-medium mb-2">High Urgency</p>}
+                              {urgency === "medium" && <p className="text-xs text-yellow-600 font-medium mb-1">Due Soon</p>}
+                              <p className="font-semibold text-gray-900 text-sm">{q.customer_name}</p>
+                              <p className="text-xs text-gray-500 truncate">{q.customer_email}</p>
+                              <p className="text-base mt-1 font-semibold text-gray-900">₹{q.amount?.toLocaleString()}</p>
+                              <p className="text-xs text-gray-400 mt-2">Last activity: {timeAgo(q.updated_at || q.created_at)}</p>
+                              <div className="mt-3 flex gap-2 flex-wrap">
+                                <span className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">{getSmartMessage(q)}</span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                        {columnQuotes.length === 0 && <p className="text-xs text-gray-400">No items in this stage</p>}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     </div>
   )
 }

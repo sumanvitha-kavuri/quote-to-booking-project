@@ -107,10 +107,6 @@ export default function Dashboard() {
     q => q.status === "accepted" && q.payment_status !== "paid"
   )
 
-  const scheduleReadyQuotes = quotes.filter(
-    q => q.status === "schedule_ready"
-  )
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
@@ -120,10 +116,10 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-800">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
 
       {/* NAVBAR */}
-      <div className="flex justify-between items-center px-4 md:px-6 py-4 bg-white border-b">
+      <div className="flex justify-between items-center px-4 md:px-6 py-4 bg-white border-b shadow-sm">
         <h1 className="text-lg font-semibold">
           Quote <span className="text-blue-600">to Booking</span>
         </h1>
@@ -139,7 +135,7 @@ export default function Dashboard() {
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-64 bg-white border rounded-xl shadow-md p-4 z-50">
+              <div className="absolute right-0 mt-3 w-64 bg-white border rounded-xl shadow-lg p-4 z-50">
                 {notifications.length === 0
                   ? <p className="text-sm text-gray-500">No notifications</p>
                   : notifications.map((n, i) => (
@@ -168,63 +164,50 @@ export default function Dashboard() {
 
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between gap-4">
-          <h2 className="text-2xl md:text-3xl font-semibold">
+          <h2 className="text-3xl font-semibold text-gray-900">
             Welcome, {profile?.name || user?.email?.split("@")[0]}
           </h2>
 
           <button
             onClick={() => router.push("/dashboard/quotes/new")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl shadow-sm"
           >
             + Create Quote
           </button>
         </div>
 
         {/* ACTION REQUIRED */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <h3 className="text-yellow-700 font-medium mb-2">Action Required</h3>
+        <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-5 shadow-sm">
+          <h3 className="text-yellow-800 font-semibold mb-3">Action Required</h3>
 
           {pendingQuotes.length > 0 && (
-            <p className="cursor-pointer hover:underline" onClick={() => handleFocus("pending")}>
+            <p className="cursor-pointer hover:underline">
               • {pendingQuotes.length} pending quotes
             </p>
           )}
 
           {openedQuotes.length > 0 && (
-            <p className="cursor-pointer hover:underline" onClick={() => handleFocus("pending")}>
+            <p className="cursor-pointer hover:underline">
               • {openedQuotes.length} opened but no response
             </p>
           )}
 
           {changeRequested.length > 0 && (
-            <p className="cursor-pointer hover:underline" onClick={() => handleFocus("pending")}>
+            <p className="cursor-pointer hover:underline">
               • {changeRequested.length} change requests
             </p>
           )}
 
           {unpaidAccepted.length > 0 && (
-            <p className="cursor-pointer hover:underline" onClick={() => handleFocus("accepted")}>
+            <p className="cursor-pointer hover:underline">
               • {unpaidAccepted.length} unpaid accepted quotes
             </p>
           )}
         </div>
 
-        {/* EMPTY STATE */}
-        {quotes.length === 0 && (
-          <div className="bg-white p-6 rounded-xl text-center border">
-            <p className="text-gray-500 mb-3">No quotes yet</p>
-            <button
-              onClick={() => router.push("/dashboard/quotes/new")}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Create your first quote
-            </button>
-          </div>
-        )}
-
         {/* KANBAN */}
         <div className="overflow-x-auto pb-4">
-          <div className="flex gap-4 min-w-max">
+          <div className="flex gap-5 min-w-max">
 
             {[
               { title: "Sent", key: "sent", color: "text-gray-500" },
@@ -246,9 +229,9 @@ export default function Dashboard() {
               return (
                 <div
                   key={col.key}
-                  className="w-[260px] bg-white border rounded-xl p-4 flex-shrink-0 shadow-sm hover:shadow-md transition"
+                  className="w-[270px] bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all"
                 >
-                  <h3 className={`mb-4 font-medium ${col.color}`}>
+                  <h3 className={`mb-4 font-semibold ${col.color}`}>
                     {col.title} ({columnQuotes.length})
                   </h3>
 
@@ -258,9 +241,9 @@ export default function Dashboard() {
                       <div
                         key={q.id}
                         onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                        className="bg-gray-50 border p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+                        className="bg-white border border-gray-200 p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all"
                       >
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-gray-900 text-sm">
                           {q.customer_name}
                         </p>
 
@@ -268,7 +251,7 @@ export default function Dashboard() {
                           {q.customer_email}
                         </p>
 
-                        <p className="text-sm mt-1 font-medium text-gray-700">
+                        <p className="text-base mt-1 font-semibold text-gray-900">
                           ₹{q.amount}
                         </p>
 
@@ -276,7 +259,7 @@ export default function Dashboard() {
                           {q.job_description || "Quote"}
                         </p>
 
-                        <span className="inline-block text-xs px-2 py-1 rounded-full bg-gray-200 text-gray-700 mt-2">
+                        <span className="inline-block text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 mt-2 border border-gray-200">
                           {q.status}
                         </span>
                       </div>
@@ -297,8 +280,8 @@ export default function Dashboard() {
         </div>
 
         {/* RECENT ACTIVITY */}
-        <div className="bg-white border rounded-xl p-4">
-          <h3 className="mb-3 font-medium">Recent Activity</h3>
+        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <h3 className="mb-3 font-semibold">Recent Activity</h3>
           {notifications.slice(0, 5).map((n, i) => (
             <div key={i} className="p-2 border-b text-sm text-gray-600">
               {n}

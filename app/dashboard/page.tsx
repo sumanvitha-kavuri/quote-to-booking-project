@@ -117,6 +117,15 @@ const needsActionCount =
   openedQuotes.length +
   changeRequested.length +
   unpaidAccepted.length
+  function getNextAction(q: any) {
+  if (q.status === "pending") return "Send follow-up"
+  if (q.status === "opened") return "Follow up (customer viewed)"
+  if (q.status === "accepted" && q.payment_status !== "paid") return "Collect payment"
+  if (q.status === "rejected") return "Revise quote"
+  if (q.status === "paid") return "Schedule job"
+  if (q.status === "schedule_ready") return "Confirm schedule"
+  return "No action"
+}
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
@@ -300,7 +309,15 @@ const needsActionCount =
                         <p className="text-base mt-1 font-semibold text-gray-900">
                           ₹{q.amount}
                         </p>
+<p className="text-xs text-gray-400 mt-2">
+  Last activity: {new Date(q.updated_at || q.created_at).toLocaleString()}
+</p>
 
+<div className="mt-2">
+  <span className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">
+    {getNextAction(q)}
+  </span>
+</div>
                         <p className="text-xs text-gray-500 mt-2">
                           {q.job_description || "Quote"}
                         </p>

@@ -186,7 +186,8 @@ function timeAgo(date: string) {
   }
 
   return (
-<div className="flex h-screen bg-gray-100 overflow-hidden">        {/* SIDEBAR */}
+<div className="flex h-screen bg-gray-100">
+        {/* SIDEBAR */}
 <div className="w-64 bg-white border-r h-screen p-5 flex flex-col justify-between">  <div>
     <div className="flex items-center gap-3 mb-6">
       <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
@@ -202,13 +203,29 @@ function timeAgo(date: string) {
       </div>
     </div>
 
-    <div className="space-y-2 text-sm">
-      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📊 Dashboard</button>
-      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📁 All Quotes</button>
-      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">⚠️ Needs Action</button>
-      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">📉 Lost Quotes</button>
-      <button className="block w-full text-left px-3 py-2 rounded hover:bg-gray-100">🔔 Activity</button>
-    </div>
+<div className="space-y-1 text-sm">
+
+  <button className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium">
+    📊 Dashboard
+  </button>
+
+  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
+    📁 All Quotes
+  </button>
+
+  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
+    ⚠️ Needs Action
+  </button>
+
+  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
+    📉 Lost Quotes
+  </button>
+
+  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
+    🔔 Activity
+  </button>
+
+</div>
   </div>
 
   <button
@@ -351,13 +368,11 @@ function timeAgo(date: string) {
           <div className="flex gap-5 min-w-max">
 
             {[
-              { title: "Sent", key: "sent", color: "text-gray-500" },
               { title: "Opened", key: "opened", color: "text-blue-600" },
               { title: "Awaiting", key: "awaiting_response", color: "text-yellow-600" },
               { title: "Accepted", key: "accepted", color: "text-green-600" },
               { title: "Paid", key: "paid", color: "text-emerald-600" },
               { title: "Ready", key: "schedule_ready", color: "text-purple-600" },
-              { title: "Lost", key: "rejected", color: "text-red-500" },
             ].map((col) => {
 
               const columnQuotes = quotes.filter(q => {
@@ -480,15 +495,7 @@ function timeAgo(date: string) {
           </div>
         </div>
 
-        {/* RECENT ACTIVITY */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-          <h3 className="mb-3 font-semibold">Recent Activity</h3>
-          {notifications.slice(0, 5).map((n, i) => (
-            <div key={i} className="p-2 border-b text-sm text-gray-600">
-              {n}
-            </div>
-          ))}
-        </div>
+
 </div>
       </div>
     </div>

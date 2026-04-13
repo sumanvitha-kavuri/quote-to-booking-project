@@ -187,56 +187,73 @@ function timeAgo(date: string) {
 
   return (
 <div className="flex h-screen bg-gray-100">
-        {/* SIDEBAR */}
-<div className="w-64 bg-white border-r h-screen p-5 flex flex-col justify-between">  <div>
-    <div className="flex items-center gap-3 mb-6">
-      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+  {/* SIDEBAR */ }
+<div className="w-72 bg-white border-r h-screen px-5 py-6 flex flex-col justify-between">
+
+  {/* TOP */}
+  <div>
+
+    {/* BRAND */}
+    <h1 className="text-xl font-semibold mb-8">
+      Quote <span className="text-blue-600">Flow</span>
+    </h1>
+
+    {/* PROFILE */}
+    <div className="flex items-center gap-4 mb-10">
+      <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold text-lg">
         {profile?.name?.[0] || "U"}
       </div>
+
       <div>
-        <p className="text-sm font-semibold">
-          {profile?.name || "User"}
+        <p className="text-base font-semibold text-gray-900 leading-none">
+          {profile?.name || "User Name"}
         </p>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 mt-1">
           {user?.email}
         </p>
       </div>
     </div>
 
-<div className="space-y-1 text-sm">
+    {/* NAV */}
+    <div className="space-y-2">
 
-  <button className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium">
-    📊 Dashboard
-  </button>
+      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm">
+        📊 Dashboard
+      </button>
 
-  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
-    📁 All Quotes
-  </button>
+      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
+        📁 All Quotes
+      </button>
 
-  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
-    ⚠️ Needs Action
-  </button>
+      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
+        ⚠️ Needs Action
+      </button>
 
-  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
-    📉 Lost Quotes
-  </button>
+      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
+        📉 Lost Quotes
+      </button>
 
-  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100">
-    🔔 Activity
-  </button>
+      <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 text-sm">
+        🔔 Activity
+      </button>
 
-</div>
+    </div>
   </div>
 
+  {/* BOTTOM */}
   <button
     onClick={async () => {
       await supabase.auth.signOut()
       router.replace("/")
     }}
-    className="text-sm text-gray-500 hover:text-red-500"
+    className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-red-50 hover:text-red-600"
   >
     Logout
   </button>
+
+</div>
+
+
 
 </div>
   {/* RIGHT SIDE (NAVBAR + CONTENT) */}

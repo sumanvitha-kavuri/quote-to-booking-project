@@ -126,6 +126,25 @@ const needsActionCount =
   if (q.status === "schedule_ready") return "Confirm schedule"
   return "No action"
 }
+function getUrgency(q: any) {
+  const last = new Date(q.updated_at || q.created_at).getTime()
+  const now = new Date().getTime()
+  const diffHours = (now - last) / (1000 * 60 * 60)
+
+  if (diffHours > 48) return "high"
+  if (diffHours > 24) return "medium"
+  return "low"
+}
+function timeAgo(date: string) {
+  const diff = Date.now() - new Date(date).getTime()
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+
+  if (hours < 1) return "Just now"
+  if (hours < 24) return `${hours}h ago`
+
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
+}
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
@@ -292,12 +311,26 @@ const needsActionCount =
 
                   <div className="space-y-3">
 
-                    {columnQuotes.map((q) => (
-                      <div
-                        key={q.id}
-                        onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                        className="bg-white border border-gray-200 p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all"
-                      >
+                    {columnQuotes.map((q) => {
+
+  const urgency = getUrgency(q)
+
+  return (
+    <div
+      key={q.id}
+      onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+      className={`bg-white border p-4 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all
+        ${urgency === "high" ? "border-red-300" : ""}
+        ${urgency === "medium" ? "border-yellow-300" : ""}
+      `}
+    >
+      {urgency === "high" && (
+  <p className="text-xs text-red-500 font-medium mb-2">⚠️ Urgent</p>
+)}
+
+{urgency === "medium" && (
+  <p className="text-xs text-yellow-600 font-medium mb-1">⏳ Follow up soon</p>
+)}
                         <p className="font-semibold text-gray-900 text-sm">
                           {q.customer_name}
                         </p>
@@ -309,8 +342,11 @@ const needsActionCount =
                         <p className="text-base mt-1 font-semibold text-gray-900">
                           ₹{q.amount}
                         </p>
+                          <p className="text-xs text-gray-500 mt-2">
+                          {q.job_description || "Quote"}
+                        </p>
 <p className="text-xs text-gray-400 mt-2">
-  Last activity: {new Date(q.updated_at || q.created_at).toLocaleString()}
+  Last activity: {timeAgo(q.updated_at || q.created_at)}
 </p>
 
 <div className="mt-2">
@@ -318,15 +354,11 @@ const needsActionCount =
     {getNextAction(q)}
   </span>
 </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {q.job_description || "Quote"}
-                        </p>
+                      
 
-                        <span className="inline-block text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 mt-2 border border-gray-200">
-                          {q.status}
-                        </span>
                       </div>
-                    ))}
+  )
+            })}
 
                     {columnQuotes.length === 0 && (
                       <p className="text-xs text-gray-400">

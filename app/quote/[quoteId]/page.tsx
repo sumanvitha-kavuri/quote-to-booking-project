@@ -50,7 +50,10 @@ export default function QuotePage({ params }: any) {
   async function markOpened() {
     await supabase
       .from("quotes")
-      .update({ status: "opened" })
+      .update({
+  status: "opened",
+  last_viewed_at: new Date().toISOString()
+})
       .eq("id", quoteId)
   }
 

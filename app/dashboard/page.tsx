@@ -226,54 +226,78 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* PIPELINE */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* 🔥 KANBAN PIPELINE */}
+<div className="overflow-x-auto pb-4">
+  <div className="flex gap-4 min-w-max">
 
-          {/* Pending */}
-          <div id="pending" className={`rounded-xl p-4 ${focus === "pending" ? "bg-yellow-500/20 border border-yellow-400" : "bg-white/5"}`}>
-            <h3 className="text-yellow-400 mb-3">Pending</h3>
-            {pendingQuotes.map(q => (
-              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
-                <p>{q.customer_name}</p>
-                <p className="text-xs text-gray-400">₹{q.amount}</p>
+    {/* COLUMN TEMPLATE FUNCTION */}
+    {[
+      { title: "Sent", key: "sent", color: "text-gray-400" },
+      { title: "Opened", key: "opened", color: "text-blue-400" },
+      { title: "Awaiting", key: "awaiting_response", color: "text-yellow-400" },
+      { title: "Accepted", key: "accepted", color: "text-blue-500" },
+      { title: "Paid", key: "paid", color: "text-green-400" },
+      { title: "Ready", key: "schedule_ready", color: "text-purple-400" },
+      { title: "Lost", key: "rejected", color: "text-red-400" },
+    ].map((col) => {
+
+      const columnQuotes = quotes.filter(q => {
+  if (col.key === "awaiting_response") {
+    return q.status === "pending" || q.status === "awaiting_response"
+  }
+  return q.status === col.key
+})
+
+      return (
+        <div
+          key={col.key}
+          className="w-[260px] bg-white/5 rounded-xl p-4 flex-shrink-0"
+        >
+          <h3 className={`mb-4 font-medium ${col.color}`}>
+            {col.title} ({columnQuotes.length})
+          </h3>
+
+          <div className="space-y-3">
+
+            {columnQuotes.map((q) => (
+              <div
+                key={q.id}
+                onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                className="bg-[#111827] p-3 rounded-lg cursor-pointer hover:bg-white/10 transition"
+              >
+                <p className="font-medium">{q.customer_name}</p>
+
+                <p className="text-xs text-gray-400">
+                  {q.customer_email}
+                </p>
+
+                <p className="text-sm mt-1">
+                  ₹{q.amount}
+                </p>
+
+                <p className="text-xs text-gray-500 mt-2">
+                  {q.job_description || "Quote"}
+                </p>
+
+                <p className="text-xs text-gray-400 mt-1">
+                  Status: {q.status}
+                </p>
               </div>
             ))}
-          </div>
 
-          {/* Accepted */}
-          <div id="accepted" className={`rounded-xl p-4 ${focus === "accepted" ? "bg-blue-500/20 border border-blue-400" : "bg-white/5"}`}>
-            <h3 className="text-blue-400 mb-3">Accepted</h3>
-            {acceptedQuotes.map(q => (
-              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
-                <p>{q.customer_name}</p>
-                <p className="text-xs text-gray-400">₹{q.amount}</p>
-              </div>
-            ))}
-          </div>
+            {columnQuotes.length === 0 && (
+              <p className="text-xs text-gray-500">
+                No items
+              </p>
+            )}
 
-          {/* Paid */}
-          <div id="paid" className={`rounded-xl p-4 ${focus === "paid" ? "bg-green-500/20 border border-green-400" : "bg-white/5"}`}>
-            <h3 className="text-green-400 mb-3">Paid</h3>
-            {paidQuotes.map(q => (
-              <div key={q.id} onClick={() => router.push(`/dashboard/quotes/${q.id}`)} className="p-3 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded">
-                <p>{q.customer_name}</p>
-                <p className="text-xs text-gray-400">₹{q.amount}</p>
-              </div>
-            ))}
           </div>
-
-          {/* Ready */}
-          <div className="bg-white/5 rounded-xl p-4">
-            <h3 className="text-purple-400 mb-3">Ready</h3>
-            {scheduleReadyQuotes.map(q => (
-              <div key={q.id} className="p-3 border-b border-white/10">
-                <p>{q.customer_name}</p>
-                <p className="text-xs text-gray-400">Ready to schedule</p>
-              </div>
-            ))}
-          </div>
-
         </div>
+      )
+    })}
+
+  </div>
+</div>
 
         {/* RECENT ACTIVITY */}
         <div className="bg-white/5 rounded-xl p-4">

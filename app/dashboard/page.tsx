@@ -349,10 +349,49 @@ function timeAgo(date: string) {
   Last activity: {timeAgo(q.updated_at || q.created_at)}
 </p>
 
-<div className="mt-2">
+<div className="mt-3 flex gap-2 flex-wrap">
+
   <span className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">
     {getNextAction(q)}
   </span>
+
+  {/* QUICK ACTION BUTTON */}
+  {q.status === "accepted" && q.payment_status !== "paid" && (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        router.push(`/dashboard/quotes/${q.id}`)
+      }}
+      className="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+    >
+      Collect ₹
+    </button>
+  )}
+
+  {q.status === "pending" && (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        router.push(`/dashboard/quotes/${q.id}`)
+      }}
+      className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+    >
+      Follow up
+    </button>
+  )}
+
+  {q.status === "paid" && (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        router.push(`/dashboard/quotes/${q.id}`)
+      }}
+      className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
+    >
+      Schedule
+    </button>
+  )}
+
 </div>
                       
 

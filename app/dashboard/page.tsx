@@ -9,7 +9,8 @@ import {
   LayoutDashboard, 
   FileText, 
   AlertCircle, 
-  BarChart3 
+  BarChart3,
+  LogOut
 } from "lucide-react"
 
 export default function Dashboard() {
@@ -190,219 +191,167 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400 font-medium">
+      <div className="min-h-screen flex items-center justify-center bg-white text-slate-400">
         Loading Dashboard...
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-slate-50/50 overflow-hidden text-slate-900">
-      {/* SIDEBAR - Professional Deep Slate */}
-      <div className="w-72 bg-slate-950 border-r border-slate-800 h-screen px-4 py-8 flex flex-col justify-between">
+    <div className="flex h-screen bg-[#FBFBFC] overflow-hidden text-slate-900">
+      {/* 1) SIDEBAR - Light Professional Slate */}
+      <div className="w-64 bg-slate-50 border-r border-slate-200 h-screen px-4 py-8 flex flex-col justify-between">
         <div>
-          {/* PROFILE - Polished & Modern */}
-          <div className="flex items-center gap-3 mb-10 p-3 rounded-xl bg-slate-900 border border-slate-800">
-            <div className="w-10 h-10 rounded-lg bg-indigo-500 flex items-center justify-center text-white font-bold shadow-inner">
+          {/* PROFILE - Defined Light Card */}
+          <div className="flex items-center gap-3 mb-8 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
+            <div className="w-9 h-9 rounded-md bg-indigo-600 flex items-center justify-center text-white font-medium text-sm">
               {profile?.name?.[0] || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-100 truncate">
+              <p className="text-sm font-semibold text-slate-800 truncate">
                 {profile?.name || "User Name"}
               </p>
-              <p className="text-[11px] text-slate-500 truncate font-medium">
+              <p className="text-[10px] text-slate-500 truncate">
                 {user?.email}
               </p>
             </div>
           </div>
 
-          {/* NAV - Indigo/Slate Accents */}
           <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm transition-all">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700 text-sm font-medium transition-all">
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </button>
-
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
               <FileText className="w-4 h-4" />
               All Quotes
             </button>
-
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
               <AlertCircle className="w-4 h-4" />
               Needs Action
             </button>
-
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-sm font-medium transition-all">
               <BarChart3 className="w-4 h-4" />
-              Lost Quotes
-            </button>
-
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
-              <Bell className="w-4 h-4" />
-              Activity
+              Analytics
             </button>
           </div>
         </div>
 
+        {/* 2) LOGOUT - Enhanced Visibility */}
         <button
           onClick={async () => {
             await supabase.auth.signOut()
             router.replace("/")
           }}
-          className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-red-950/20 hover:text-red-400 transition-all"
+          className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all shadow-sm"
         >
-          Logout
+          <LogOut className="w-4 h-4" />
+          Sign Out
         </button>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* NAVBAR */}
+        {/* 7 & 8) NAVBAR - Defined Heading & Visible Buttons */}
         <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-slate-200">
-          <h1 className="text-lg font-bold text-slate-900 tracking-tight">
-            QUOTES <span className="text-indigo-600">/</span> BOOKING
+          <h1 className="text-md font-medium text-slate-500 tracking-tight uppercase">
+            Quote <span className="text-indigo-600">to</span> Booking
           </h1>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition-all">
-              <Home className="w-4 h-4 text-slate-500" />
+            <button onClick={() => router.push("/")} className="p-2 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-all shadow-sm">
+              <Home className="w-4 h-4 text-slate-700" />
             </button>
 
             <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition-all relative">
-                <Bell className="w-4 h-4 text-slate-500" />
-                {notifications.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full border-2 border-white"></span>}
+              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-all shadow-sm">
+                <Bell className="w-4 h-4 text-slate-700" />
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 rounded-xl shadow-xl p-2 z-50">
-                  {notifications.length === 0
-                    ? <p className="text-xs text-slate-400 text-center py-4">No new activity</p>
-                    : notifications.map((n, i) => (
-                      <div key={i} className="text-xs p-3 hover:bg-slate-50 rounded-lg text-slate-600 border-b border-slate-50 last:border-0">
-                        {n}
-                      </div>
-                    ))
-                  }
+                <div className="absolute right-0 mt-3 w-72 bg-white border border-slate-200 rounded-xl shadow-xl p-2 z-50">
+                  {notifications.length === 0 ? <p className="text-xs text-slate-400 p-4 text-center">No alerts</p> : 
+                    notifications.map((n, i) => <div key={i} className="text-xs p-3 border-b border-slate-50">{n}</div>)}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 lg:p-10 bg-slate-50/30">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-              <div>
-                <p className="text-indigo-600 text-[11px] font-bold uppercase tracking-widest mb-1">Manager Overview</p>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Welcome back, {profile?.name || user?.email?.split("@")[0]}
-                </h2>
-              </div>
-              <button
-                onClick={() => router.push("/dashboard/quotes/new")}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold transition-all text-sm"
-              >
+        <div className="flex-1 overflow-y-auto p-8 bg-[#FBFBFC]">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-slate-800">Overview</h2>
+              <button onClick={() => router.push("/dashboard/quotes/new")} className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md shadow-indigo-100 hover:bg-indigo-700 transition-all">
                 + New Quote
               </button>
             </div>
 
-            {/* PIPELINE STATS - Modern Minimalist */}
+            {/* 6) PIPELINE STATS - Functional Coloring */}
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Pipeline</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">
-                  ₹{totalPipelineValue.toLocaleString()}
-                </h3>
+              <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-6">
+                <p className="text-xs font-medium text-blue-600 uppercase">Total Pipeline</p>
+                <h3 className="text-2xl font-semibold text-slate-900 mt-1">₹{totalPipelineValue.toLocaleString()}</h3>
               </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">
-                  ₹{moneyWaiting.toLocaleString()}
-                </h3>
+              <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-6">
+                <p className="text-xs font-medium text-emerald-600 uppercase">Money Waiting</p>
+                <h3 className="text-2xl font-semibold text-slate-900 mt-1">₹{moneyWaiting.toLocaleString()}</h3>
               </div>
-              <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 shadow-sm">
-                <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Needs Action</p>
-                <h3 className="text-2xl font-bold text-indigo-900 mt-1">
-                  {needsActionCount} <span className="text-sm font-medium opacity-70">Quotes</span>
-                </h3>
+              {/* Needs Action Logic */}
+              <div className={`${needsActionCount > 0 ? "bg-rose-50 border-rose-100" : "bg-white border-slate-200"} border rounded-xl p-6 transition-colors`}>
+                <p className={`text-xs font-medium uppercase ${needsActionCount > 0 ? "text-rose-600" : "text-slate-500"}`}>Needs Action</p>
+                <h3 className="text-2xl font-semibold text-slate-900 mt-1">{needsActionCount} Tasks</h3>
               </div>
             </div>
 
-            {/* ACTION REQUIRED - Subtle Professional Alert */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-3.5 h-3.5 text-indigo-600" /> Priority Follow-ups
+            {/* 3) PRIORITY FOLLOWUPS - Clickable Yellow Container */}
+            <div 
+              onClick={() => handleFocus("pending")}
+              className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 cursor-pointer hover:bg-yellow-100 transition-all group shadow-sm"
+            >
+              <h3 className="text-yellow-700 font-semibold mb-3 text-xs uppercase flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" /> Priority Action Items
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {pendingQuotes.length > 0 && <p className="text-xs font-semibold text-slate-600 py-2 px-3 bg-slate-50 rounded-lg border border-slate-100"> {pendingQuotes.length} Pending</p>}
-                {openedQuotes.length > 0 && <p className="text-xs font-semibold text-indigo-600 py-2 px-3 bg-indigo-50/50 rounded-lg border border-indigo-100"> {openedQuotes.length} Viewed</p>}
-                {changeRequested.length > 0 && <p className="text-xs font-semibold text-amber-600 py-2 px-3 bg-amber-50 rounded-lg border border-amber-100"> {changeRequested.length} Requests</p>}
-                {unpaidAccepted.length > 0 && <p className="text-xs font-semibold text-rose-600 py-2 px-3 bg-rose-50 rounded-lg border border-rose-100"> {unpaidAccepted.length} Unpaid</p>}
+              <div className="flex gap-4">
+                {pendingQuotes.length > 0 && <span className="text-xs font-medium bg-white px-3 py-1.5 rounded-md border border-yellow-200">{pendingQuotes.length} Pending</span>}
+                {openedQuotes.length > 0 && <span className="text-xs font-medium bg-white px-3 py-1.5 rounded-md border border-yellow-200">{openedQuotes.length} Viewed</span>}
               </div>
             </div>
 
-            {/* KANBAN */}
-            <div className="overflow-x-auto pb-6">
-              <div className="flex gap-5 min-w-max">
+            {/* 5) KANBAN SECTIONING */}
+            <div className="overflow-x-auto pb-4">
+              <div className="flex gap-6 min-w-max">
                 {[
-                  { title: "Opened", key: "opened", color: "bg-slate-500" },
-                  { title: "Awaiting", key: "awaiting_response", color: "bg-indigo-500" },
-                  { title: "Accepted", key: "accepted", color: "bg-emerald-500" },
-                  { title: "Paid", key: "paid", color: "bg-blue-500" },
-                  { title: "Ready", key: "schedule_ready", color: "bg-violet-500" },
+                  { title: "Opened", key: "opened", color: "bg-slate-100 text-slate-600" },
+                  { title: "Awaiting", key: "awaiting_response", color: "bg-indigo-50 text-indigo-600" },
+                  { title: "Accepted", key: "accepted", color: "bg-orange-50 text-orange-600", border: "border-l-4 border-l-orange-400" },
+                  { title: "Paid", key: "paid", color: "bg-emerald-50 text-emerald-600" },
                 ].map((col) => {
-                  const columnQuotes = quotes.filter(q => {
-                    if (col.key === "awaiting_response") return q.status === "pending" || q.status === "awaiting_response"
-                    return q.status === col.key
-                  })
-
+                  const columnQuotes = quotes.filter(q => col.key === "awaiting_response" ? (q.status === "pending" || q.status === "awaiting_response") : q.status === col.key)
+                  
                   return (
-                    <div key={col.key} className="w-[280px]">
-                      <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-500">
-                        <span className="flex items-center gap-2">
-                          <span className={`w-1.5 h-1.5 rounded-full ${col.color}`}></span>
-                          {col.title}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
-                      </h3>
+                    <div key={col.key} id={col.key} className="w-[280px]">
+                      {/* Section Heading Design */}
+                      <div className={`${col.color} px-3 py-2 rounded-lg mb-4 flex justify-between items-center border border-transparent shadow-sm`}>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">{col.title}</span>
+                        <span className="text-[10px] font-bold opacity-70">{columnQuotes.length}</span>
+                      </div>
+                      
                       <div className="space-y-3">
-                        {columnQuotes.map((q) => {
-                          const urgency = getUrgency(q)
-                          return (
-                            <div
-                              key={q.id}
-                              onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                              className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-indigo-200 transition-all
-                                ${urgency === "high" ? "border-l-4 border-l-rose-500" : "border-slate-200"}
-                              `}
-                            >
-                              <div className="flex justify-between items-start mb-1">
-                                <p className="font-bold text-slate-900 text-sm truncate leading-tight">{q.customer_name}</p>
-                                {urgency === "high" && <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                              </div>
-                              <p className="text-[11px] text-slate-400 truncate mb-3">{q.customer_email}</p>
-                              <p className="text-lg font-bold text-slate-900 tracking-tight">₹{q.amount?.toLocaleString()}</p>
-                              
-                              <div className="mt-4 pt-3 border-t border-slate-50 flex flex-col gap-2">
-                                <div className="flex items-center justify-between">
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Updated {timeAgo(q.updated_at || q.created_at)}</p>
-                                </div>
-                                <span className={`text-[10px] px-2 py-1.5 rounded-md font-bold uppercase tracking-tight text-center 
-                                  ${urgency === "high" ? "bg-rose-50 text-rose-600" : "bg-slate-50 text-slate-600 border border-slate-100"}`}>
-                                  {getSmartMessage(q)}
-                                </span>
-                              </div>
+                        {columnQuotes.map((q) => (
+                          <div
+                            key={q.id}
+                            onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
+                            className={`bg-white border border-slate-200 p-4 rounded-xl cursor-pointer hover:shadow-md transition-all ${col.key === 'accepted' ? 'border-l-4 border-l-orange-400' : ''}`}
+                          >
+                            <p className="font-semibold text-slate-800 text-sm truncate">{q.customer_name}</p>
+                            <p className="text-lg font-bold text-slate-900 mt-1">₹{q.amount?.toLocaleString()}</p>
+                            <div className="mt-3 pt-3 border-t border-slate-50">
+                              <span className="text-[10px] bg-slate-50 text-slate-500 px-2 py-1 rounded-md border border-slate-100 font-medium">
+                                {timeAgo(q.updated_at || q.created_at)}
+                              </span>
                             </div>
-                          )
-                        })}
-                        {columnQuotes.length === 0 && (
-                          <div className="border-2 border-dashed border-slate-200 rounded-xl py-8 flex flex-col items-center justify-center">
-                            <p className="text-[10px] text-slate-300 font-bold uppercase">Empty</p>
                           </div>
-                        )}
+                        ))}
                       </div>
                     </div>
                   )

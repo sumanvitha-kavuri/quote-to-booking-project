@@ -333,15 +333,46 @@ export default function Dashboard() {
             </div>
 
             {/* ACTION REQUIRED - Yellow + Clickable Feel */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 cursor-pointer hover:bg-yellow-100 transition">
-              <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-3.5 h-3.5 text-yellow-600" /> Priority Follow-ups
+<div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5">
+                <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
+                <AlertCircle className="w-3.5 h-3.5 text-yellow-600" /> Action Required
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {pendingQuotes.length > 0 && <p className="text-xs font-semibold text-slate-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {pendingQuotes.length} Pending</p>}
-                {openedQuotes.length > 0 && <p className="text-xs font-semibold text-blue-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {openedQuotes.length} Viewed</p>}
-                {changeRequested.length > 0 && <p className="text-xs font-semibold text-amber-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {changeRequested.length} Requests</p>}
-                {unpaidAccepted.length > 0 && <p className="text-xs font-semibold text-rose-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {unpaidAccepted.length} Unpaid</p>}
+{pendingQuotes.length > 0 && (
+  <button
+    onClick={() => handleFocus("pending")}
+    className="text-xs font-semibold text-slate-600 py-2 px-3 bg-white rounded-lg border border-yellow-200 hover:bg-slate-50 transition"
+  >
+    {pendingQuotes.length} Pending
+  </button>
+)}
+
+{openedQuotes.length > 0 && (
+  <button
+    onClick={() => handleFocus("pending")}
+    className="text-xs font-semibold text-blue-600 py-2 px-3 bg-white rounded-lg border border-yellow-200 hover:bg-slate-50 transition"
+  >
+    {openedQuotes.length} Viewed
+  </button>
+)}
+
+{changeRequested.length > 0 && (
+  <button
+    onClick={() => handleFocus("pending")}
+    className="text-xs font-semibold text-amber-600 py-2 px-3 bg-white rounded-lg border border-yellow-200 hover:bg-slate-50 transition"
+  >
+    {changeRequested.length} Requests
+  </button>
+)}
+
+{unpaidAccepted.length > 0 && (
+  <button
+    onClick={() => handleFocus("accepted")}
+    className="text-xs font-semibold text-rose-600 py-2 px-3 bg-white rounded-lg border border-yellow-200 hover:bg-slate-50 transition"
+  >
+    {unpaidAccepted.length} Unpaid
+  </button>
+)}
               </div>
             </div>
 
@@ -361,8 +392,8 @@ export default function Dashboard() {
                   })
 
                   return (
-                    <div key={col.key} className="w-[280px]">
-                      <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-700">
+<div id={col.key} key={col.key} className="w-[280px]">
+                        <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-700">
                         <span className="flex items-center gap-2">
                           <span className={`w-1.5 h-1.5 rounded-full ${col.color}`}></span>
                           {col.title}

@@ -252,10 +252,10 @@ export default function Dashboard() {
     await supabase.auth.signOut()
     router.replace("/")
   }}
-  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-all active:scale-[0.98]"
+  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all active:scale-[0.98]"
 >
   <LogOut className="w-4 h-4" />
-  Logout
+  Logout Account
 </button>
       </div>
 

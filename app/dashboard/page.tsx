@@ -333,12 +333,11 @@ export default function Dashboard() {
             </div>
 
             {/* ACTION REQUIRED - Yellow + Clickable Feel */}
-<div className="bg-yellow-100 border border-yellow-300 rounded-xl p-5">
-                <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
+<div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                <h3 className="text-amber-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
                 <AlertCircle className="w-3.5 h-3.5 text-yellow-600" /> Action Required
               </h3>
-              <div className="space-y-1 text-sm">
-
+<div className="flex flex-wrap gap-4 text-sm">
   {pendingQuotes.length > 0 && (
     <p
       onClick={() => handleFocus("pending")}

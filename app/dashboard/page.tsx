@@ -198,16 +198,16 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-slate-50/50 overflow-hidden text-slate-900">
-      {/* SIDEBAR - Light Theme Applied */}
-      <div className="w-72 bg-white border-r border-slate-200 h-screen px-4 py-8 flex flex-col justify-between">
+      {/* SIDEBAR - Professional Deep Slate */}
+      <div className="w-72 bg-slate-950 border-r border-slate-800 h-screen px-4 py-8 flex flex-col justify-between">
         <div>
-          {/* PROFILE - Updated to Light Theme */}
-          <div className="flex items-center gap-3 mb-10 p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
+          {/* PROFILE - Polished & Modern */}
+          <div className="flex items-center gap-3 mb-10 p-3 rounded-xl bg-slate-900 border border-slate-800">
+            <div className="w-10 h-10 rounded-lg bg-indigo-500 flex items-center justify-center text-white font-bold shadow-inner">
               {profile?.name?.[0] || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-900 truncate">
+              <p className="text-sm font-semibold text-slate-100 truncate">
                 {profile?.name || "User Name"}
               </p>
               <p className="text-[11px] text-slate-500 truncate font-medium">
@@ -216,42 +216,41 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* NAV - Updated to Light Theme + Blue Accents */}
+          {/* NAV - Indigo/Slate Accents */}
           <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-sm transition-all">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm transition-all">
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
               <FileText className="w-4 h-4" />
               All Quotes
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
               <AlertCircle className="w-4 h-4" />
               Needs Action
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
               <BarChart3 className="w-4 h-4" />
               Lost Quotes
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-slate-900 hover:text-slate-100 text-sm font-medium transition-all">
               <Bell className="w-4 h-4" />
               Activity
             </button>
           </div>
         </div>
 
-        {/* LOGOUT - Updated to proper action button */}
         <button
           onClick={async () => {
             await supabase.auth.signOut()
             router.replace("/")
           }}
-          className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 border border-slate-200 transition-all"
+          className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-red-950/20 hover:text-red-400 transition-all"
         >
           Logout
         </button>
@@ -261,19 +260,19 @@ export default function Dashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* NAVBAR */}
         <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-slate-200">
-          <h1 className="text-lg font-medium text-slate-900 tracking-tight">
-            Quote to Booking
+          <h1 className="text-lg font-bold text-slate-900 tracking-tight">
+            QUOTES <span className="text-indigo-600">/</span> BOOKING
           </h1>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-300 bg-white transition-all">
-              <Home className="w-4 h-4 text-slate-700" />
+            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition-all">
+              <Home className="w-4 h-4 text-slate-500" />
             </button>
 
             <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-300 bg-white transition-all relative">
-                <Bell className="w-4 h-4 text-slate-700" />
-                {notifications.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>}
+              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition-all relative">
+                <Bell className="w-4 h-4 text-slate-500" />
+                {notifications.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full border-2 border-white"></span>}
               </button>
 
               {showNotifications && (
@@ -297,51 +296,51 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
               <div>
-                <p className="text-blue-600 text-[11px] font-bold uppercase tracking-widest mb-1">Manager Overview</p>
+                <p className="text-indigo-600 text-[11px] font-bold uppercase tracking-widest mb-1">Manager Overview</p>
                 <h2 className="text-2xl font-bold text-slate-900">
                   Welcome back, {profile?.name || user?.email?.split("@")[0]}
                 </h2>
               </div>
               <button
                 onClick={() => router.push("/dashboard/quotes/new")}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold transition-all text-sm"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold transition-all text-sm"
               >
                 + New Quote
               </button>
             </div>
 
-            {/* PIPELINE STATS - Color Refreshed */}
+            {/* PIPELINE STATS - Modern Minimalist */}
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Pipeline</p>
                 <h3 className="text-2xl font-bold text-slate-900 mt-1">
                   ₹{totalPipelineValue.toLocaleString()}
                 </h3>
               </div>
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
                 <h3 className="text-2xl font-bold text-slate-900 mt-1">
                   ₹{moneyWaiting.toLocaleString()}
                 </h3>
               </div>
-              <div className={`rounded-xl p-6 shadow-sm border ${needsActionCount === 0 ? "bg-white border-slate-200 text-slate-900" : "bg-red-50 border-red-100 text-red-900"}`}>
-                <p className={`text-[11px] font-bold uppercase tracking-wider ${needsActionCount === 0 ? "text-slate-500" : "text-red-600"}`}>Needs Action</p>
-                <h3 className="text-2xl font-bold mt-1">
+              <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 shadow-sm">
+                <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Needs Action</p>
+                <h3 className="text-2xl font-bold text-indigo-900 mt-1">
                   {needsActionCount} <span className="text-sm font-medium opacity-70">Quotes</span>
                 </h3>
               </div>
             </div>
 
-            {/* ACTION REQUIRED - Yellow + Clickable Feel */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 cursor-pointer hover:bg-yellow-100 transition">
+            {/* ACTION REQUIRED - Subtle Professional Alert */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-3.5 h-3.5 text-yellow-600" /> Priority Follow-ups
+                <AlertCircle className="w-3.5 h-3.5 text-indigo-600" /> Priority Follow-ups
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {pendingQuotes.length > 0 && <p className="text-xs font-semibold text-slate-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {pendingQuotes.length} Pending</p>}
-                {openedQuotes.length > 0 && <p className="text-xs font-semibold text-blue-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {openedQuotes.length} Viewed</p>}
-                {changeRequested.length > 0 && <p className="text-xs font-semibold text-amber-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {changeRequested.length} Requests</p>}
-                {unpaidAccepted.length > 0 && <p className="text-xs font-semibold text-rose-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {unpaidAccepted.length} Unpaid</p>}
+                {pendingQuotes.length > 0 && <p className="text-xs font-semibold text-slate-600 py-2 px-3 bg-slate-50 rounded-lg border border-slate-100"> {pendingQuotes.length} Pending</p>}
+                {openedQuotes.length > 0 && <p className="text-xs font-semibold text-indigo-600 py-2 px-3 bg-indigo-50/50 rounded-lg border border-indigo-100"> {openedQuotes.length} Viewed</p>}
+                {changeRequested.length > 0 && <p className="text-xs font-semibold text-amber-600 py-2 px-3 bg-amber-50 rounded-lg border border-amber-100"> {changeRequested.length} Requests</p>}
+                {unpaidAccepted.length > 0 && <p className="text-xs font-semibold text-rose-600 py-2 px-3 bg-rose-50 rounded-lg border border-rose-100"> {unpaidAccepted.length} Unpaid</p>}
               </div>
             </div>
 
@@ -350,9 +349,9 @@ export default function Dashboard() {
               <div className="flex gap-5 min-w-max">
                 {[
                   { title: "Opened", key: "opened", color: "bg-slate-500" },
-                  { title: "Awaiting", key: "awaiting_response", color: "bg-blue-500" },
-                  { title: "Accepted", key: "accepted", color: "bg-orange-500" },
-                  { title: "Paid", key: "paid", color: "bg-emerald-500" },
+                  { title: "Awaiting", key: "awaiting_response", color: "bg-indigo-500" },
+                  { title: "Accepted", key: "accepted", color: "bg-emerald-500" },
+                  { title: "Paid", key: "paid", color: "bg-blue-500" },
                   { title: "Ready", key: "schedule_ready", color: "bg-violet-500" },
                 ].map((col) => {
                   const columnQuotes = quotes.filter(q => {
@@ -362,12 +361,12 @@ export default function Dashboard() {
 
                   return (
                     <div key={col.key} className="w-[280px]">
-                      <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-700">
+                      <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-500">
                         <span className="flex items-center gap-2">
                           <span className={`w-1.5 h-1.5 rounded-full ${col.color}`}></span>
                           {col.title}
                         </span>
-                        <span className="text-[10px] text-slate-600 font-medium bg-slate-200 px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
+                        <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
                       </h3>
                       <div className="space-y-3">
                         {columnQuotes.map((q) => {
@@ -376,7 +375,7 @@ export default function Dashboard() {
                             <div
                               key={q.id}
                               onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                              className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-blue-200 transition-all
+                              className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-indigo-200 transition-all
                                 ${urgency === "high" ? "border-l-4 border-l-rose-500" : "border-slate-200"}
                               `}
                             >

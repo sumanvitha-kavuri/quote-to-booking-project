@@ -200,16 +200,13 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-slate-50/50 overflow-hidden text-slate-900">
       {/* SIDEBAR - Light Theme Applied */}
-      <div className="w-72 bg-white border-r border-slate-200 h-screen px-4 py-8 flex flex-col justify-between">
-        <div>
+<div className="w-72 bg-white border-r border-slate-200 h-screen px-5 py-8 flex flex-col justify-between shadow-sm">        <div>
           {/* PROFILE - Updated to Light Theme */}
-          <div className="flex items-center gap-3 mb-10 p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
+<div className="flex items-center gap-4 mb-10 p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200 shadow-sm">            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
               {profile?.name?.[0] || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-900 truncate">
-                {profile?.name || "User Name"}
+<p className="text-base font-semibold text-slate-900 truncate">                {profile?.name || "User Name"}
               </p>
               <p className="text-[11px] text-slate-500 truncate font-medium">
                 {user?.email}
@@ -218,33 +215,35 @@ export default function Dashboard() {
           </div>
 
           {/* NAV - Updated to Light Theme + Blue Accents */}
-          <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-sm transition-all">
-              <LayoutDashboard className="w-4 h-4" />
-              Dashboard
-            </button>
+<div className="space-y-2">
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
-              <FileText className="w-4 h-4" />
-              All Quotes
-            </button>
+  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white text-base font-semibold shadow-sm transition-all">
+    <LayoutDashboard className="w-5 h-5" />
+    Dashboard
+  </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
-              <AlertCircle className="w-4 h-4" />
-              Needs Action
-            </button>
+  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
+    <FileText className="w-5 h-5" />
+    All Quotes
+  </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
-              <BarChart3 className="w-4 h-4" />
-              Lost Quotes
-            </button>
+  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
+    <AlertCircle className="w-5 h-5" />
+    Needs Action
+  </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-all">
-              <Bell className="w-4 h-4" />
-              Activity
-            </button>
-          </div>
-        </div>
+  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
+    <BarChart3 className="w-5 h-5" />
+    Lost Quotes
+  </button>
+
+  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
+    <Bell className="w-5 h-5" />
+    Activity
+  </button>
+
+</div>
+     </div>
 
         {/* LOGOUT - Updated to proper action button */}
 <button
@@ -252,9 +251,9 @@ export default function Dashboard() {
     await supabase.auth.signOut()
     router.replace("/")
   }}
-  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all active:scale-[0.98]"
+  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all active:scale-[0.98]"
 >
-  <LogOut className="w-4 h-4" />
+  <LogOut className="w-5 h-5" />
   Logout Account
 </button>
       </div>

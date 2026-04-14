@@ -198,7 +198,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50/30 overflow-hidden text-zinc-900">
+    <div className="flex h-screen bg-zinc-100/60 overflow-hidden text-zinc-900">
       {/* SIDEBAR */}
       <div className="w-72 bg-white border-r border-zinc-200 h-screen px-5 py-8 flex flex-col justify-between shadow-sm">
         <div>

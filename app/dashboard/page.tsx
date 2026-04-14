@@ -190,59 +190,42 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500">
-        Loading Dashboard...
+      <div className="min-h-screen flex items-center justify-center bg-white text-slate-900">
+        Loading...
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900">
-      {/* SIDEBAR - Corporate Navy/Slate Theme */}
-      <div className="w-80 bg-slate-900 border-r border-slate-800 h-screen px-6 py-8 flex flex-col justify-between">
+    <div className="flex h-screen bg-[#fcfcfd] overflow-hidden text-slate-900">
+      {/* SIDEBAR - NOW WHITE & UNIFIED */}
+      <div className="w-64 bg-white border-r border-slate-200 h-screen px-4 py-8 flex flex-col justify-between">
         <div>
-          {/* PROFILE - Clean Professional */}
-          <div className="flex items-center gap-4 mb-12 p-3 rounded-xl bg-slate-800/50 border border-slate-700">
-            <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
+          <div className="flex items-center gap-3 mb-10 px-2">
+            <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
               {profile?.name?.[0] || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-white truncate">
-                {profile?.name || "User Name"}
-              </p>
-              <p className="text-xs text-slate-400 truncate">
-                {user?.email}
+              <p className="text-sm font-bold text-slate-900 truncate">
+                {profile?.name || "User"}
               </p>
             </div>
           </div>
 
-          {/* NAV - Business Blue accents */}
-          <div className="space-y-2">
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-lg shadow-blue-900/20 transition-all">
-              <LayoutDashboard className="w-5 h-5" />
+          <nav className="space-y-1">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-blue-50 text-blue-700 text-sm font-semibold transition-all">
+              <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </button>
-
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition-all">
-              <FileText className="w-5 h-5" />
-              All Quotes
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-slate-600 hover:bg-slate-50 text-sm font-medium transition-all">
+              <FileText className="w-4 h-4" />
+              Quotes
             </button>
-
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition-all">
-              <AlertCircle className="w-5 h-5" />
-              Needs Action
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-slate-600 hover:bg-slate-50 text-sm font-medium transition-all">
+              <AlertCircle className="w-4 h-4" />
+              Actions
             </button>
-
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition-all">
-              <BarChart3 className="w-5 h-5" />
-              Lost Quotes
-            </button>
-
-            <button className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition-all">
-              <Bell className="w-5 h-5" />
-              Activity
-            </button>
-          </div>
+          </nav>
         </div>
 
         <button
@@ -250,152 +233,107 @@ export default function Dashboard() {
             await supabase.auth.signOut()
             router.replace("/")
           }}
-          className="w-full text-left px-5 py-3.5 rounded-xl text-sm font-medium text-slate-400 hover:bg-red-950/30 hover:text-red-400 transition-all"
+          className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-400 hover:text-red-600 transition-all"
         >
           Logout
         </button>
       </div>
 
-      {/* RIGHT SIDE */}
+      {/* MAIN UI */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* NAVBAR */}
-        <div className="flex justify-between items-center px-8 py-5 bg-white border-b border-slate-200">
-          <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-            QUOTES <span className="text-blue-600">&</span> BOOKING
+        <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-slate-200">
+          <h1 className="text-sm font-black text-slate-900 tracking-widest uppercase">
+            CRM <span className="text-blue-600">Core</span>
           </h1>
-
-          <div className="flex items-center gap-5">
-            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-100 rounded-lg transition-all">
-              <Home className="w-5 h-5 text-slate-600" />
-            </button>
-
-            <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-100 rounded-lg transition-all">
-                <Bell className="w-5 h-5 text-slate-600" />
-              </button>
-
-              {showNotifications && (
-                <div className="absolute right-0 mt-4 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl p-4 z-50">
-                  {notifications.length === 0
-                    ? <p className="text-sm text-slate-400 text-center py-2">No notifications</p>
-                    : notifications.map((n, i) => (
-                      <div key={i} className="text-sm p-3 hover:bg-slate-50 rounded-lg text-slate-700 border-b border-slate-100 last:border-0">
-                        {n}
-                      </div>
-                    ))
-                  }
-                </div>
-              )}
-            </div>
+          <div className="flex items-center gap-4">
+             <Bell className="w-5 h-5 text-slate-400 cursor-pointer" />
           </div>
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 lg:p-12">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#f8f9fa]">
           <div className="max-w-6xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-              <div>
-                <p className="text-blue-600 text-xs font-bold uppercase tracking-widest mb-1">Manager Overview</p>
-                <h2 className="text-3xl font-black text-slate-900">
-                  Welcome back, {profile?.name || user?.email?.split("@")[0]}
-                </h2>
-              </div>
-              {/* CREATE QUOTE BUTTON -> BUSINESS BLUE */}
+            
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <h2 className="text-2xl font-bold text-slate-900">
+                Welcome, {profile?.name || "User"}
+              </h2>
               <button
                 onClick={() => router.push("/dashboard/quotes/new")}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-lg shadow-lg shadow-blue-200 font-bold transition-all uppercase text-sm tracking-wide"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded shadow-sm font-bold text-sm transition-all"
               >
-                + New Quote
+                + CREATE QUOTE
               </button>
             </div>
 
-            {/* PIPELINE STATS */}
+            {/* KPI STATS - HIGH CONTRAST */}
             <div className="grid md:grid-cols-3 gap-6">
-              {/* TOTAL PIPELINE -> PALE BLUE */}
-              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">Total Pipeline</p>
-                <h3 className="text-3xl font-black text-slate-900 mt-2">
-                  ₹{totalPipelineValue.toLocaleString()}
-                </h3>
+              <div className="bg-white border-l-4 border-l-blue-500 border border-slate-200 p-6 shadow-sm">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Total Pipeline</p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">₹{totalPipelineValue.toLocaleString()}</h3>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
-                <h3 className="text-3xl font-black text-slate-900 mt-2">
-                  ₹{moneyWaiting.toLocaleString()}
-                </h3>
+              <div className="bg-white border-l-4 border-l-slate-400 border border-slate-200 p-6 shadow-sm">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Money Waiting</p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">₹{moneyWaiting.toLocaleString()}</h3>
               </div>
-              {/* NEEDS ACTION -> RED */}
-              <div className="bg-red-50 border border-red-100 rounded-2xl p-7 shadow-sm">
-                <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Needs Action</p>
-                <h3 className="text-3xl font-black text-red-700 mt-2">
-                  {needsActionCount} <span className="text-lg font-medium opacity-60">Quotes</span>
-                </h3>
+              <div className="bg-white border-l-4 border-l-red-500 border border-slate-200 p-6 shadow-sm">
+                <p className="text-[10px] font-black text-red-600 uppercase tracking-widest">Needs Action</p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{needsActionCount} Quotes</h3>
               </div>
             </div>
 
-            {/* ACTION REQUIRED -> PALE YELLOW */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-7">
-              <h3 className="text-yellow-800 font-black mb-4 text-xs uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" /> Priority Follow-ups
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {pendingQuotes.length > 0 && <p className="text-sm font-semibold text-yellow-900 py-2 px-3 bg-white/50 rounded-lg border border-yellow-200"> {pendingQuotes.length} Pending</p>}
-                {openedQuotes.length > 0 && <p className="text-sm font-semibold text-yellow-900 py-2 px-3 bg-white/50 rounded-lg border border-yellow-200"> {openedQuotes.length} Viewed</p>}
-                {changeRequested.length > 0 && <p className="text-sm font-semibold text-yellow-900 py-2 px-3 bg-white/50 rounded-lg border border-yellow-200"> {changeRequested.length} Requests</p>}
-                {unpaidAccepted.length > 0 && <p className="text-sm font-semibold text-yellow-900 py-2 px-3 bg-white/50 rounded-lg border border-yellow-200"> {unpaidAccepted.length} Unpaid</p>}
+            {/* PRIORITY SECTION - INTEGRATED PALETTE */}
+            <div className="bg-white border border-slate-200 border-l-4 border-l-yellow-500 p-6">
+              <h3 className="text-slate-900 font-bold mb-4 text-xs uppercase tracking-widest">Immediate Actions</h3>
+              <div className="flex flex-wrap gap-3">
+                {pendingQuotes.length > 0 && <span className="bg-yellow-50 text-yellow-800 text-[11px] font-bold px-3 py-1 border border-yellow-100">{pendingQuotes.length} PENDING</span>}
+                {openedQuotes.length > 0 && <span className="bg-blue-50 text-blue-800 text-[11px] font-bold px-3 py-1 border border-blue-100">{openedQuotes.length} VIEWED</span>}
+                {changeRequested.length > 0 && <span className="bg-red-50 text-red-800 text-[11px] font-bold px-3 py-1 border border-red-100">{changeRequested.length} REVISIONS</span>}
               </div>
             </div>
 
-            {/* KANBAN */}
+            {/* KANBAN - STRONGER CARDS */}
             <div className="overflow-x-auto pb-6">
               <div className="flex gap-6 min-w-max">
                 {[
-                  { title: "Opened", key: "opened", color: "text-slate-600" },
-                  { title: "Awaiting", key: "awaiting_response", color: "text-blue-600" },
-                  { title: "Accepted", key: "accepted", color: "text-emerald-600" },
-                  { title: "Paid", key: "paid", color: "text-indigo-600" },
-                  { title: "Ready", key: "schedule_ready", color: "text-purple-600" },
+                  { title: "Opened", key: "opened", color: "bg-slate-900" },
+                  { title: "Awaiting", key: "awaiting_response", color: "bg-blue-600" },
+                  { title: "Accepted", key: "accepted", color: "bg-emerald-600" },
+                  { title: "Paid", key: "paid", color: "bg-indigo-600" },
                 ].map((col) => {
-                  const columnQuotes = quotes.filter(q => {
-                    if (col.key === "awaiting_response") return q.status === "pending" || q.status === "awaiting_response"
-                    return q.status === col.key
-                  })
+                  const columnQuotes = quotes.filter(q => col.key === "awaiting_response" ? (q.status === "pending" || q.status === "awaiting_response") : q.status === col.key)
 
                   return (
-                    <div key={col.key} className="w-[300px] bg-slate-100/50 border border-slate-200 rounded-2xl p-4">
-                      <h3 className={`mb-5 font-black text-xs uppercase tracking-tighter flex items-center justify-between px-2 ${col.color}`}>
-                        {col.title} 
-                        <span className="bg-white border border-slate-200 px-2.5 py-0.5 rounded-md text-slate-600">{columnQuotes.length}</span>
-                      </h3>
-                      <div className="space-y-3">
+                    <div key={col.key} className="w-72">
+                      <div className="flex items-center gap-2 mb-4">
+                         <div className={`w-2 h-2 rounded-full ${col.color}`} />
+                         <h3 className="font-bold text-[11px] uppercase tracking-wider text-slate-700">{col.title} ({columnQuotes.length})</h3>
+                      </div>
+                      
+                      <div className="space-y-4">
                         {columnQuotes.map((q) => {
                           const urgency = getUrgency(q)
                           return (
                             <div
                               key={q.id}
                               onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                              className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md transition-all
-                                ${urgency === "high" ? "border-red-200 bg-red-50/30" : "border-slate-200"}
+                              className={`bg-white border-2 p-4 cursor-pointer hover:border-blue-600 shadow-sm transition-all
+                                ${urgency === "high" ? "border-red-200" : "border-slate-100"}
                               `}
                             >
-                              <div className="flex justify-between items-start mb-1">
-                                <p className="font-bold text-slate-900 text-sm truncate">{q.customer_name}</p>
-                                {urgency === "high" && <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />}
-                              </div>
-                              <p className="text-[11px] text-slate-500 truncate mb-3">{q.customer_email}</p>
-                              <p className="text-lg font-black text-slate-900">₹{q.amount?.toLocaleString()}</p>
+                              <p className="font-bold text-slate-900 text-sm mb-1 truncate">{q.customer_name}</p>
+                              <p className="text-[10px] text-slate-500 mb-3 font-semibold">{q.customer_email}</p>
+                              <p className="text-lg font-black text-slate-900 mb-3">₹{q.amount?.toLocaleString()}</p>
                               
-                              <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-                                <p className="text-[10px] text-slate-400 font-bold uppercase">Activity: {timeAgo(q.updated_at || q.created_at)}</p>
-                                <span className={`text-[10px] px-2 py-1.5 rounded-md font-bold uppercase tracking-tight text-center 
-                                  ${urgency === "high" ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-700"}`}>
+                              <div className="pt-3 border-t border-slate-50">
+                                <span className={`text-[9px] px-2 py-1 font-black uppercase rounded ${urgency === "high" ? "bg-red-600 text-white" : "bg-slate-100 text-slate-600"}`}>
                                   {getSmartMessage(q)}
                                 </span>
                               </div>
                             </div>
                           )
                         })}
-                        {columnQuotes.length === 0 && <p className="text-[11px] text-slate-400 text-center font-medium py-4">Clear</p>}
                       </div>
                     </div>
                   )

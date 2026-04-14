@@ -9,7 +9,8 @@ import {
   LayoutDashboard, 
   FileText, 
   AlertCircle, 
-  BarChart3 
+  BarChart3 ,
+  LogOut
 } from "lucide-react"
 
 export default function Dashboard() {
@@ -246,15 +247,16 @@ export default function Dashboard() {
         </div>
 
         {/* LOGOUT - Updated to proper action button */}
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut()
-            router.replace("/")
-          }}
-          className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 border border-slate-200 transition-all"
-        >
-          Logout
-        </button>
+<button
+  onClick={async () => {
+    await supabase.auth.signOut()
+    router.replace("/")
+  }}
+  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-all active:scale-[0.98]"
+>
+  <LogOut className="w-4 h-4" />
+  Logout
+</button>
       </div>
 
       {/* RIGHT SIDE */}

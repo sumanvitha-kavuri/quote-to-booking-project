@@ -318,9 +318,8 @@ export default function Dashboard() {
                   ₹{totalPipelineValue.toLocaleString()}
                 </h3>
               </div>
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-6 shadow-sm">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">
+<div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6 shadow-sm">                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
+                <h3 className="text-2xl font-bold text-emerald-700 mt-1">
                   ₹{moneyWaiting.toLocaleString()}
                 </h3>
               </div>

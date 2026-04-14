@@ -268,7 +268,7 @@ export default function Dashboard() {
               <FileText className="w-4 h-4 text-white" />
             </div>
             <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">
-              Quote<span className="text-indigo-600">to</span>Booking
+              Quote<span className="text-indigo-600"> to </span>Booking
             </h1>
           </div>
 

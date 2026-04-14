@@ -381,7 +381,7 @@ export default function Dashboard() {
             <div className="overflow-x-auto pb-6">
               <div className="flex gap-5 min-w-max">
                 {[
-                  { title: "Opened", key: "opened", color: "bg-slate-500" },
+{ title: "Follow Up", key: "opened", color: "bg-slate-500" },
                   { title: "Awaiting", key: "awaiting_response", color: "bg-blue-500" },
                   { title: "Accepted", key: "accepted", color: "bg-orange-500" },
                   { title: "Paid", key: "paid", color: "bg-emerald-500" },
@@ -409,9 +409,13 @@ export default function Dashboard() {
                               key={q.id}
                               onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
                               className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-blue-200 transition-all
-                                ${urgency === "high" ? "border-l-4 border-l-rose-500" : "border-slate-200"}
-                              `}
-                            >
+
+${col.key === "opened" ? "border-l-4 border-l-slate-400" : ""}
+${col.key === "awaiting_response" ? "border-l-4 border-l-blue-500" : ""}
+${col.key === "accepted" ? "border-l-4 border-l-orange-500" : ""}
+${col.key === "paid" ? "border-l-4 border-l-emerald-500" : ""}
+${col.key === "schedule_ready" ? "border-l-4 border-l-violet-500" : ""}
+`}                               >
                               <div className="flex justify-between items-start mb-1">
                                 <p className="font-bold text-slate-900 text-sm truncate leading-tight">{q.customer_name}</p>
                                 {urgency === "high" && <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
@@ -424,7 +428,10 @@ export default function Dashboard() {
                                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Updated {timeAgo(q.updated_at || q.created_at)}</p>
                                 </div>
                                 <span className={`text-[10px] px-2 py-1.5 rounded-md font-bold uppercase tracking-tight text-center 
-                                  ${urgency === "high" ? "bg-rose-50 text-rose-600" : "bg-slate-50 text-slate-600 border border-slate-100"}`}>
+  ${urgency === "high" ? "bg-rose-50 text-rose-600" : ""}
+  ${urgency === "medium" ? "bg-amber-50 text-amber-600" : ""}
+  ${urgency === "low" ? "bg-slate-50 text-slate-600 border border-slate-100" : ""}
+`}>
                                   {getSmartMessage(q)}
                                 </span>
                               </div>

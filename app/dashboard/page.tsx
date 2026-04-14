@@ -198,7 +198,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50/50 overflow-hidden text-zinc-900">
+    <div className="flex h-screen bg-zinc-50/30 overflow-hidden text-zinc-900">
       {/* SIDEBAR */}
       <div className="w-72 bg-white border-r border-zinc-200 h-screen px-5 py-8 flex flex-col justify-between shadow-sm">
         <div>
@@ -295,7 +295,7 @@ export default function Dashboard() {
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 lg:p-10 bg-zinc-50/30">
+        <div className="flex-1 overflow-y-auto p-8 lg:p-10 bg-zinc-50/20">
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
               <div>
@@ -320,7 +320,7 @@ export default function Dashboard() {
                   ₹{totalPipelineValue.toLocaleString()}
                 </h3>
               </div>
-              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6 shadow-sm">
+              <div className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-6 shadow-sm">
                 <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Money Waiting</p>
                 <h3 className="text-2xl font-bold text-emerald-700 mt-1">
                   ₹{moneyWaiting.toLocaleString()}
@@ -335,7 +335,7 @@ export default function Dashboard() {
             </div>
 
             {/* ACTION REQUIRED */}
-            <div className="bg-amber-50 border border-amber-100 rounded-xl p-5">
+            <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-5">
               <h3 className="text-amber-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
                 <AlertCircle className="w-3.5 h-3.5 text-amber-600" /> Action Required
               </h3>
@@ -398,11 +398,11 @@ export default function Dashboard() {
                       id={col.key}
                       key={col.key}
                       className={`w-[280px] rounded-xl p-3 border
-                        ${col.key === "opened" ? "bg-zinc-50 border-zinc-200" : ""}
-                        ${col.key === "awaiting_response" ? "bg-blue-50/50 border-blue-100" : ""}
-                        ${col.key === "accepted" ? "bg-orange-50/50 border-orange-100" : ""}
-                        ${col.key === "paid" ? "bg-emerald-50/50 border-emerald-100" : ""}
-                        ${col.key === "schedule_ready" ? "bg-indigo-50/50 border-indigo-100" : ""}
+                        ${col.key === "opened" ? "bg-zinc-100/40 border-zinc-200" : ""}
+                        ${col.key === "awaiting_response" ? "bg-blue-50/30 border-blue-100" : ""}
+                        ${col.key === "accepted" ? "bg-orange-50/30 border-orange-100" : ""}
+                        ${col.key === "paid" ? "bg-emerald-50/30 border-emerald-100" : ""}
+                        ${col.key === "schedule_ready" ? "bg-indigo-50/30 border-indigo-100" : ""}
                       `}
                     >
                       <h3 className="mb-3 font-bold text-xs uppercase tracking-wider flex items-center justify-between px-1">

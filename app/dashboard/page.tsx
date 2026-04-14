@@ -393,15 +393,25 @@ export default function Dashboard() {
                   })
 
                   return (
-<div id={col.key} key={col.key} className="w-[280px]">
-                        <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-700">
+<div
+  id={col.key}
+  key={col.key}
+  className={`w-[280px] rounded-xl p-3 border
+
+  ${col.key === "opened" ? "bg-slate-50 border-slate-200" : ""}
+  ${col.key === "awaiting_response" ? "bg-blue-50 border-blue-100" : ""}
+  ${col.key === "accepted" ? "bg-orange-50 border-orange-100" : ""}
+  ${col.key === "paid" ? "bg-emerald-50 border-emerald-100" : ""}
+  ${col.key === "schedule_ready" ? "bg-violet-50 border-violet-100" : ""}
+`}
+>                        <h3 className="mb-3 font-bold text-xs uppercase tracking-wider flex items-center justify-between px-1">
                         <span className="flex items-center gap-2">
-                          <span className={`w-1.5 h-1.5 rounded-full ${col.color}`}></span>
+<span className={`w-2 h-2 rounded-full ${col.color}`}></span>
                           {col.title}
                         </span>
                         <span className="text-[10px] text-slate-600 font-medium bg-slate-200 px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
                       </h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {columnQuotes.map((q) => {
                           const urgency = getUrgency(q)
                           return (

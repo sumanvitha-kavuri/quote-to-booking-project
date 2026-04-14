@@ -10,7 +10,9 @@ import {
   FileText, 
   AlertCircle, 
   BarChart3 ,
-  LogOut
+  LogOut,
+  ChevronRight,
+  Plus
 } from "lucide-react"
 
 export default function Dashboard() {
@@ -191,98 +193,105 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400 font-medium">
-        Loading Dashboard...
+      <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] text-slate-400 font-medium">
+        <div className="flex flex-col items-center gap-3">
+            <div className="w-6 h-6 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <p className="text-sm tracking-tight">Syncing your workflow...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-slate-50/50 overflow-hidden text-slate-900">
-      {/* SIDEBAR - Light Theme Applied */}
-<div className="w-72 bg-white border-r border-slate-200 h-screen px-5 py-8 flex flex-col justify-between shadow-sm">        <div>
-          {/* PROFILE - Updated to Light Theme */}
-<div className="flex items-center gap-4 mb-10 p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200 shadow-sm">            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
-              {profile?.name?.[0] || "U"}
+    <div className="flex h-screen bg-[#FDFDFD] overflow-hidden text-slate-900 font-sans selection:bg-blue-100">
+      {/* SIDEBAR - Premium Minimalist */}
+      <div className="w-64 bg-white border-r border-slate-100 h-screen px-6 py-10 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div>
+          {/* LOGO AREA */}
+          <div className="flex items-center gap-2 mb-12 px-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <LayoutDashboard className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-<p className="text-base font-semibold text-slate-900 truncate">                {profile?.name || "User Name"}
-              </p>
-              <p className="text-[11px] text-slate-500 truncate font-medium">
-                {user?.email}
-              </p>
-            </div>
+            <span className="font-bold tracking-tight text-lg">WorkFlow</span>
           </div>
 
-          {/* NAV - Updated to Light Theme + Blue Accents */}
-<div className="space-y-2">
-
-  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white text-base font-semibold shadow-sm transition-all">
-    <LayoutDashboard className="w-5 h-5" />
-    Dashboard
-  </button>
-
-  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
-    <FileText className="w-5 h-5" />
-    All Quotes
-  </button>
-
-  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
-    <AlertCircle className="w-5 h-5" />
-    Needs Action
-  </button>
-
-  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
-    <BarChart3 className="w-5 h-5" />
-    Lost Quotes
-  </button>
-
-  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 text-base font-medium transition-all">
-    <Bell className="w-5 h-5" />
-    Activity
-  </button>
-
-</div>
-     </div>
-
-        {/* LOGOUT - Updated to proper action button */}
-<button
-  onClick={async () => {
-    await supabase.auth.signOut()
-    router.replace("/")
-  }}
-  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all active:scale-[0.98]"
->
-  <LogOut className="w-5 h-5" />
-  Logout Account
-</button>
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* NAVBAR */}
-        <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-slate-200">
-          <h1 className="text-lg font-medium text-slate-900 tracking-tight">
-            Quote to Booking
-          </h1>
-
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.push("/")} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-300 bg-white transition-all">
-              <Home className="w-4 h-4 text-slate-700" />
+          {/* NAV */}
+          <div className="space-y-1">
+            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-50 text-blue-600 text-sm font-semibold transition-all">
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
             </button>
 
+            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 text-sm font-medium transition-all group">
+              <FileText className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+              Quotes
+            </button>
+
+            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 text-sm font-medium transition-all group">
+              <AlertCircle className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+              Pending
+            </button>
+
+            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 text-sm font-medium transition-all group">
+              <BarChart3 className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+              Analytics
+            </button>
+          </div>
+        </div>
+
+        {/* PROFILE & LOGOUT */}
+        <div className="space-y-4">
+          <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/50">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-slate-200 border border-white shadow-sm flex items-center justify-center text-[10px] font-bold">
+                    {profile?.name?.[0] || "U"}
+                </div>
+                <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-900 truncate leading-none mb-1">{profile?.name || "Member"}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{user?.email}</p>
+                </div>
+            </div>
+          </div>
+          
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut()
+              router.replace("/")
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-400 hover:text-rose-500 hover:bg-rose-50/50 transition-all border border-transparent hover:border-rose-100"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* HEADER BAR */}
+        <header className="h-16 flex justify-between items-center px-8 bg-white/80 backdrop-blur-md border-b border-slate-100 z-10">
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-[0.15em]">
+            Command Center
+          </h2>
+
+          <div className="flex items-center gap-4">
             <div className="relative">
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 hover:bg-slate-50 rounded-lg border border-slate-300 bg-white transition-all relative">
-                <Bell className="w-4 h-4 text-slate-700" />
-                {notifications.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>}
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)} 
+                className="w-9 h-9 flex items-center justify-center hover:bg-slate-50 rounded-full transition-colors relative"
+              >
+                <Bell className="w-4 h-4 text-slate-600" />
+                {notifications.length > 0 && <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-600 rounded-full ring-2 ring-white animate-pulse"></span>}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 rounded-xl shadow-xl p-2 z-50">
+                <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-100 rounded-2xl shadow-2xl p-2 z-50 ring-1 ring-black/5">
+                  <p className="text-[10px] font-bold text-slate-400 px-3 py-2 uppercase tracking-widest">Recent Activity</p>
                   {notifications.length === 0
-                    ? <p className="text-xs text-slate-400 text-center py-4">No new activity</p>
+                    ? <p className="text-xs text-slate-400 text-center py-6 italic">No new events</p>
                     : notifications.map((n, i) => (
-                      <div key={i} className="text-xs p-3 hover:bg-slate-50 rounded-lg text-slate-600 border-b border-slate-50 last:border-0">
+                      <div key={i} className="text-[11px] p-3 hover:bg-slate-50 rounded-lg text-slate-700 font-medium flex gap-2 items-start border-b border-slate-50 last:border-0">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1 shrink-0"></div>
                         {n}
                       </div>
                     ))
@@ -290,66 +299,92 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 lg:p-10 bg-slate-50/30">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-              <div>
-                <p className="text-blue-600 text-[11px] font-bold uppercase tracking-widest mb-1">Manager Overview</p>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Welcome back, {profile?.name || user?.email?.split("@")[0]}
-                </h2>
-              </div>
-              <button
+            
+            <button
                 onClick={() => router.push("/dashboard/quotes/new")}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg shadow-sm font-semibold transition-all text-sm"
-              >
-                + New Quote
-              </button>
-            </div>
+                className="bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-lg shadow-md shadow-slate-200 font-bold transition-all text-xs flex items-center gap-2"
+            >
+                <Plus className="w-3.5 h-3.5" />
+                Create Quote
+            </button>
+          </div>
+        </header>
 
-            {/* PIPELINE STATS - Color Refreshed */}
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 shadow-sm">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Pipeline</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">
-                  ₹{totalPipelineValue.toLocaleString()}
-                </h3>
-              </div>
-<div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6 shadow-sm">                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Money Waiting</p>
-                <h3 className="text-2xl font-bold text-emerald-700 mt-1">
-                  ₹{moneyWaiting.toLocaleString()}
-                </h3>
-              </div>
-              <div className={`rounded-xl p-6 shadow-sm border ${needsActionCount === 0 ? "bg-white border-slate-200 text-slate-900" : "bg-red-50 border-red-100 text-red-900"}`}>
-                <p className={`text-[11px] font-bold uppercase tracking-wider ${needsActionCount === 0 ? "text-slate-500" : "text-red-600"}`}>Needs Action</p>
-                <h3 className="text-2xl font-bold mt-1">
-                  {needsActionCount} <span className="text-sm font-medium opacity-70">Quotes</span>
-                </h3>
-              </div>
-            </div>
+        {/* VIEWPORT */}
+        <main className="flex-1 overflow-y-auto p-10 bg-[#FCFCFD]">
+          <div className="max-w-7xl mx-auto space-y-10">
+            
+            {/* HERO SECTION */}
+            <section className="flex flex-col gap-1">
+                <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                  Good morning, {profile?.name?.split(" ")[0] || "Partner"}
+                </h1>
+                <p className="text-slate-400 text-sm font-medium">Here is what is happening across your projects today.</p>
+            </section>
 
-            {/* ACTION REQUIRED - Yellow + Clickable Feel */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 cursor-pointer hover:bg-yellow-100 transition">
-              <h3 className="text-slate-900 font-bold mb-4 text-[11px] uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-3.5 h-3.5 text-yellow-600" /> Priority Follow-ups
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {pendingQuotes.length > 0 && <p className="text-xs font-semibold text-slate-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {pendingQuotes.length} Pending</p>}
-                {openedQuotes.length > 0 && <p className="text-xs font-semibold text-blue-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {openedQuotes.length} Viewed</p>}
-                {changeRequested.length > 0 && <p className="text-xs font-semibold text-amber-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {changeRequested.length} Requests</p>}
-                {unpaidAccepted.length > 0 && <p className="text-xs font-semibold text-rose-600 py-2 px-3 bg-white rounded-lg border border-yellow-200"> {unpaidAccepted.length} Unpaid</p>}
+            {/* KEY METRICS - Apple Card Style */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm ring-1 ring-slate-200/50">
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Pipeline Value</span>
+                <div className="flex items-baseline gap-1 mt-2">
+                    <span className="text-3xl font-bold tracking-tighter">₹{totalPipelineValue.toLocaleString()}</span>
+                </div>
               </div>
-            </div>
+              
+              <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm ring-1 ring-slate-200/50 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full -mr-8 -mt-8 opacity-50 group-hover:scale-110 transition-transform"></div>
+                <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest relative z-10">Revenue Waiting</span>
+                <div className="flex items-baseline gap-1 mt-2 relative z-10">
+                    <span className="text-3xl font-bold tracking-tighter text-emerald-600">₹{moneyWaiting.toLocaleString()}</span>
+                </div>
+              </div>
 
-            {/* KANBAN */}
-            <div className="overflow-x-auto pb-6">
-              <div className="flex gap-5 min-w-max">
+              <div className={`rounded-2xl p-6 shadow-sm border transition-all ring-1 ${needsActionCount === 0 ? "bg-white border-slate-100 ring-slate-200/50" : "bg-white border-rose-100 ring-rose-200/20 shadow-rose-100/20"}`}>
+                <span className={`text-[10px] font-extrabold uppercase tracking-widest ${needsActionCount === 0 ? "text-slate-400" : "text-rose-500"}`}>Action Required</span>
+                <div className="flex items-baseline gap-2 mt-2">
+                    <span className={`text-3xl font-bold tracking-tighter ${needsActionCount === 0 ? "text-slate-900" : "text-rose-600"}`}>{needsActionCount}</span>
+                    <span className="text-xs font-bold text-slate-400">Quotes</span>
+                </div>
+              </div>
+            </section>
+
+            {/* PRIORITY ALERTS */}
+            <section className="bg-[#1e293b] rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent"></div>
+                <h3 className="text-white font-bold mb-6 text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 relative z-10">
+                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                    Focus Items
+                </h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Stale</p>
+                        <p className="text-white font-bold text-lg">{pendingQuotes.length}</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Viewed</p>
+                        <p className="text-white font-bold text-lg">{openedQuotes.length}</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Revision</p>
+                        <p className="text-white font-bold text-lg">{changeRequested.length}</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Unpaid</p>
+                        <p className="text-white font-bold text-lg">{unpaidAccepted.length}</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* KANBAN BOARD */}
+            <section className="space-y-6 pb-20">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                  <h3 className="font-bold text-sm text-slate-900 tracking-tight">Workflow States</h3>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Automated Tracking On</p>
+              </div>
+              
+              <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide">
                 {[
-                  { title: "Opened", key: "opened", color: "bg-slate-500" },
+                  { title: "Opened", key: "opened", color: "bg-slate-400" },
                   { title: "Awaiting", key: "awaiting_response", color: "bg-blue-500" },
                   { title: "Accepted", key: "accepted", color: "bg-orange-500" },
                   { title: "Paid", key: "paid", color: "bg-emerald-500" },
@@ -361,47 +396,60 @@ export default function Dashboard() {
                   })
 
                   return (
-                    <div key={col.key} className="w-[280px]">
-                      <h3 className="mb-4 font-bold text-[11px] uppercase tracking-wider flex items-center justify-between px-1 text-slate-700">
-                        <span className="flex items-center gap-2">
-                          <span className={`w-1.5 h-1.5 rounded-full ${col.color}`}></span>
-                          {col.title}
+                    <div key={col.key} className="w-[300px] shrink-0">
+                      <div className="flex items-center justify-between mb-5 px-1">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-1.5 h-1.5 rounded-full ${col.color}`}></div>
+                            <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-500">{col.title}</span>
+                        </div>
+                        <span className="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-full ring-1 ring-slate-200/50">
+                            {columnQuotes.length}
                         </span>
-                        <span className="text-[10px] text-slate-600 font-medium bg-slate-200 px-2 py-0.5 rounded-full">{columnQuotes.length}</span>
-                      </h3>
-                      <div className="space-y-3">
+                      </div>
+
+                      <div className="space-y-4">
                         {columnQuotes.map((q) => {
                           const urgency = getUrgency(q)
                           return (
                             <div
                               key={q.id}
                               onClick={() => router.push(`/dashboard/quotes/${q.id}`)}
-                              className={`bg-white border p-4 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-blue-200 transition-all
-                                ${urgency === "high" ? "border-l-4 border-l-rose-500" : "border-slate-200"}
+                              className={`group bg-white border border-slate-100 p-5 rounded-2xl cursor-pointer shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-blue-100 hover:-translate-y-1 transition-all duration-300
+                                ${urgency === "high" ? "ring-1 ring-rose-100 bg-rose-50/10" : ""}
                               `}
                             >
-                              <div className="flex justify-between items-start mb-1">
-                                <p className="font-bold text-slate-900 text-sm truncate leading-tight">{q.customer_name}</p>
-                                {urgency === "high" && <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
-                              </div>
-                              <p className="text-[11px] text-slate-400 truncate mb-3">{q.customer_email}</p>
-                              <p className="text-lg font-bold text-slate-900 tracking-tight">₹{q.amount?.toLocaleString()}</p>
-                              
-                              <div className="mt-4 pt-3 border-t border-slate-50 flex flex-col gap-2">
-                                <div className="flex items-center justify-between">
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Updated {timeAgo(q.updated_at || q.created_at)}</p>
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-[13px] tracking-tight group-hover:text-blue-600 transition-colors">{q.customer_name}</h4>
+                                    <p className="text-[10px] text-slate-400 font-medium mt-0.5">{q.customer_email}</p>
                                 </div>
-                                <span className={`text-[10px] px-2 py-1.5 rounded-md font-bold uppercase tracking-tight text-center 
-                                  ${urgency === "high" ? "bg-rose-50 text-rose-600" : "bg-slate-50 text-slate-600 border border-slate-100"}`}>
+                                {urgency === "high" && <div className="w-2 h-2 rounded-full bg-rose-500 ring-4 ring-rose-50" />}
+                              </div>
+
+                              <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-xs font-bold text-slate-400">₹</span>
+                                <span className="text-xl font-bold tracking-tighter text-slate-900">{q.amount?.toLocaleString()}</span>
+                              </div>
+                              
+                              <div className="pt-4 border-t border-slate-50">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Active {timeAgo(q.updated_at || q.created_at)}</span>
+                                  </div>
+                                  <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+                                </div>
+                                <div className={`text-[10px] py-2 px-3 rounded-lg font-bold uppercase tracking-tight text-center transition-colors
+                                  ${urgency === "high" ? "bg-rose-50 text-rose-600" : "bg-slate-50 text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600"}`}>
                                   {getSmartMessage(q)}
-                                </span>
+                                </div>
                               </div>
                             </div>
                           )
                         })}
                         {columnQuotes.length === 0 && (
-                          <div className="border-2 border-dashed border-slate-200 rounded-xl py-8 flex flex-col items-center justify-center">
-                            <p className="text-[10px] text-slate-300 font-bold uppercase">Empty</p>
+                          <div className="border-2 border-dashed border-slate-100 rounded-2xl py-12 flex flex-col items-center justify-center bg-slate-50/30">
+                            <span className="text-[9px] text-slate-300 font-extrabold uppercase tracking-widest">No Active Jobs</span>
                           </div>
                         )}
                       </div>
@@ -409,9 +457,9 @@ export default function Dashboard() {
                   )
                 })}
               </div>
-            </div>
+            </section>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   )

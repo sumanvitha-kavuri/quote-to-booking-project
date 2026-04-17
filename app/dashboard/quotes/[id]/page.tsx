@@ -1,11 +1,3 @@
-/**
- * QUOTE DETAIL PAGE
- * Functionality: 
- * - Macro-view of a single customer's quote status.
- * - Real-time activity timeline tracking.
- * - Quick action triggers (Edit, Resend, Status management).
- */
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -27,8 +19,6 @@ import {
 export default function QuoteDetail() {
   const { id } = useParams()
   const router = useRouter()
-  
-  // State management for quote data
   const [quote, setQuote] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -36,161 +26,156 @@ export default function QuoteDetail() {
     fetchQuote()
   }, [])
 
-  /**
-   * Fetch specific quote data from Supabase
-   */
   async function fetchQuote() {
-    try {
-      const { data, error } = await supabase
-        .from("quotes")
-        .select("*")
-        .eq("id", id)
-        .single()
+    const { data } = await supabase
+      .from("quotes")
+      .select("*")
+      .eq("id", id)
+      .single()
 
-      if (error) throw error
-      setQuote(data)
-    } catch (err) {
-      console.error("Error fetching quote:", err)
-    } finally {
-      setLoading(false)
-    }
+    setQuote(data)
+    setLoading(false)
   }
 
-  // Loading State - Matches Dashboard Aesthetic
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50 text-zinc-400 font-medium animate-pulse">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 text-zinc-400 font-medium">
         Loading Details...
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 text-zinc-900 pb-20">
-      
-      {/* 1. STICKY HEADER BAR */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-zinc-200 px-8 py-5 sticky top-0 z-50">
+    <div className="min-h-screen bg-zinc-50/50 text-zinc-900">
+      {/* HEADER BAR - CLEAN ZINC WHITE */}
+      <div className="bg-white border-b border-zinc-200 px-8 py-5 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button 
             onClick={() => router.back()}
-            className="group flex items-center gap-2 text-zinc-500 hover:text-indigo-600 transition-all font-bold text-sm"
+            className="flex items-center gap-2 text-zinc-500 hover:text-indigo-600 transition-all font-bold text-sm"
           >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </button>
           
-          <div className="flex items-center gap-4">
-            {/* Dynamic Status Badge */}
-            <span className={`text-[11px] px-4 py-1.5 rounded-full font-black uppercase tracking-wider border shadow-sm
+          <div className="flex items-center gap-3">
+            <span className={`text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-widest border shadow-sm
               ${quote.status === 'paid' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
                 quote.status === 'accepted' ? 'bg-orange-50 text-orange-600 border-orange-100' : 
-                'bg-zinc-50 text-zinc-500 border-zinc-200'}`}>
-              {quote.status?.replace('_', ' ')}
+                'bg-zinc-100 text-zinc-500 border-zinc-200'}`}>
+              {quote.status}
             </span>
-            <button className="p-2 hover:bg-zinc-100 rounded-xl transition-colors text-zinc-400">
-              <MoreHorizontal className="w-5 h-5" />
-            </button>
+            <MoreHorizontal className="w-5 h-5 text-zinc-300 cursor-pointer" />
           </div>
         </div>
-      </nav>
+      </div>
 
-      <main className="max-w-6xl mx-auto p-8 lg:p-12 space-y-10">
-        
-        {/* 2. PAGE TITLE SECTION */}
-        <header>
-          <p className="text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em] mb-2">Management View</p>
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tight leading-tight">
+      <main className="max-w-6xl mx-auto p-8 md:p-12 space-y-10">
+        {/* TITLE SECTION */}
+        <div>
+          <p className="text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em] mb-2">Quote Management</p>
+          <h1 className="text-4xl font-black text-zinc-900 tracking-tight flex items-center gap-4">
+            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100">
+                <FileText className="w-6 h-6 text-white" />
+            </div>
             Quote for {quote.customer_name}
           </h1>
-        </header>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
-          
-          {/* 3. PRIMARY CONTENT (Left Column) */}
+          {/* MAIN DETAILS CARD */}
           <div className="lg:col-span-2 space-y-8">
-            
-            {/* Customer Details Card */}
-            <section className="bg-white border border-zinc-200 rounded-[2.5rem] p-10 shadow-sm">
+            <div className="bg-white border border-zinc-200 rounded-[2.5rem] p-10 shadow-sm">
               <h2 className="text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-8 flex items-center gap-2">
                 <User className="w-4 h-4 text-indigo-500" /> Customer Information
               </h2>
               
-              <div className="grid md:grid-cols-2 gap-10">
-                <div className="space-y-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight">Full Name</p>
                   <p className="text-xl font-bold text-zinc-900">{quote.customer_name}</p>
                 </div>
-                <div className="space-y-1">
+
+                <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight">Email Address</p>
-                  <p className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                    {quote.customer_email}
-                    <Mail className="w-4 h-4 text-zinc-300" />
-                  </p>
+                  <p className="text-xl font-bold text-zinc-900">{quote.customer_email}</p>
                 </div>
               </div>
-            </section>
+            </div>
 
-            {/* Visual Activity History */}
-            <section className="bg-white border border-zinc-200 rounded-[2.5rem] p-10 shadow-sm">
+            {/* HISTORY SECTION - REFINED TIMELINE */}
+            <div className="bg-white border border-zinc-200 rounded-[2.5rem] p-10 shadow-sm">
               <h2 className="text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-10 flex items-center gap-2">
                 <History className="w-4 h-4 text-indigo-500" /> Activity History
               </h2>
 
               <div className="space-y-10 relative before:absolute before:inset-0 before:ml-[23px] before:w-[2px] before:bg-zinc-100">
-                
-                {/* Event: Creation */}
-                <div className="relative flex items-start gap-6 group">
-                  <div className="w-12 h-12 rounded-2xl bg-white border-2 border-zinc-100 flex items-center justify-center z-10 shadow-sm transition-all group-hover:border-indigo-600 group-hover:bg-indigo-50/30">
-                    <Calendar className="w-5 h-5 text-zinc-400 group-hover:text-indigo-600" />
+                <div className="relative flex items-center gap-6 group">
+                  <div className="w-12 h-12 rounded-2xl bg-white border-2 border-indigo-600 flex items-center justify-center z-10 shadow-sm transition-transform group-hover:scale-105">
+                    <Calendar className="w-5 h-5 text-indigo-600" />
                   </div>
-                  <div className="flex-1 pt-1">
+                  <div className="p-5 bg-zinc-50 rounded-[1.5rem] border border-zinc-100 flex-1">
                     <p className="text-base font-bold text-zinc-900">Quote created</p>
-                    <p className="text-sm text-zinc-500 font-medium">Draft sent to {quote.customer_email}</p>
+                    <p className="text-sm text-zinc-400 font-medium">Initial quote sent via email</p>
                   </div>
                 </div>
 
-                {/* Event: Acceptance (Conditional) */}
                 {quote.status === "accepted" && (
-                  <div className="relative flex items-start gap-6 group">
-                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-orange-500 flex items-center justify-center z-10 shadow-sm">
+                  <div className="relative flex items-center gap-6 group">
+                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-orange-500 flex items-center justify-center z-10 shadow-sm transition-transform group-hover:scale-105">
                       <CheckCircle2 className="w-5 h-5 text-orange-500" />
                     </div>
-                    <div className="flex-1 pt-1">
-                      <p className="text-base font-bold text-zinc-900">Accepted by customer</p>
-                      <p className="text-sm text-zinc-500 font-medium">Awaiting final payment or scheduling</p>
+                    <div className="p-5 bg-orange-50/50 rounded-[1.5rem] border border-orange-100 flex-1">
+                      <p className="text-base font-bold text-orange-900">Accepted by customer</p>
+                      <p className="text-sm text-orange-600/70 font-medium">Awaiting payment or scheduling</p>
+                    </div>
+                  </div>
+                )}
+
+                {quote.status === "paid" && (
+                  <div className="relative flex items-center gap-6 group">
+                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-emerald-500 flex items-center justify-center z-10 shadow-sm transition-transform group-hover:scale-105">
+                      <IndianRupee className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div className="p-5 bg-emerald-50/50 rounded-[1.5rem] border border-emerald-100 flex-1">
+                      <p className="text-base font-bold text-emerald-900">Payment received</p>
+                      <p className="text-sm text-emerald-600/70 font-medium">Transaction completed</p>
                     </div>
                   </div>
                 )}
               </div>
-            </section>
+            </div>
           </div>
 
-          {/* 4. SIDEBAR SUMMARY (Right Column) */}
-          <aside className="space-y-6">
-            
-            {/* Pricing Highlight Card */}
-            <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-200/50 relative overflow-hidden group">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+          {/* SIDEBAR SUMMARY CARD - BOLD INDIGO */}
+          <div className="space-y-8">
+            <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-200/50 relative overflow-hidden">
+              {/* Subtle Decorative element */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
               
-              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-200/80 mb-3">Amount Due</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-200 mb-3">Total Amount</p>
               <h3 className="text-5xl font-black tracking-tighter mb-8 flex items-center gap-1">
-                <span className="text-2xl opacity-40 font-medium italic">₹</span>
+                <span className="text-2xl opacity-50 italic font-medium">₹</span>
                 {quote.amount?.toLocaleString()}
               </h3>
               
-              <div className="pt-8 border-t border-white/10 space-y-4">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-indigo-200 uppercase tracking-widest">Payment</span>
-                  <span className="bg-white/20 px-3 py-1 rounded-lg">{quote.status === 'paid' ? 'COMPLETED' : 'PENDING'}</span>
+              <div className="pt-8 border-t border-white/10 space-y-5">
+                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-indigo-200">Status</span>
+                  <span>{quote.status === 'paid' ? 'Completed' : 'Pending'}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-indigo-200">Date</span>
+                  <span>{new Date(quote.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>
 
-            {/* Quick Actions Panel */}
+            {/* ACTION PANEL */}
             <div className="bg-white border border-zinc-200 rounded-[2rem] p-8 shadow-sm">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-6">Quick Actions</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6">Manager Actions</h3>
               <div className="grid gap-3">
-                <button className="w-full py-4 bg-zinc-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-zinc-200">
+                <button className="w-full py-4 bg-zinc-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-zinc-100">
                   Edit Quote
                 </button>
                 <button className="w-full py-4 bg-white border border-zinc-200 text-zinc-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-50 transition-all active:scale-95">
@@ -198,8 +183,7 @@ export default function QuoteDetail() {
                 </button>
               </div>
             </div>
-            
-          </aside>
+          </div>
         </div>
       </main>
     </div>

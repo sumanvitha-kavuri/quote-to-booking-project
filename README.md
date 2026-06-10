@@ -1,6 +1,6 @@
 # QuoteFlow: Quote-to-Booking Automation Platform
 
-A cloud-native workflow automation platform built using **Next.js**, **Supabase**, **Stripe**, and **Resend**. The application helps service businesses transform customer quotes into approved, paid, and schedule-ready jobs through automated follow-ups, status tracking, and deposit collection.
+A SaaS workflow management platform built using **Next.js**, **Supabase**, **Stripe**, and **Resend**. The application helps service businesses transform customer quotes into approved, paid, and schedule-ready jobs through automated follow-ups, status tracking, and deposit collection.
 
 ---
 
